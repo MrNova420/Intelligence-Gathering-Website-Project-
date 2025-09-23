@@ -18,7 +18,7 @@ except ImportError:
     def Text():
         return "Text"
     
-    def DateTime():
+    def DateTime(timezone=False):
         return "DateTime"
     
     def Boolean():

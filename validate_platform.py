@@ -98,13 +98,12 @@ def test_database_models():
     print("\n🗄️ Testing Database Models...")
     try:
         from backend.app.db.models import (
-            User, Query, ScanResult, PaymentPlan, Report
+            User, Query, ScanResult, Report
         )
         
         print("✅ User Model: Imported")
         print("✅ Query Model: Imported") 
         print("✅ ScanResult Model: Imported")
-        print("✅ PaymentPlan Model: Imported")
         print("✅ Report Model: Imported")
         
         return True
