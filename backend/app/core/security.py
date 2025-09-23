@@ -149,6 +149,53 @@ def log_security_event(event_type: str, user_id: str = None, ip_address: str = N
     logger.info(f"Security Event: {log_entry}")
     # In production, this would be stored in a secure audit log
 
+def audit_log(user_id: str, action: str, details: dict = None):
+    """Log security events for audit purposes."""
+    log_entry = {
+        "timestamp": datetime.utcnow().isoformat(),
+        "user_id": user_id,
+        "action": action,
+        "details": details or {},
+        "ip_address": "unknown"  # Would be filled from request context
+    }
+    logger.info(f"AUDIT: {log_entry}")
+    return log_entry
+
+class SecurityManager:
+    """Main security manager class for backward compatibility."""
+    
+    def __init__(self):
+        self.secret_key = settings.SECRET_KEY
+        self.algorithm = settings.ALGORITHM
+        self.access_token_expire_minutes = settings.ACCESS_TOKEN_EXPIRE_MINUTES
+    
+    def encrypt_data(self, data: str) -> str:
+        """Encrypt data using global encrypt function."""
+        return encrypt_data(data)
+    
+    def decrypt_data(self, encrypted_data: str) -> str:
+        """Decrypt data using global decrypt function."""
+        return decrypt_data(encrypted_data)
+    
+    def hash_password(self, password: str) -> str:
+        """Hash password using global function."""
+        return hash_password(password)
+    
+    def verify_password(self, password: str, hashed: str) -> bool:
+        """Verify password using global function."""
+        return verify_password(password, hashed)
+    
+    def create_access_token(self, data: dict, expires_delta: Optional[timedelta] = None) -> str:
+        """Create access token using global function."""
+        return create_access_token(data, expires_delta)
+    
+    def verify_token(self, token: str) -> Optional[dict]:
+        """Verify token using global function."""
+        return verify_token(token)
+
+# Global security manager instance
+security_manager = SecurityManager()
+
 def mask_sensitive_data(data: str, mask_char: str = "*", visible_chars: int = 4) -> str:
     """Mask sensitive data for logging/display."""
     if not data or len(data) <= visible_chars:
