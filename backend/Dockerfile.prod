@@ -1,0 +1,99 @@
+# Production Dockerfile with security hardening
+FROM python:3.11-slim as builder
+
+# Build arguments
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VERSION
+
+# Labels for metadata
+LABEL maintainer="Intelligence Platform Team" \
+      org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.name="Intelligence Gathering Platform Backend" \
+      org.label-schema.description="Production-ready intelligence gathering API" \
+      org.label-schema.url="https://github.com/MrNova420/Intelligence-Gathering-Website-Project-" \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vcs-url="https://github.com/MrNova420/Intelligence-Gathering-Website-Project-" \
+      org.label-schema.version=$VERSION \
+      org.label-schema.schema-version="1.0"
+
+# Create non-root user
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Install system dependencies and security updates
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libc6-dev \
+    libpq-dev \
+    curl \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Install Python dependencies with security enhancements
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir --trusted-host pypi.org --trusted-host pypi.python.org \
+       cryptography bcrypt PyJWT \
+    && pip install --no-cache-dir -r requirements.txt \
+    && pip check
+
+# Production stage
+FROM python:3.11-slim as production
+
+# Create non-root user
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Install runtime dependencies only
+RUN apt-get update && apt-get install -y \
+    libpq5 \
+    curl \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Copy Python packages from builder
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+# Set working directory
+WORKDIR /app
+
+# Copy application code
+COPY --chown=appuser:appuser . .
+
+# Create necessary directories with proper permissions
+RUN mkdir -p /app/logs /app/tmp \
+    && chown -R appuser:appuser /app \
+    && chmod -R 755 /app \
+    && chmod 750 /app/logs /app/tmp
+
+# Security hardening
+RUN chmod -R o-rwx /app \
+    && find /app -type f -name "*.py" -exec chmod 644 {} \; \
+    && find /app -type d -exec chmod 755 {} \;
+
+# Switch to non-root user
+USER appuser
+
+# Set environment variables
+ENV PYTHONPATH=/app \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Expose port
+EXPOSE 8000
+
+# Run the application
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
