@@ -18,3 +18,13 @@ stripe==7.8.0
 bcrypt==4.1.2
 pyjwt==2.8.0
 pydantic-settings==2.1.0
+
+# Additional dependencies for scanner modules
+dnspython==2.4.2
+phonenumbers==8.13.26
+pyotp==2.9.0
+qrcode[pil]==7.4.2
+reportlab==4.0.7
+difflib2==0.1
+Levenshtein==0.25.0
+textdistance==4.6.1

@@ -331,6 +331,51 @@ class ReportGenerator:
         self.data_filter = ReportDataFilter(self.paywall_manager)
         self.templates = self._load_report_templates()
     
+    def get_subscription_features(self) -> Dict[str, Any]:
+        """Get all subscription features and their access matrix"""
+        return {
+            "plans": {
+                "free": {
+                    "max_queries_per_day": 5,
+                    "max_scanners_per_query": 3,
+                    "report_types": ["preview"],
+                    "export_formats": ["json"],
+                    "data_retention_days": 7,
+                    "api_access": False,
+                    "bulk_operations": False,
+                    "priority_support": False,
+                    "advanced_filters": False
+                },
+                "professional": {
+                    "max_queries_per_day": 100,
+                    "max_scanners_per_query": 10,
+                    "report_types": ["preview", "full", "summary"],
+                    "export_formats": ["json", "html", "csv"],
+                    "data_retention_days": 30,
+                    "api_access": True,
+                    "bulk_operations": True,
+                    "priority_support": False,
+                    "advanced_filters": True
+                },
+                "enterprise": {
+                    "max_queries_per_day": 1000,
+                    "max_scanners_per_query": 25,
+                    "report_types": ["preview", "full", "summary", "detailed"],
+                    "export_formats": ["json", "html", "csv", "pdf", "xml"],
+                    "data_retention_days": 365,
+                    "api_access": True,
+                    "bulk_operations": True,
+                    "priority_support": True,
+                    "advanced_filters": True
+                }
+            },
+            "feature_matrix": self.paywall_manager.access_matrix
+        }
+    
+    def filter_data_by_subscription(self, data: Dict[str, Any], subscription_plan: str) -> Dict[str, Any]:
+        """Filter data based on subscription plan"""
+        return self.data_filter.filter_for_full(data, SubscriptionPlan(subscription_plan))
+    
     async def generate_report(
         self,
         data: Dict[str, Any],

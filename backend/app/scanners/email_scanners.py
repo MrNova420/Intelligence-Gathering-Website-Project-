@@ -498,3 +498,10 @@ def register_email_scanners(scanner_registry):
         logger.info(f"Registered email scanner: {scanner_instance.name}")
     
     return len(EMAIL_SCANNERS)
+
+
+# Aliases for backward compatibility
+EmailValidator = EmailValidatorScanner
+EmailReputation = EmailReputationScanner  
+EmailBreach = EmailBreachScanner
+SocialMediaEmail = SocialMediaEmailScanner

@@ -869,6 +869,18 @@ class AggregationEngine:
         self.confidence_scorer = ConfidenceScorer()
         self.relationship_linker = RelationshipLinker()
     
+    def normalize_email(self, email: str) -> Dict[str, Any]:
+        """Normalize email address - delegate to normalizer"""
+        return self.normalizer.normalize_email(email)
+    
+    def normalize_phone(self, phone: str) -> Dict[str, Any]:
+        """Normalize phone number - delegate to normalizer"""
+        return self.normalizer.normalize_phone(phone)
+    
+    def deduplicate_entities(self, entities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Deduplicate entities - delegate to deduplicator"""
+        return self.deduplicator.deduplicate_entities(entities)
+    
     async def aggregate_scan_results(self, scan_results: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Main aggregation method"""
         logger.info(f"Starting aggregation of {len(scan_results)} scan results")
@@ -1058,3 +1070,13 @@ class AggregationEngine:
         diversity_bonus = min(unique_types * 0.05, 0.2)
         
         return round(min(quality_score + diversity_bonus, 1.0), 3)
+
+
+# Alias for backward compatibility
+DataAggregationEngine = AggregationEngine
+
+
+# Factory function
+def create_aggregation_engine() -> AggregationEngine:
+    """Create and return a configured AggregationEngine instance"""
+    return AggregationEngine()

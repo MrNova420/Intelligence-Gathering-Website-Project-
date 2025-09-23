@@ -573,3 +573,10 @@ def register_phone_scanners(scanner_registry):
         logger.info(f"Registered phone scanner: {scanner_instance.name}")
     
     return len(PHONE_SCANNERS)
+
+
+# Aliases for backward compatibility
+PhoneValidator = PhoneValidatorScanner
+PhoneLocation = PhoneLocationScanner
+PhoneSpam = PhoneSpamScanner
+PhoneCarrier = PhoneCarrierScanner

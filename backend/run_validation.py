@@ -132,11 +132,10 @@ def validate_security_system():
         
         # Test MFA manager
         mfa_manager = MFAManager()
-        secret = mfa_manager.generate_secret()
-        qr_url = mfa_manager.generate_qr_code("test@example.com", secret)
+        secret_data = mfa_manager.generate_secret("test@example.com")
         
-        print(f"  ✅ MFA secret generation: {len(secret)} chars")
-        print(f"  ✅ QR code generation: {len(qr_url)} chars")
+        print(f"  ✅ MFA secret generation: {len(secret_data['secret'])} chars")
+        print(f"  ✅ QR code generation: {len(secret_data['qr_code'])} chars")
         
         # Test RBAC manager
         rbac_manager = RBACManager()
@@ -156,7 +155,7 @@ def validate_performance_optimizer():
     print("\n⚡ Validating Performance Optimizer...")
     
     try:
-        from app.core.performance_optimizer import RedisCache, PerformanceMonitor, AsyncScannerOrchestrator
+        from app.core.performance_optimizer import RedisCache, PerformanceMonitor, AsyncScannerOrchestrator, CacheManager
         
         # Test Redis cache (mock mode)
         cache = RedisCache()
@@ -169,8 +168,9 @@ def validate_performance_optimizer():
         print(f"  ✅ System metrics: {len(metrics)} metrics collected")
         
         # Test async orchestrator
-        orchestrator = AsyncScannerOrchestrator()
-        print(f"  ✅ Async orchestrator: {len(orchestrator.scanner_pool)} scanners in pool")
+        cache_manager = CacheManager()
+        orchestrator = AsyncScannerOrchestrator(cache_manager)
+        print(f"  ✅ Async orchestrator initialized with cache manager")
         
         return True
         

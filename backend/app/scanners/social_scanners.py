@@ -717,3 +717,15 @@ def register_social_scanners(scanner_registry):
         logger.info(f"Registered social media scanner: {scanner_instance.name}")
     
     return len(SOCIAL_SCANNERS)
+
+
+# Export classes for direct import
+__all__ = [
+    'SocialMediaBaseScanner',
+    'TwitterScanner', 
+    'LinkedInScanner',
+    'InstagramScanner',
+    'FacebookScanner', 
+    'GitHubScanner',
+    'register_social_scanners'
+]
