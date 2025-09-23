@@ -11,31 +11,33 @@ export default function Home() {
   const [query, setQuery] = useState<QueryForm>({ type: 'email', value: '' })
   const [isScanning, setIsScanning] = useState(false)
   const [results, setResults] = useState<any>(null)
+  const [scanId, setScanId] = useState<string | null>(null)
+  const [userPlan, setUserPlan] = useState<'free' | 'professional' | 'enterprise'>('free')
+  const [dailyQueries, setDailyQueries] = useState({ used: 2, limit: 5 })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!query.value.trim()) return
 
+    // Check query limits
+    if (dailyQueries.used >= dailyQueries.limit) {
+      alert(`Daily query limit reached (${dailyQueries.limit}). Please upgrade your plan or try again tomorrow.`)
+      return
+    }
+
     setIsScanning(true)
     
-    // Simulate API call
+    // Generate scan ID and redirect to progress page
+    const newScanId = 'scan_' + Math.random().toString(36).substr(2, 9)
+    setScanId(newScanId)
+    
+    // Update daily usage
+    setDailyQueries(prev => ({ ...prev, used: prev.used + 1 }))
+    
+    // In real implementation, would start actual scan and redirect
     setTimeout(() => {
-      setResults({
-        query: query.value,
-        type: query.type,
-        scanners_used: 87,
-        sources_found: 23,
-        confidence_score: 0.85,
-        preview_data: {
-          social_profiles: 5,
-          public_records: 8,
-          email_verification: 'verified',
-          phone_lookup: '+1 555-***-****',
-          location: 'San Francisco, CA'
-        }
-      })
-      setIsScanning(false)
-    }, 3000)
+      window.location.href = `/scan-progress?scanId=${newScanId}`
+    }, 1000)
   }
 
   const scannerTypes = [
@@ -95,6 +97,7 @@ export default function Home() {
               <nav className="flex space-x-6">
                 <a href="#" className="text-gray-300 hover:text-white transition-colors">Dashboard</a>
                 <a href="#" className="text-gray-300 hover:text-white transition-colors">Reports</a>
+                <a href="/subscription" className="text-gray-300 hover:text-white transition-colors">Pricing</a>
                 <a href="#" className="text-gray-300 hover:text-white transition-colors">API</a>
                 <button className="btn-primary">
                   Login
@@ -114,6 +117,35 @@ export default function Home() {
               Comprehensive OSINT research with 100+ scanner tools. Gather intelligence from 
               social media, public records, APIs, and more - all in one platform.
             </p>
+            
+            {/* Query Usage Stats */}
+            <div className="max-w-2xl mx-auto mb-8">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-gray-600">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-white font-medium">Daily Queries</span>
+                  <span className="text-white font-bold">{dailyQueries.used}/{dailyQueries.limit}</span>
+                </div>
+                <div className="w-full bg-gray-700 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      dailyQueries.used >= dailyQueries.limit ? 'bg-red-500' : 
+                      dailyQueries.used / dailyQueries.limit > 0.8 ? 'bg-yellow-500' : 'bg-green-500'
+                    }`}
+                    style={{ width: `${Math.min((dailyQueries.used / dailyQueries.limit) * 100, 100)}%` }}
+                  ></div>
+                </div>
+                <div className="flex justify-between items-center mt-2 text-sm">
+                  <span className="text-gray-400">
+                    Plan: <span className="text-white capitalize">{userPlan}</span>
+                  </span>
+                  {dailyQueries.used >= dailyQueries.limit * 0.8 && (
+                    <a href="/subscription" className="text-primary-400 hover:text-primary-300">
+                      Upgrade Plan
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
             
             {/* Search Form */}
             <div className="max-w-2xl mx-auto">
