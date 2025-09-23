@@ -34,9 +34,9 @@ async def mock_lifespan(app):
 
 def create_application():
     """Create and configure the FastAPI application."""
-    from app.core.config import settings
-    from app.core.database import init_db
-    from app.scanners.implementations import register_scanners
+    from backend.app.core.config import settings
+    from backend.app.core.database import init_db
+    from backend.app.scanners.implementations import register_scanners
     
     app = MockFastAPI(
         title=settings.PROJECT_NAME,

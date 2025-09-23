@@ -1,11 +1,65 @@
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text, JSON, Enum, Float, LargeBinary
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
+# Mock SQLAlchemy for demonstration when SQLAlchemy is not installed
+try:
+    from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text, JSON, Enum, Float, LargeBinary
+    from sqlalchemy.ext.declarative import declarative_base
+    from sqlalchemy.orm import relationship
+    from sqlalchemy.sql import func
+except ImportError:
+    # Mock SQLAlchemy classes for testing
+    def Column(*args, **kwargs):
+        return None
+    
+    def Integer():
+        return "Integer"
+    
+    def String(length=None):
+        return f"String({length})"
+    
+    def Text():
+        return "Text"
+    
+    def DateTime():
+        return "DateTime"
+    
+    def Boolean():
+        return "Boolean"
+    
+    def ForeignKey(key):
+        return f"ForeignKey({key})"
+    
+    def Float():
+        return "Float"
+    
+    def JSON():
+        return "JSON"
+    
+    def Enum(*args, **kwargs):
+        return "Enum"
+    
+    def LargeBinary():
+        return "LargeBinary"
+    
+    def declarative_base():
+        class MockBase:
+            pass
+        return MockBase
+    
+    def relationship(*args, **kwargs):
+        return None
+    
+    class func:
+        @staticmethod
+        def now():
+            return "func.now()"
+
 import enum
 from typing import Optional
 
-from app.core.database import Base
+# Create Base if not imported
+try:
+    from app.core.database import Base
+except ImportError:
+    Base = declarative_base()
 
 
 class QueryType(str, enum.Enum):

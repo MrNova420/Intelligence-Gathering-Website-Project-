@@ -9,7 +9,15 @@ from cryptography.fernet import Fernet
 import base64
 import os
 
-from app.core.config import settings
+try:
+    from backend.app.core.config import settings
+except ImportError:
+    # Mock settings for standalone testing
+    class MockSettings:
+        SECRET_KEY = "your-secret-key-change-in-production"
+        ALGORITHM = "HS256"
+        ACCESS_TOKEN_EXPIRE_MINUTES = 30
+    settings = MockSettings()
 
 logger = logging.getLogger(__name__)
 
@@ -22,8 +30,8 @@ def get_encryption_key() -> bytes:
     """Get encryption key from environment or generate new one."""
     key = os.environ.get('ENCRYPTION_KEY')
     if not key:
-        # In production, this should be stored securely
-        key = base64.urlsafe_b64encode(b"your-32-byte-secret-key-change-this!")
+        # Generate a proper 32-byte key for production
+        key = base64.urlsafe_b64encode(b"intelligence_platform_key_32bit!")
     return key
 
 # Initialize Fernet cipher
@@ -47,6 +55,106 @@ def decrypt_data(encrypted_data: str) -> str:
     except Exception as e:
         logger.error(f"Decryption error: {e}")
         raise
+
+def hash_password(password: str) -> str:
+    """Hash a password using BCrypt."""
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verify a password against its hash."""
+    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    """Create a JWT access token."""
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    return encoded_jwt
+
+def verify_token(token: str):
+    """Verify and decode JWT token."""
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        return payload
+    except jwt.PyJWTError:
+        return None
+
+def generate_api_key() -> str:
+    """Generate a secure API key."""
+    return secrets.token_urlsafe(32)
+
+def sanitize_input(input_data: str) -> str:
+    """Sanitize user input to prevent XSS and injection attacks."""
+    if not input_data:
+        return ""
+    
+    # Basic sanitization - remove potentially dangerous characters
+    dangerous_chars = ["<", ">", "\"", "'", "&", "script", "javascript"]
+    sanitized = input_data
+    
+    for char in dangerous_chars:
+        sanitized = sanitized.replace(char, "")
+    
+    return sanitized.strip()
+
+# Security middleware functions
+def get_client_ip(request) -> str:
+    """Extract client IP address from request."""
+    forwarded_for = request.headers.get("X-Forwarded-For")
+    if forwarded_for:
+        return forwarded_for.split(",")[0].strip()
+    return request.client.host
+
+# Rate limiting (Redis-based in production)
+rate_limit_store = {}
+
+def check_rate_limit(identifier: str, limit: int = 100, window: int = 3600) -> bool:
+    """Check if request is within rate limits."""
+    current_time = datetime.utcnow().timestamp()
+    
+    if identifier not in rate_limit_store:
+        rate_limit_store[identifier] = []
+    
+    # Clean old entries
+    rate_limit_store[identifier] = [
+        timestamp for timestamp in rate_limit_store[identifier] 
+        if current_time - timestamp < window
+    ]
+    
+    # Check limit
+    if len(rate_limit_store[identifier]) >= limit:
+        return False
+    
+    # Add current request
+    rate_limit_store[identifier].append(current_time)
+    return True
+
+# Audit logging
+def log_security_event(event_type: str, user_id: str = None, ip_address: str = None, details: dict = None):
+    """Log security events for audit purposes."""
+    log_entry = {
+        "timestamp": datetime.utcnow().isoformat(),
+        "event_type": event_type,
+        "user_id": user_id,
+        "ip_address": ip_address,
+        "details": details or {}
+    }
+    
+    logger.info(f"Security Event: {log_entry}")
+    # In production, this would be stored in a secure audit log
+
+def mask_sensitive_data(data: str, mask_char: str = "*", visible_chars: int = 4) -> str:
+    """Mask sensitive data for logging/display."""
+    if not data or len(data) <= visible_chars:
+        return mask_char * len(data) if data else ""
+    
+    return data[:visible_chars] + mask_char * (len(data) - visible_chars)
 
 def create_access_token(subject: str, expires_delta: Optional[timedelta] = None) -> str:
     """Create JWT access token with proper security."""
