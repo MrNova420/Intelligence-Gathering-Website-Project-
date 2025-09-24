@@ -1126,8 +1126,9 @@ class AggregationEngine:
         return round(min(quality_score + diversity_bonus, 1.0), 3)
 
 
-# Alias for backward compatibility
+# Aliases for backward compatibility
 DataAggregationEngine = AggregationEngine
+AdvancedAggregationEngine = AggregationEngine
 
 
 # Factory function

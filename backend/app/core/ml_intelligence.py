@@ -1020,3 +1020,6 @@ source_prioritizer = SourcePrioritizationEngine()
 pattern_recognizer = PatternRecognitionEngine()
 confidence_predictor = ConfidencePredictionModel()
 anomaly_detector = AnomalyDetectionEngine()
+
+# Alias for backward compatibility
+MLIntelligenceEngine = SourcePrioritizationEngine

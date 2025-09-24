@@ -566,3 +566,6 @@ data_quality_analyzer = DataQualityAnalyzer()
 behavioral_analyzer = BehavioralPatternAnalyzer()
 risk_engine = RiskAssessmentEngine()
 predictive_analytics = PredictiveAnalytics()
+
+# Alias for backward compatibility
+AdvancedAnalyticsEngine = DataQualityAnalyzer

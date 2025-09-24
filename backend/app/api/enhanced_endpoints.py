@@ -578,3 +578,8 @@ async def detailed_health_check():
             "error": str(e),
             "timestamp": datetime.utcnow().isoformat()
         }
+
+
+# Export router for main app
+router = enhanced_router  # Alias for backward compatibility
+__all__ = ['enhanced_router', 'router']
