@@ -28,6 +28,13 @@ except ImportError:
         SOCIAL_MEDIA = "social_media"
         PUBLIC_RECORDS = "public_records"
         IMAGE_ANALYSIS = "image_analysis"
+        API = "api"
+        FORUM_COMMUNITY = "forum_community"
+        DEEP_WEB = "deep_web"
+        NETWORK = "network"
+        BLOCKCHAIN = "blockchain"
+        CYBERSECURITY = "cybersecurity"
+        GEOSPATIAL = "geospatial"
     
     class MockQueryStatus:
         PENDING = "pending"

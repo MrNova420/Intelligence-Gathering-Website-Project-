@@ -246,27 +246,6 @@ if __name__ == "__main__":
     logger.info(f"🌐 Server will be available at: http://localhost:{config['port']}")
     
     uvicorn.run(app, **config)
-            "status": "healthy", 
-            "service": "intelligence-gathering-api",
-            "scanners": "100+ tools ready"
-        }
-
-    @app.get("/")
-    async def root():
-        """Root endpoint."""
-        return {
-            "message": "Intelligence Gathering Platform API",
-            "docs": "/docs",
-            "health": "/health",
-            "version": settings.VERSION,
-            "scanners_available": 100
-        }
-    
-    return app
-
-
-# Create app instance
-app = create_application()
 
 if __name__ == "__main__":
     # Simple test runner
