@@ -10,7 +10,7 @@ import secrets
 import hashlib
 import hmac
 import logging
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from datetime import datetime, timedelta
 import base64
 import time
@@ -84,7 +84,7 @@ except ImportError:
         TOTP = MockTOTP
         @staticmethod
         def random_base32():
-            return "JBSWY3DPEHPK3PXP"
+            return "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP"  # 32-character base32 string
     pyotp = MockPyOTP()
 
 try:
@@ -393,6 +393,7 @@ class MFAManager:
         return {
             "secret": secret,
             "qr_code": qr_base64,
+            "qr_code_data": qr_base64,  # Alias for test compatibility
             "backup_codes": backup_codes,
             "provisioning_uri": provisioning_uri
         }
@@ -458,11 +459,22 @@ class RBACManager:
         
         return False
     
-    def get_user_permissions(self, user_role: str) -> Dict[str, Any]:
-        """Get all permissions for a user role"""
-        return self.permissions.get(user_role, {})
+    def get_user_permissions(self, user_role: str) -> List[str]:
+        """Get all permissions for a user role as a list"""
+        role_perms = self.permissions.get(user_role.upper(), {})
+        
+        # Convert dictionary permissions to flat list
+        permissions = []
+        for resource, actions in role_perms.items():
+            if resource == "*" and actions == ["*"]:
+                permissions.extend(["*"])
+            else:
+                for action in actions:
+                    permissions.append(f"{resource}:{action}")
+        
+        return permissions
     
-    def get_role_permissions(self, user_role: str) -> Dict[str, Any]:
+    def get_role_permissions(self, user_role: str) -> List[str]:
         """Alias for get_user_permissions for backward compatibility"""
         return self.get_user_permissions(user_role)
     
