@@ -111,67 +111,61 @@ This is a **fully operational, enterprise-grade intelligence gathering platform*
 - **2GB+ RAM and 10GB+ disk space** (minimum requirements)
 - **Domain name and SSL certificates** (for production only)
 
-### **🚀 Option 1: Termux/Standalone Deployment (Recommended for Testing)**
+### **🚀 Option 1: Super Easy Start (One Command)**
 
-Perfect for Android devices, development, and testing environments:
+**The absolute easiest way - works on any platform:**
 
 ```bash
-# Clone the repository
+# Clone and run - that's it!
 git clone https://github.com/MrNova420/Intelligence-Gathering-Website-Project-.git
 cd Intelligence-Gathering-Website-Project-
 
-# For Termux/Android - Use the automated script:
-./start_termux.sh
+# ONE COMMAND DOES EVERYTHING:
+./run.sh
 
-# OR Manual setup:
-# Install Python dependencies (SQLite-only for Termux)
-pip install -r backend/requirements-lite.txt
-
-# Setup SQLite database
-python backend/app/db/setup_standalone.py
-
-# Setup environment variables
-cp .env.example .env
-nano .env  # Edit with your settings
-
-# Start the application
-python backend/run_standalone.py
-
-# Test the platform
-python verify_fixes.py
+# Or on Windows:
+run.bat
 ```
 
-**Termux-Specific Setup:**
+**What this does automatically:**
+- ✅ Installs all dependencies (no psycopg2-binary issues)
+- ✅ Sets up SQLite database
+- ✅ Configures environment
+- ✅ Starts both backend and frontend
+- ✅ Opens on localhost for testing
+
+### **🔧 Option 2: Advanced Control**
+
 ```bash
-# Update Termux packages
-pkg update && pkg upgrade
-
-# Install required packages
-pkg install python git nodejs
-
-# Clone and run the automated setup
-git clone https://github.com/MrNova420/Intelligence-Gathering-Website-Project-.git
-cd Intelligence-Gathering-Website-Project-
-
-# Use the Termux-optimized script (handles everything automatically)
-./start_termux.sh
+# Full installation control
+./install.sh              # Install everything
+./easy_start.sh           # Setup + start
+./easy_start.sh start     # Just start
+./easy_start.sh stop      # Stop everything
+./easy_start.sh restart   # Restart
+./easy_start.sh status    # Check status
 ```
 
-**Manual Termux Setup (if needed):**
+**🛠️ Troubleshooting Made Easy:**
+
 ```bash
-# Install Python dependencies (SQLite-only)
-pip install -r backend/requirements-lite.txt
-
-# Setup database
-python backend/app/db/setup_standalone.py
-
-# Install frontend dependencies
-cd frontend && npm install && cd ..
-
-# Start backend and frontend manually
-python backend/run_standalone.py &
-cd frontend && npm run dev
+# If anything goes wrong:
+./fix.sh            # Fixes common issues automatically
+./status.sh         # Shows what's running
+./easy_start.sh stop   # Stop everything cleanly
 ```
+
+**Works on:**
+- 📱 **Termux/Android** - Perfect mobile development
+- 🐧 **Linux** - All distributions  
+- 🍎 **macOS** - Native support
+- 🪟 **Windows** - Use `run.bat` or WSL
+
+**No more:**
+- ❌ psycopg2-binary compilation errors
+- ❌ Complex dependency management  
+- ❌ Manual configuration
+- ❌ Port conflicts or stuck processes
 
 ### **🐳 Option 2: Docker Deployment (Production Ready)**
 
