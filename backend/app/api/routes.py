@@ -273,15 +273,188 @@ async def get_platform_stats():
     }
 
 
-def calculate_confidence(scan_results: Dict[str, Any]) -> float:
-    """Calculate overall confidence score from scan results"""
-    if not scan_results:
-        return 0.0
-    
-    successful_scans = [r for r in scan_results.values() if not isinstance(r, dict) or r.get("status") != "failed"]
-    if not successful_scans:
-        return 0.0
-    
-    # Simple confidence calculation
-    success_rate = len(successful_scans) / len(scan_results)
-    return round(success_rate * 0.8 + 0.2, 2)  # Base confidence + success rate
+@api_router.post("/report/pdf")
+async def generate_pdf_report(request: ReportRequest):
+    """Generate professional PDF intelligence report"""
+    try:
+        from ..core.pdf_generator import pdf_generator
+        
+        # TODO: Retrieve actual scan data from database
+        # For now, create mock scan data structure
+        mock_scan_data = {
+            "scan_id": request.scan_id,
+            "query": {
+                "type": "email",
+                "value": "example@domain.com"
+            },
+            "results": {
+                "email_validator": {
+                    "valid": True,
+                    "confidence": 0.95,
+                    "domain_check": {"domain_exists": True},
+                    "timestamp": "2024-01-20T10:30:00Z"
+                },
+                "email_reputation": {
+                    "reputation_score": 0.87,
+                    "confidence": 0.82,
+                    "timestamp": "2024-01-20T10:30:02Z"
+                }
+            },
+            "confidence_score": 88.5,
+            "sources": ["email_validator", "email_reputation"]
+        }
+        
+        # Generate PDF
+        pdf_bytes = pdf_generator.generate_intelligence_report(
+            mock_scan_data, 
+            report_type=request.report_type
+        )
+        
+        # Return as base64 encoded response
+        import base64
+        pdf_base64 = base64.b64encode(pdf_bytes).decode('utf-8')
+        
+        return {
+            "scan_id": request.scan_id,
+            "report_type": request.report_type,
+            "format": "pdf",
+            "size_bytes": len(pdf_bytes),
+            "pdf_data": pdf_base64,
+            "generated_at": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"PDF generation failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate PDF report")
+
+
+@api_router.get("/dashboard/business")
+async def get_business_dashboard():
+    """Get business intelligence dashboard data"""
+    try:
+        from ..core.business_intelligence import business_intelligence
+        
+        dashboard_data = await business_intelligence.generate_executive_dashboard()
+        return dashboard_data
+        
+    except Exception as e:
+        logger.error(f"Business dashboard generation failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate business dashboard")
+
+
+@api_router.get("/dashboard/realtime")
+async def get_realtime_dashboard():
+    """Get real-time monitoring dashboard data"""
+    try:
+        from ..core.business_intelligence import business_intelligence
+        
+        realtime_data = await business_intelligence.get_real_time_dashboard()
+        return realtime_data
+        
+    except Exception as e:
+        logger.error(f"Real-time dashboard generation failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate real-time dashboard")
+
+
+@api_router.post("/visualizations/performance")
+async def create_performance_visualization(scan_data: Dict[str, Any]):
+    """Create performance visualization charts"""
+    try:
+        from ..core.visualization_engine import visualization_engine
+        
+        # Create scanner performance chart
+        performance_chart = await visualization_engine.create_scanner_performance_chart(
+            scan_data.get("results", {})
+        )
+        
+        # Create confidence distribution chart
+        confidence_chart = await visualization_engine.create_confidence_distribution_chart(
+            scan_data.get("results", {})
+        )
+        
+        return {
+            "charts": [
+                {
+                    "id": "performance",
+                    "chart_type": performance_chart.chart_type.value,
+                    "title": performance_chart.title,
+                    "data": performance_chart.data,
+                    "labels": performance_chart.labels,
+                    "options": performance_chart.options,
+                    "metadata": performance_chart.metadata
+                },
+                {
+                    "id": "confidence",
+                    "chart_type": confidence_chart.chart_type.value,
+                    "title": confidence_chart.title,
+                    "data": confidence_chart.data,
+                    "labels": confidence_chart.labels,
+                    "options": confidence_chart.options
+                }
+            ],
+            "generated_at": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Visualization generation failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create visualizations")
+
+
+@api_router.post("/visualizations/network")
+async def create_network_visualization(entity_data: Dict[str, Any]):
+    """Create network graph visualization for entity relationships"""
+    try:
+        from ..core.visualization_engine import visualization_engine
+        
+        network_graph = await visualization_engine.create_intelligence_network_graph(entity_data)
+        return network_graph
+        
+    except Exception as e:
+        logger.error(f"Network visualization failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create network visualization")
+
+
+@api_router.get("/analytics/advanced")
+async def get_advanced_analytics():
+    """Get advanced analytics and insights"""
+    try:
+        from ..core.advanced_analytics import data_quality_analyzer
+        
+        # Mock analytics data (replace with actual data sources)
+        mock_data = {
+            "basic_info": {"name": "John Doe", "age": 35},
+            "contact_details": {"email": "john@example.com", "phone": "+1234567890"},
+            "social_profiles": {"linkedin": "john-doe", "twitter": "@johndoe"},
+            "professional_info": {"company": "Tech Corp", "title": "Engineer"},
+            "location_data": {"city": "San Francisco", "state": "CA"},
+            "verification_status": "verified"
+        }
+        
+        quality_analysis = data_quality_analyzer.analyze_data_quality(mock_data)
+        
+        return {
+            "data_quality": quality_analysis,
+            "insights": [
+                {
+                    "type": "quality",
+                    "title": "Data Completeness",
+                    "description": f"Overall completeness score: {quality_analysis['completeness']:.1%}",
+                    "score": quality_analysis['completeness']
+                },
+                {
+                    "type": "accuracy",
+                    "title": "Data Accuracy",
+                    "description": f"Accuracy assessment: {quality_analysis['accuracy']:.1%}",
+                    "score": quality_analysis['accuracy']
+                }
+            ],
+            "recommendations": [
+                "Consider additional validation for higher confidence scores",
+                "Cross-reference data with multiple sources for accuracy",
+                "Implement automated quality monitoring"
+            ]
+        }
+        
+    except Exception as e:
+        logger.error(f"Advanced analytics failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate advanced analytics")
