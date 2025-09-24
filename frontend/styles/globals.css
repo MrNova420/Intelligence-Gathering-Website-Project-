@@ -2,76 +2,187 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom animations for enterprise-grade effects */
-@keyframes scan-horizontal {
-  0% { transform: translateX(-100%); opacity: 0; }
-  50% { opacity: 1; }
-  100% { transform: translateX(100vw); opacity: 0; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap');
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 15, 23, 42;
+  --background-end-rgb: 0, 0, 0;
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
-@keyframes scan-horizontal-reverse {
-  0% { transform: translateX(100%); opacity: 0; }
-  50% { opacity: 1; }
-  100% { transform: translateX(-100vw); opacity: 0; }
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #000000 100%);
+  color: rgb(var(--foreground-rgb));
+  scroll-behavior: smooth;
+}
+
+/* GitHub-style scrollbars */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 6px;
+  border: 2px solid rgba(15, 23, 42, 0.8);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* Ultra-modern animations inspired by Linear, Notion, and Vercel */
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(1deg); }
+  66% { transform: translateY(-5px) rotate(-1deg); }
 }
 
-@keyframes glow {
-  0%, 100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); }
-  50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
+@keyframes blob {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
 }
 
-.animate-scan-horizontal {
-  animation: scan-horizontal 3s ease-in-out infinite;
+@keyframes gradient-x {
+  0%, 100% { transform: translateX(0%); }
+  50% { transform: translateX(-100%); }
 }
 
-.animate-scan-horizontal-reverse {
-  animation: scan-horizontal-reverse 4s ease-in-out infinite;
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
+@keyframes scan-horizontal {
+  0% { 
+    transform: translateX(-100%); 
+    opacity: 0; 
+    width: 2px;
+  }
+  10% { 
+    opacity: 1; 
+    width: 2px;
+  }
+  50% { 
+    opacity: 1; 
+    width: 4px;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
+  }
+  90% { 
+    opacity: 1; 
+    width: 2px;
+  }
+  100% { 
+    transform: translateX(100vw); 
+    opacity: 0; 
+    width: 2px;
+  }
+}
+
+@keyframes scan-vertical {
+  0% { 
+    transform: translateY(-100%); 
+    opacity: 0; 
+    height: 2px;
+  }
+  10% { 
+    opacity: 1; 
+    height: 2px;
+  }
+  50% { 
+    opacity: 1; 
+    height: 4px;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.8);
+  }
+  90% { 
+    opacity: 1; 
+    height: 2px;
+  }
+  100% { 
+    transform: translateY(100vh); 
+    opacity: 0; 
+    height: 2px;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.8);
+    transform: scale(1.05);
+  }
+}
+
+/* Discord/GitHub-inspired scanning lines */
+.scan-line-horizontal {
+  position: absolute;
+  top: 20%;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+  animation: scan-horizontal 8s linear infinite;
+  z-index: 1;
+}
+
+.scan-line-vertical {
+  position: absolute;
+  left: 80%;
+  top: 0;
+  width: 2px;
+  background: linear-gradient(180deg, transparent, #8b5cf6, transparent);
+  animation: scan-vertical 6s linear infinite;
+  animation-delay: 2s;
+  z-index: 1;
+}
+
+/* Advanced blob animation like Linear */
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+/* Floating animation like Notion */
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
 
-.animate-glow {
-  animation: glow 2s ease-in-out infinite alternate;
-}
-
-/* Professional scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(59, 130, 246, 0.5);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(59, 130, 246, 0.8);
-}
-
-/* Enhanced gradient text effect */
-.gradient-text {
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
-  background-size: 200% 200%;
+/* Gradient text animation like Vercel */
+.animate-gradient-x {
   animation: gradient-shift 3s ease infinite;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-@keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
 }
 
 /* Professional button effects */

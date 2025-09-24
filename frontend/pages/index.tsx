@@ -11,7 +11,14 @@ import {
   Award, Layers, Cpu, Cloud, GitBranch, Workflow, Zap as ZapIcon,
   MousePointer, Sparkles, Infinity, CircuitBoard, Satellite,
   Server, Terminal, GitMerge, Hexagon, PenTool,
-  Lightbulb, MessageSquare, TrendingDown
+  Lightbulb, MessageSquare, TrendingDown, Monitor, Code,
+  Gauge, Mic, Video, Headphones, BookOpen, Hash, AtSign,
+  Command, GitPullRequest, Package, Briefcase, Building,
+  Crown, Gem, Diamond, Palette, Layers3, Box, Component,
+  Gamepad2, Joystick, Trophy, Medal, FlaskConical, Beaker,
+  Microscope, TestTube, Dna, Atom, Orbit, Rocket, Plane,
+  Car, Train, Ship, Anchor, Compass, Wind, Sun, Moon,
+  Sunrise, Sunset, CloudRain, CloudSnow, Thermometer
 } from 'lucide-react'
 
 interface Testimonial {
