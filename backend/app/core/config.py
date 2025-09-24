@@ -9,6 +9,7 @@ class Settings:
     PROJECT_NAME: str = "Intelligence Gathering Platform"
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
+    DEBUG: bool = False
     
     # Security
     SECRET_KEY: str = secrets.token_urlsafe(32)

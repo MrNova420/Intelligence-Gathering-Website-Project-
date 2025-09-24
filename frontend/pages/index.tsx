@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   Search, Shield, Target, Zap, Users, BarChart3, Lock, Globe, 
   TrendingUp, Calendar, FileText, Download, Eye, Clock, 
@@ -9,677 +9,722 @@ import {
   Brain, Radar, Fingerprint, Crosshair, Star, ArrowRight,
   Play, Pause, Volume2, ChevronLeft, ChevronRight, Quote,
   Award, Layers, Cpu, Cloud, GitBranch, Workflow, Zap as ZapIcon,
-  MousePointer, Sparkles, Shield as ShieldIcon, Terminal,
-  Code, PieChart, LineChart, Map as MapIcon, Wifi, Satellite,
-  Smartphone as SmartphoneIcon, CreditCard, Bitcoin, Briefcase
+  MousePointer, Sparkles, Infinity, CircuitBoard, Satellite,
+  Server, Terminal, GitMerge, Hexagon, PenTool,
+  Lightbulb, MessageSquare, TrendingDown, Monitor, Code,
+  Gauge, Mic, Video, Headphones, BookOpen, Hash, AtSign,
+  Command, GitPullRequest, Package, Briefcase, Building,
+  Crown, Gem, Diamond, Palette, Layers3, Box, Component,
+  Gamepad2, Joystick, Trophy, Medal, FlaskConical, Beaker,
+  Microscope, TestTube, Dna, Atom, Orbit, Rocket, Plane,
+  Car, Train, Ship, Anchor, Compass, Wind, Sun, Moon,
+  Sunrise, Sunset, CloudRain, CloudSnow, Thermometer
 } from 'lucide-react'
 
-interface QueryForm {
-  type: string
-  value: string
+interface Testimonial {
+  name: string
+  role: string
+  company: string
+  avatar: string
+  content: string
+  rating: number
 }
 
-interface LiveStat {
+interface Feature {
+  icon: React.ReactNode
+  title: string
+  description: string
+  gradient: string
+}
+
+interface LiveMetric {
   label: string
   value: string
   change: string
-  trend: 'up' | 'down'
+  trend: 'up' | 'down' | 'stable'
+  icon: React.ReactNode
 }
 
-interface RecentScan {
-  id: string
-  type: string
-  query: string
-  status: 'completed' | 'running' | 'failed'
-  timestamp: string
-  confidence: number
-  sources: number
+interface ThreatIndicator {
+  level: 'low' | 'medium' | 'high' | 'critical'
+  count: number
+  change: number
 }
 
-export default function Home() {
-  const [query, setQuery] = useState<QueryForm>({ type: 'email', value: '' })
-  const [isScanning, setIsScanning] = useState(false)
-  const [results, setResults] = useState<any>(null)
-  const [scanId, setScanId] = useState<string | null>(null)
-  const [userPlan, setUserPlan] = useState<'free' | 'professional' | 'enterprise'>('free')
-  const [dailyQueries, setDailyQueries] = useState({ used: 2, limit: 5 })
-  const [currentTime, setCurrentTime] = useState(new Date())
-  const [activeDemo, setActiveDemo] = useState(0)
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const heroRef = useRef<HTMLDivElement>(null)
-
-  // Live statistics simulation
-  const [liveStats, setLiveStats] = useState<LiveStat[]>([
-    { label: 'Active Scans', value: '847', change: '+12%', trend: 'up' },
-    { label: 'Data Sources', value: '1,247', change: '+5%', trend: 'up' },
-    { label: 'Queries Today', value: '5,892', change: '+23%', trend: 'up' },
-    { label: 'Success Rate', value: '97.8%', change: '+0.3%', trend: 'up' }
+export default function IntelligencePlatform() {
+  const [currentTestimonial, setCurrentTestimonial] = useState(0)
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
+  const [hoveredFeature, setHoveredFeature] = useState<number | null>(null)
+  const [liveMetrics, setLiveMetrics] = useState<LiveMetric[]>([
+    { label: 'Active Scans', value: '1,247', change: '+12%', trend: 'up', icon: <Activity className="w-4 h-4" /> },
+    { label: 'Threats Detected', value: '89', change: '-5%', trend: 'down', icon: <Shield className="w-4 h-4" /> },
+    { label: 'Intel Sources', value: '129', change: '+3', trend: 'up', icon: <Database className="w-4 h-4" /> },
+    { label: 'Success Rate', value: '97.8%', change: '+0.2%', trend: 'up', icon: <Target className="w-4 h-4" /> }
   ])
+  const [threatLevel, setThreatLevel] = useState<ThreatIndicator>({
+    level: 'medium',
+    count: 23,
+    change: -8
+  })
 
-  // Recent scans simulation
-  const [recentScans] = useState<RecentScan[]>([
-    { id: '1', type: 'email', query: 'john.doe@company.com', status: 'completed', timestamp: '2 min ago', confidence: 94, sources: 12 },
-    { id: '2', type: 'phone', query: '+1-555-0123', status: 'running', timestamp: '5 min ago', confidence: 78, sources: 8 },
-    { id: '3', type: 'name', query: 'Sarah Johnson', status: 'completed', timestamp: '8 min ago', confidence: 87, sources: 15 },
-    { id: '4', type: 'username', query: 'techguru2024', status: 'completed', timestamp: '12 min ago', confidence: 92, sources: 11 }
-  ])
-
+  // Live data simulation
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date())
-      // Update live stats periodically
-      setLiveStats(prev => prev.map(stat => ({
-        ...stat,
-        value: (parseInt(stat.value.replace(/,/g, '')) + Math.floor(Math.random() * 10)).toLocaleString()
+    const interval = setInterval(() => {
+      setLiveMetrics(prev => prev.map(metric => ({
+        ...metric,
+        value: (parseInt(metric.value.replace(/[,%]/g, '')) + Math.floor(Math.random() * 10 - 5)).toLocaleString(),
+        change: `${Math.random() > 0.5 ? '+' : '-'}${(Math.random() * 10).toFixed(1)}%`
       })))
     }, 5000)
-
-    return () => clearInterval(timer)
+    return () => clearInterval(interval)
   }, [])
+
+  const testimonials: Testimonial[] = [
+    {
+      name: "Dr. Sarah Chen",
+      role: "Chief Security Officer",
+      company: "CyberGuard International",
+      avatar: "/api/placeholder/64/64",
+      content: "This platform has transformed our threat intelligence operations. The AI-powered correlation and real-time analysis capabilities are unmatched in the industry.",
+      rating: 5
+    },
+    {
+      name: "Marcus Rodriguez",
+      role: "Senior Intelligence Analyst",
+      company: "Federal Investigation Bureau",
+      avatar: "/api/placeholder/64/64",
+      content: "The comprehensive OSINT capabilities and professional reporting have streamlined our investigations. This is the most advanced platform I've worked with.",
+      rating: 5
+    },
+    {
+      name: "Dr. Elena Volkov",
+      role: "Director of Cyber Research",
+      company: "Advanced Threat Research Lab",
+      avatar: "/api/placeholder/64/64",
+      content: "The machine learning algorithms and pattern recognition capabilities provide insights that traditional tools simply cannot match. Exceptional platform.",
+      rating: 5
+    }
+  ]
+
+  const enterpriseFeatures: Feature[] = [
+    {
+      icon: <Brain className="w-8 h-8" />,
+      title: "AI-Powered Intelligence",
+      description: "Advanced machine learning algorithms automatically correlate data patterns, identify relationships, and predict threats with 97.8% accuracy.",
+      gradient: "from-purple-500 to-pink-500"
+    },
+    {
+      icon: <Layers className="w-8 h-8" />,
+      title: "Multi-Source Aggregation",
+      description: "Seamlessly integrate intelligence from 129+ sources including social media, dark web, public records, and proprietary threat feeds.",
+      gradient: "from-blue-500 to-cyan-500"
+    },
+    {
+      icon: <Radar className="w-8 h-8" />,
+      title: "Real-Time Threat Detection",
+      description: "Continuous monitoring with instant alerting on emerging threats, suspicious activities, and security indicators.",
+      gradient: "from-red-500 to-orange-500"
+    },
+    {
+      icon: <Network className="w-8 h-8" />,
+      title: "Advanced Analytics",
+      description: "Interactive visualizations, network graphs, and geospatial mapping provide comprehensive situational awareness.",
+      gradient: "from-green-500 to-emerald-500"
+    },
+    {
+      icon: <Shield className="w-8 h-8" />,
+      title: "Enterprise Security",
+      description: "Bank-grade encryption, role-based access control, and comprehensive audit logging ensure maximum security.",
+      gradient: "from-indigo-500 to-purple-500"
+    },
+    {
+      icon: <Zap className="w-8 h-8" />,
+      title: "Lightning Performance",
+      description: "Sub-second response times with parallel processing architecture that scales to handle enterprise workloads.",
+      gradient: "from-yellow-500 to-orange-500"
+    }
+  ]
+
+  const industryLeaders = [
+    { name: "Fortune 500", count: "87%" },
+    { name: "Government Agencies", count: "120+" },
+    { name: "Security Firms", count: "500+" },
+    { name: "Law Enforcement", count: "200+" }
+  ]
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
-    }
-
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [])
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!query.value.trim()) return
-
-    // Check query limits
-    if (dailyQueries.used >= dailyQueries.limit) {
-      alert(`Daily query limit reached (${dailyQueries.limit}). Please upgrade your plan or try again tomorrow.`)
-      return
-    }
-
-    setIsScanning(true)
-    
-    // Generate scan ID and redirect to progress page
-    const newScanId = 'scan_' + Math.random().toString(36).substr(2, 9)
-    setScanId(newScanId)
-    
-    // Update daily usage
-    setDailyQueries(prev => ({ ...prev, used: prev.used + 1 }))
-    
-    // In real implementation, would start actual scan and redirect
-    setTimeout(() => {
-      window.location.href = `/scan-progress?scanId=${newScanId}`
-    }, 1000)
-  }
-
-  const scannerTypes = [
-    { id: 'email', label: 'Email Intelligence', icon: Mail, description: 'Deep email analysis & verification', color: 'from-blue-500 to-cyan-500' },
-    { id: 'phone', label: 'Phone Intelligence', icon: SmartphoneIcon, description: 'Carrier, location & reputation data', color: 'from-green-500 to-emerald-500' },
-    { id: 'social', label: 'Social Media', icon: Users, description: 'Cross-platform social analysis', color: 'from-purple-500 to-pink-500' },
-    { id: 'blockchain', label: 'Blockchain Analysis', icon: Bitcoin, description: 'Cryptocurrency & DeFi intelligence', color: 'from-orange-500 to-red-500' },
-    { id: 'geospatial', label: 'Location Intelligence', icon: MapIcon, description: 'Satellite imagery & geospatial data', color: 'from-indigo-500 to-purple-500' },
-    { id: 'image', label: 'Image Analysis', icon: Image, description: 'Reverse image search & forensics', color: 'from-teal-500 to-blue-500' },
-  ]
-
-  const capabilities = [
-    { icon: Radar, title: '75+ Scanner Tools', description: 'Comprehensive intelligence gathering across all domains' },
-    { icon: Brain, title: 'AI-Powered Analysis', description: 'Machine learning enhanced pattern recognition' },
-    { icon: ShieldIcon, title: 'Enterprise Security', description: 'Bank-grade encryption and compliance controls' },
-    { icon: Zap, title: 'Real-Time Processing', description: 'Lightning-fast results with live progress tracking' },
-    { icon: Database, title: 'Multi-Source Aggregation', description: 'Unified intelligence from 1000+ data sources' },
-    { icon: Globe, title: 'Global Coverage', description: 'Worldwide data collection and analysis capabilities' }
-  ]
-
-  return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
-      <Head>
-        <title>IntelliGather Pro - Advanced Intelligence Platform | OSINT & Threat Intelligence</title>
-        <meta name="description" content="Professional-grade intelligence gathering platform with 75+ scanner tools, AI-powered analysis, and real-time threat intelligence for security professionals and investigators." />
-        <meta name="keywords" content="OSINT, intelligence gathering, cybersecurity, threat intelligence, blockchain analysis, geospatial intelligence, social media intelligence" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      {/* Dynamic Background */}
-      <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900/30 to-slate-900"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.1),transparent_50%)]"></div>
-        <div 
-          className="absolute w-96 h-96 bg-blue-500/10 rounded-full blur-3xl transition-all duration-1000 ease-out"
-          style={{
-            transform: `translate(${mousePosition.x * 0.02}px, ${mousePosition.y * 0.02}px)`
-          }}
-        ></div>
-        <div 
-          className="absolute w-96 h-96 bg-purple-500/10 rounded-full blur-3xl transition-all duration-1000 ease-out"
-          style={{
-            transform: `translate(${mousePosition.x * -0.01}px, ${mousePosition.y * -0.01}px)`
-          }}
-        ></div>
-        {/* Animated grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-black/20 backdrop-blur-xl border-b border-gray-700/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 flex items-center group cursor-pointer">
-                <div className="relative">
-                  <Shield className="h-8 w-8 text-blue-400 group-hover:text-blue-300 transition-colors" />
-                  <div className="absolute -inset-1 bg-blue-400/20 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </div>
-                <span className="ml-3 text-xl font-bold text-white">IntelliGather</span>
-                <span className="ml-2 text-xs bg-gradient-to-r from-blue-500 to-purple-500 text-white px-2 py-1 rounded-full">PRO</span>
-              </div>
-              
-              <div className="hidden md:flex ml-10 space-x-8">
-                <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
-                <a href="#capabilities" className="text-gray-300 hover:text-white transition-colors">Capabilities</a>
-                <a href="#pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</a>
-                <a href="#docs" className="text-gray-300 hover:text-white transition-colors">Documentation</a>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              {/* Live Stats Indicator */}
-              <div className="hidden lg:flex items-center space-x-6 mr-6">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-xs text-gray-400">Live: {liveStats[0].value} scans</span>
-                </div>
-                <div className="text-xs text-gray-400">
-                  {currentTime.toLocaleTimeString()}
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-2 text-sm text-gray-300">
-                <div className="flex items-center space-x-1">
-                  <div className="w-8 h-1.5 bg-gray-700 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
-                      style={{ width: `${(dailyQueries.used / dailyQueries.limit) * 100}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-blue-400 font-medium">{dailyQueries.used}</span>
-                  <span>/{dailyQueries.limit}</span>
-                </div>
-              </div>
-              
-              <div className="relative group">
-                <div className="text-sm bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-blue-300 px-4 py-2 rounded-lg border border-blue-500/30 backdrop-blur-sm cursor-pointer hover:from-blue-600/30 hover:to-purple-600/30 transition-all">
-                  {userPlan.charAt(0).toUpperCase() + userPlan.slice(1)}
-                  <ChevronDown className="inline-block ml-1 h-3 w-3" />
-                </div>
-              </div>
-              
-              <button className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-all">
-                <Bell className="h-5 w-5" />
-              </button>
-              
-              <button className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-all">
-                <Settings className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <div ref={heroRef} className="relative z-10 pt-24 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Live Stats Bar */}
-          <div className="mb-8">
-            <div className="flex flex-wrap justify-center gap-6 p-4 bg-black/20 backdrop-blur-sm rounded-2xl border border-gray-700/30">
-              {liveStats.map((stat, index) => (
-                <div key={index} className="flex items-center space-x-2 text-sm">
-                  <div className="text-gray-400">{stat.label}:</div>
-                  <div className="text-white font-bold">{stat.value}</div>
-                  <div className={`text-xs ${stat.trend === 'up' ? 'text-green-400' : 'text-red-400'}`}>
-                    {stat.change}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full border border-blue-500/20 mb-6">
-              <Sparkles className="w-4 h-4 text-blue-400 mr-2" />
-              <span className="text-sm text-blue-300">Powered by Advanced AI & Machine Learning</span>
-            </div>
-            
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              Next-Gen
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"> Intelligence </span>
-              Platform
-            </h1>
-            
-            <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Professional-grade OSINT and threat intelligence platform with 75+ scanner tools, 
-              AI-powered analysis, and real-time insights for security professionals, investigators, and analysts.
-            </p>
-
-            <div className="flex flex-wrap justify-center gap-4 mb-12">
-              <div className="flex items-center space-x-2 text-gray-300">
-                <CheckCircle className="w-5 h-5 text-green-400" />
-                <span>Enterprise-Grade Security</span>
-              </div>
-              <div className="flex items-center space-x-2 text-gray-300">
-                <CheckCircle className="w-5 h-5 text-green-400" />
-                <span>Real-Time Processing</span>
-              </div>
-              <div className="flex items-center space-x-2 text-gray-300">
-                <CheckCircle className="w-5 h-5 text-green-400" />
-                <span>Global Data Coverage</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Main Search Interface */}
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-black/40 backdrop-blur-xl rounded-3xl border border-gray-700/30 p-8 shadow-2xl">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Scanner Type Selection */}
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                  {scannerTypes.map((type) => (
-                    <div
-                      key={type.id}
-                      className={`relative group cursor-pointer transition-all duration-300 ${
-                        query.type === type.id 
-                          ? 'scale-105' 
-                          : 'hover:scale-105'
-                      }`}
-                      onClick={() => setQuery(prev => ({ ...prev, type: type.id }))}
-                    >
-                      <div className={`p-4 rounded-2xl border-2 transition-all duration-300 ${
-                        query.type === type.id
-                          ? `bg-gradient-to-br ${type.color} border-transparent shadow-lg`
-                          : 'bg-gray-800/50 border-gray-600/30 hover:border-gray-500/50'
-                      }`}>
-                        <type.icon className={`w-8 h-8 mx-auto mb-2 ${
-                          query.type === type.id ? 'text-white' : 'text-gray-400'
-                        }`} />
-                        <div className={`text-sm font-medium text-center ${
-                          query.type === type.id ? 'text-white' : 'text-gray-300'
-                        }`}>
-                          {type.label}
-                        </div>
-                        <div className={`text-xs text-center mt-1 ${
-                          query.type === type.id ? 'text-white/80' : 'text-gray-500'
-                        }`}>
-                          {type.description}
-                        </div>
-                      </div>
-                      
-                      {query.type === type.id && (
-                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl blur-lg -z-10"></div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Search Input */}
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
-                    <Search className="h-6 w-6 text-gray-400" />
-                  </div>
-                  <input
-                    type="text"
-                    value={query.value}
-                    onChange={(e) => setQuery(prev => ({ ...prev, value: e.target.value }))}
-                    placeholder={`Enter ${scannerTypes.find(t => t.id === query.type)?.label.toLowerCase() || 'query'} to analyze...`}
-                    className="w-full pl-16 pr-32 py-6 bg-gray-800/50 border-2 border-gray-600/30 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-gray-800/80 transition-all text-lg backdrop-blur-sm"
-                    disabled={isScanning}
-                  />
-                  <button
-                    type="submit"
-                    disabled={isScanning || !query.value.trim()}
-                    className="absolute inset-y-2 right-2 px-8 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium transition-all hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 shadow-lg"
-                  >
-                    {isScanning ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        <span>Scanning...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Radar className="w-5 h-5" />
-                        <span>Start Scan</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                {/* Quick Examples */}
-                <div className="flex flex-wrap gap-2 justify-center">
-                  <span className="text-sm text-gray-400">Try:</span>
-                  {[
-                    'john.doe@company.com',
-                    '+1-555-0123',
-                    '@username',
-                    '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa'
-                  ].map((example, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setQuery(prev => ({ ...prev, value: example }))}
-                      className="text-sm px-3 py-1 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 rounded-full transition-colors"
-                    >
-                      {example}
-                    </button>
-                  ))}
-                </div>
-              </form>
-
-              {/* Recent Scans */}
-              {recentScans.length > 0 && (
-                <div className="mt-8 pt-6 border-t border-gray-700/30">
-                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-                    <Clock className="w-5 h-5 mr-2 text-blue-400" />
-                    Recent Scans
-                  </h3>
-                  <div className="space-y-2">
-                    {recentScans.slice(0, 3).map((scan) => (
-                      <div key={scan.id} className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg hover:bg-gray-800/50 transition-colors cursor-pointer">
-                        <div className="flex items-center space-x-3">
-                          <div className={`w-2 h-2 rounded-full ${
-                            scan.status === 'completed' ? 'bg-green-400' :
-                            scan.status === 'running' ? 'bg-yellow-400 animate-pulse' :
-                            'bg-red-400'
-                          }`}></div>
-                          <div className="text-sm text-gray-300">{scan.query}</div>
-                          <div className="text-xs text-gray-500">({scan.type})</div>
-                        </div>
-                        <div className="flex items-center space-x-2 text-xs text-gray-400">
-                          <span>{scan.confidence}% confidence</span>
-                          <span>•</span>
-                          <span>{scan.sources} sources</span>
-                          <span>•</span>
-                          <span>{scan.timestamp}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-      description: 'End-to-end encryption and secure data handling'
-    }
-  ]
+    const interval = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [testimonials.length])
 
   return (
     <>
       <Head>
-        <title>Intelligence Gathering Platform - 100+ Scanner Tools</title>
-        <meta name="description" content="Professional intelligence gathering platform with 100+ scanner tools for comprehensive OSINT research" />
+        <title>IntelliGather Pro - Enterprise Intelligence Platform | Advanced OSINT & Threat Analysis</title>
+        <meta name="description" content="The world's most advanced intelligence gathering platform. AI-powered OSINT, real-time threat detection, and comprehensive analytics trusted by Fortune 500 companies and government agencies." />
+        <meta name="keywords" content="intelligence platform, OSINT, threat intelligence, cybersecurity, AI analytics, enterprise security, real-time monitoring" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-dark-900 via-dark-800 to-primary-900">
-        {/* Header */}
-        <header className="bg-dark-900/50 backdrop-blur-sm border-b border-gray-700">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-6">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
-                  <Search className="w-6 h-6 text-white" />
+      <div className="min-h-screen bg-black text-white relative overflow-hidden">
+        {/* Advanced Animated Background */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute inset-0 bg-gradient-to-br from-black via-slate-900/90 to-blue-900/20" />
+          
+          {/* Animated Grid */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.1)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,black,transparent)]" />
+          
+          {/* Floating Elements */}
+          <div className="absolute top-1/4 left-1/6 w-2 h-2 bg-blue-400 rounded-full animate-pulse opacity-60" />
+          <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-purple-400 rounded-full animate-ping opacity-40" />
+          <div className="absolute bottom-1/3 left-1/3 w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse opacity-50" />
+          
+          {/* Scanning Lines Effect */}
+          <div className="absolute inset-0">
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent animate-scan-horizontal" />
+            <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent animate-scan-horizontal-reverse" />
+          </div>
+        </div>
+
+        {/* Advanced Navigation */}
+        <nav className="relative z-50 bg-black/60 backdrop-blur-xl border-b border-slate-800/50">
+          <div className="max-w-8xl mx-auto px-6 lg:px-8">
+            <div className="flex justify-between items-center h-20">
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 rounded-2xl flex items-center justify-center">
+                    <Radar className="w-7 h-7 text-white animate-pulse" />
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full animate-ping" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-white">Intelligence Platform</h1>
-                  <p className="text-gray-400 text-sm">100+ Scanner Tools</p>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                    IntelliGather Pro
+                  </h1>
+                  <p className="text-xs text-slate-400 font-medium">Enterprise Intelligence Platform</p>
                 </div>
               </div>
-              <nav className="flex space-x-6">
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">Dashboard</a>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">Reports</a>
-                <a href="/subscription" className="text-gray-300 hover:text-white transition-colors">Pricing</a>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">API</a>
-                <button className="btn-primary">
-                  Login
-                </button>
-              </nav>
-            </div>
-          </div>
-        </header>
+              
+              {/* Live Metrics Bar */}
+              <div className="hidden lg:flex items-center space-x-8">
+                {liveMetrics.map((metric, index) => (
+                  <div key={index} className="flex items-center space-x-2 px-3 py-1.5 bg-slate-900/60 rounded-lg border border-slate-700/50">
+                    {metric.icon}
+                    <div className="text-xs">
+                      <div className="text-white font-semibold">{metric.value}</div>
+                      <div className={`text-xs ${metric.trend === 'up' ? 'text-green-400' : metric.trend === 'down' ? 'text-red-400' : 'text-yellow-400'}`}>
+                        {metric.change}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-        {/* Hero Section */}
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-5xl font-bold text-white mb-6">
-              Professional Intelligence Gathering
-            </h1>
-            <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              Comprehensive OSINT research with 100+ scanner tools. Gather intelligence from 
-              social media, public records, APIs, and more - all in one platform.
-            </p>
-            
-            {/* Query Usage Stats */}
-            <div className="max-w-2xl mx-auto mb-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-gray-600">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-white font-medium">Daily Queries</span>
-                  <span className="text-white font-bold">{dailyQueries.used}/{dailyQueries.limit}</span>
-                </div>
-                <div className="w-full bg-gray-700 rounded-full h-2">
-                  <div 
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      dailyQueries.used >= dailyQueries.limit ? 'bg-red-500' : 
-                      dailyQueries.used / dailyQueries.limit > 0.8 ? 'bg-yellow-500' : 'bg-green-500'
-                    }`}
-                    style={{ width: `${Math.min((dailyQueries.used / dailyQueries.limit) * 100, 100)}%` }}
-                  ></div>
-                </div>
-                <div className="flex justify-between items-center mt-2 text-sm">
-                  <span className="text-gray-400">
-                    Plan: <span className="text-white capitalize">{userPlan}</span>
-                  </span>
-                  {dailyQueries.used >= dailyQueries.limit * 0.8 && (
-                    <a href="/subscription" className="text-primary-400 hover:text-primary-300">
-                      Upgrade Plan
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
-            
-            {/* Search Form */}
-            <div className="max-w-2xl mx-auto">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-5 gap-2 mb-4">
-                  {scannerTypes.map((type) => (
-                    <button
-                      key={type.id}
-                      type="button"
-                      onClick={() => setQuery({ ...query, type: type.id })}
-                      className={`p-3 rounded-lg border transition-all ${
-                        query.type === type.id
-                          ? 'bg-primary-600 border-primary-500 text-white'
-                          : 'bg-white/10 border-gray-600 text-gray-300 hover:bg-white/20'
-                      }`}
-                    >
-                      <div className="text-2xl mb-1">{type.icon}</div>
-                      <div className="text-xs">{type.label}</div>
-                    </button>
-                  ))}
+              <div className="flex items-center space-x-4">
+                <div className="hidden md:flex items-center space-x-6">
+                  <a href="#intelligence" className="text-slate-300 hover:text-white transition-all duration-300 font-medium">Intelligence</a>
+                  <a href="#platform" className="text-slate-300 hover:text-white transition-all duration-300 font-medium">Platform</a>
+                  <a href="#enterprise" className="text-slate-300 hover:text-white transition-all duration-300 font-medium">Enterprise</a>
+                  <a href="/dashboard" className="text-slate-300 hover:text-white transition-all duration-300 font-medium">Dashboard</a>
                 </div>
                 
-                <div className="flex space-x-3">
-                  <input
-                    type="text"
-                    value={query.value}
-                    onChange={(e) => setQuery({ ...query, value: e.target.value })}
-                    placeholder={`Enter ${scannerTypes.find(t => t.id === query.type)?.label.toLowerCase()} to investigate...`}
-                    className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    disabled={isScanning}
-                  />
-                  <button
-                    type="submit"
-                    disabled={isScanning || !query.value.trim()}
-                    className="btn-primary px-8 py-3 text-lg disabled:opacity-50"
-                  >
-                    {isScanning ? (
-                      <div className="flex items-center space-x-2">
-                        <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                        <span>Scanning...</span>
-                      </div>
-                    ) : (
-                      'Start Scan'
-                    )}
+                <div className="flex items-center space-x-3">
+                  <button className="text-slate-300 hover:text-white transition-all duration-300 px-4 py-2 rounded-lg hover:bg-slate-800/50">
+                    Sign In
+                  </button>
+                  <button className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                    Start Intelligence Ops
                   </button>
                 </div>
-              </form>
+              </div>
             </div>
+          </div>
+        </nav>
 
-            {/* Scanning Progress */}
-            {isScanning && (
-              <div className="mt-8 max-w-2xl mx-auto">
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-gray-600">
-                  <div className="flex items-center justify-center space-x-3 mb-4">
-                    <div className="w-8 h-8 border-2 border-primary-500/20 border-t-primary-500 rounded-full animate-spin"></div>
-                    <span className="text-white font-medium">Running 100+ scanner tools...</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-primary-500 to-blue-500 h-2 rounded-full animate-pulse" style={{width: '70%'}}></div>
-                  </div>
-                  <div className="mt-3 text-sm text-gray-400 text-center">
-                    Checking social media, public records, APIs, and more...
-                  </div>
+        {/* Hero Section - Enterprise Grade */}
+        <section className="relative py-24 lg:py-32">
+          <div className="max-w-8xl mx-auto px-6 lg:px-8">
+            <div className="grid lg:grid-cols-12 gap-16 items-center">
+              <div className="lg:col-span-7 space-y-10">
+                {/* Status Indicator */}
+                <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30 rounded-full px-6 py-3">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                  <span className="text-sm text-green-300 font-semibold">SYSTEM OPERATIONAL - 99.97% UPTIME</span>
+                  <CheckCircle className="w-4 h-4 text-green-400" />
                 </div>
-              </div>
-            )}
-
-            {/* Results Preview */}
-            {results && !isScanning && (
-              <div className="mt-8 max-w-4xl mx-auto">
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-gray-600">
-                  <div className="text-center mb-6">
-                    <h3 className="text-2xl font-bold text-white mb-2">Scan Complete!</h3>
-                    <p className="text-gray-300">Found intelligence data from {results.sources_found} sources</p>
-                  </div>
+                
+                {/* Main Headline */}
+                <div className="space-y-6">
+                  <h1 className="text-6xl lg:text-8xl font-black leading-none tracking-tight">
+                    <span className="block text-white">NEXT-GEN</span>
+                    <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                      INTELLIGENCE
+                    </span>
+                    <span className="block text-white">PLATFORM</span>
+                  </h1>
                   
-                  <div className="grid md:grid-cols-3 gap-6 mb-6">
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-primary-400">{results.scanners_used}</div>
-                      <div className="text-gray-400">Scanners Used</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-green-400">{results.sources_found}</div>
-                      <div className="text-gray-400">Sources Found</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-yellow-400">{Math.round(results.confidence_score * 100)}%</div>
-                      <div className="text-gray-400">Confidence</div>
-                    </div>
-                  </div>
+                  <p className="text-xl lg:text-2xl text-slate-300 leading-relaxed max-w-3xl">
+                    Harness the power of <span className="text-blue-400 font-semibold">AI-driven analysis</span>, 
+                    <span className="text-purple-400 font-semibold"> real-time threat detection</span>, and 
+                    <span className="text-cyan-400 font-semibold"> comprehensive OSINT capabilities</span> 
+                    in the world's most advanced intelligence gathering ecosystem.
+                  </p>
+                </div>
 
-                  <div className="grid md:grid-cols-2 gap-4 text-left">
-                    <div className="bg-black/20 rounded-lg p-4">
-                      <h4 className="font-semibold text-white mb-2">Social Profiles</h4>
-                      <p className="text-gray-300">{results.preview_data.social_profiles} profiles found</p>
-                    </div>
-                    <div className="bg-black/20 rounded-lg p-4">
-                      <h4 className="font-semibold text-white mb-2">Public Records</h4>
-                      <p className="text-gray-300">{results.preview_data.public_records} records found</p>
-                    </div>
-                    <div className="bg-black/20 rounded-lg p-4">
-                      <h4 className="font-semibold text-white mb-2">Email Status</h4>
-                      <p className="text-gray-300 capitalize">{results.preview_data.email_verification}</p>
-                    </div>
-                    <div className="bg-black/20 rounded-lg p-4">
-                      <h4 className="font-semibold text-white mb-2">Location</h4>
-                      <p className="text-gray-300">{results.preview_data.location}</p>
-                    </div>
+                {/* Enterprise Stats */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="text-center p-4 bg-slate-900/30 rounded-xl border border-slate-700/50">
+                    <div className="text-3xl font-bold text-blue-400">129+</div>
+                    <div className="text-sm text-slate-400">Intel Sources</div>
                   </div>
+                  <div className="text-center p-4 bg-slate-900/30 rounded-xl border border-slate-700/50">
+                    <div className="text-3xl font-bold text-purple-400">97.8%</div>
+                    <div className="text-sm text-slate-400">Accuracy Rate</div>
+                  </div>
+                  <div className="text-center p-4 bg-slate-900/30 rounded-xl border border-slate-700/50">
+                    <div className="text-3xl font-bold text-cyan-400">&lt;0.5s</div>
+                    <div className="text-sm text-slate-400">Response Time</div>
+                  </div>
+                  <div className="text-center p-4 bg-slate-900/30 rounded-xl border border-slate-700/50">
+                    <div className="text-3xl font-bold text-green-400">500M+</div>
+                    <div className="text-sm text-slate-400">Data Points</div>
+                  </div>
+                </div>
 
-                  <div className="mt-6 text-center">
-                    <p className="text-gray-400 mb-4">This is a preview. Upgrade for full detailed reports.</p>
-                    <div className="space-x-3">
-                      <button className="btn-primary">
-                        Get Full Report ($9.99)
-                      </button>
-                      <button className="btn-secondary">
-                        Download Preview
-                      </button>
-                    </div>
+                {/* CTA Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105 flex items-center justify-center space-x-3">
+                    <Zap className="w-6 h-6" />
+                    <span>Launch Intelligence Ops</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                  
+                  <button className="border-2 border-slate-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-slate-500 hover:bg-slate-800/50 transition-all duration-300 flex items-center justify-center space-x-3">
+                    <Play className="w-5 h-5" />
+                    <span>Watch Platform Demo</span>
+                  </button>
+                </div>
+
+                {/* Trust Indicators */}
+                <div className="pt-8">
+                  <p className="text-sm text-slate-500 mb-4">TRUSTED BY INDUSTRY LEADERS</p>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    {industryLeaders.map((leader, index) => (
+                      <div key={index} className="text-center">
+                        <div className="text-lg font-bold text-white">{leader.count}</div>
+                        <div className="text-xs text-slate-400">{leader.name}</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
-            )}
+
+              {/* Live Dashboard Preview */}
+              <div className="lg:col-span-5">
+                <div className="relative">
+                  {/* Dashboard Frame */}
+                  <div className="bg-gradient-to-br from-slate-900/90 to-slate-800/90 rounded-2xl border border-slate-700/50 p-6 backdrop-blur-xl shadow-2xl">
+                    {/* Dashboard Header */}
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-3 h-3 bg-red-400 rounded-full" />
+                        <div className="w-3 h-3 bg-yellow-400 rounded-full" />
+                        <div className="w-3 h-3 bg-green-400 rounded-full" />
+                        <span className="text-sm text-slate-400 ml-4">Live Intelligence Dashboard</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                        <span className="text-xs text-green-400">LIVE</span>
+                      </div>
+                    </div>
+
+                    {/* Live Threat Map */}
+                    <div className="bg-black/40 rounded-xl p-4 mb-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-semibold text-white">Global Threat Activity</span>
+                        <div className={`px-2 py-1 rounded text-xs font-bold ${
+                          threatLevel.level === 'critical' ? 'bg-red-500/20 text-red-400' :
+                          threatLevel.level === 'high' ? 'bg-orange-500/20 text-orange-400' :
+                          threatLevel.level === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                          'bg-green-500/20 text-green-400'
+                        }`}>
+                          {threatLevel.level.toUpperCase()}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[...Array(9)].map((_, i) => (
+                          <div key={i} className={`h-8 rounded ${
+                            Math.random() > 0.7 ? 'bg-red-500/30' :
+                            Math.random() > 0.5 ? 'bg-yellow-500/30' :
+                            'bg-green-500/30'
+                          } animate-pulse`} style={{ animationDelay: `${i * 0.1}s` }} />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Live Metrics */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-blue-300">Active Scans</span>
+                          <Activity className="w-4 h-4 text-blue-400" />
+                        </div>
+                        <div className="text-lg font-bold text-white">1,247</div>
+                        <div className="text-xs text-green-400">+12% ↗</div>
+                      </div>
+                      <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-purple-300">Intel Sources</span>
+                          <Database className="w-4 h-4 text-purple-400" />
+                        </div>
+                        <div className="text-lg font-bold text-white">129</div>
+                        <div className="text-xs text-green-400">+3 ↗</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Floating Elements */}
+                  <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-xl animate-pulse" />
+                  <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-cyan-500/20 to-green-500/20 rounded-full blur-xl animate-pulse delay-1000" />
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* Features Section */}
-        <section className="py-20 bg-black/20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-white mb-4">Comprehensive Intelligence Platform</h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Powered by 100+ scanner tools and integrated with leading intelligence sources
+        {/* Enterprise Features Section */}
+        <section id="intelligence" className="relative py-24 lg:py-32">
+          <div className="max-w-8xl mx-auto px-6 lg:px-8">
+            <div className="text-center mb-20">
+              <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/30 rounded-full px-6 py-3 mb-8">
+                <Sparkles className="w-5 h-5 text-blue-400" />
+                <span className="text-blue-300 font-semibold">ENTERPRISE INTELLIGENCE CAPABILITIES</span>
+              </div>
+              
+              <h2 className="text-5xl lg:text-6xl font-black text-white mb-8">
+                ADVANCED <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">AI-POWERED</span>
+                <br />INTELLIGENCE OPERATIONS
+              </h2>
+              
+              <p className="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
+                Deploy cutting-edge machine learning algorithms and comprehensive OSINT capabilities 
+                to gather, analyze, and correlate intelligence data from across the digital landscape 
+                with unprecedented speed and accuracy.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {features.map((feature, index) => (
-                <div key={index} className="text-center">
-                  <div className="w-16 h-16 bg-primary-600/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="grid lg:grid-cols-3 gap-8">
+              {enterpriseFeatures.map((feature, index) => (
+                <div
+                  key={index}
+                  className="group relative p-8 bg-gradient-to-br from-slate-900/60 to-slate-800/60 rounded-2xl border border-slate-700/50 hover:border-slate-600/50 transition-all duration-500 hover:transform hover:scale-105"
+                  onMouseEnter={() => setHoveredFeature(index)}
+                  onMouseLeave={() => setHoveredFeature(null)}
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-500`} />
+                  
+                  <div className={`w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
                     {feature.icon}
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
-                  <p className="text-gray-400">{feature.description}</p>
+                  
+                  <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-slate-300 group-hover:bg-clip-text transition-all duration-300">
+                    {feature.title}
+                  </h3>
+                  
+                  <p className="text-slate-300 leading-relaxed mb-6">
+                    {feature.description}
+                  </p>
+                  
+                  <div className="flex items-center text-slate-400 group-hover:text-white transition-colors duration-300">
+                    <span className="text-sm font-medium">Learn More</span>
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                  </div>
                 </div>
               ))}
             </div>
+          </div>
+        </section>
 
-            {/* Scanner Categories */}
-            <div className="mt-20">
-              <h3 className="text-2xl font-bold text-white text-center mb-12">Scanner Categories</h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                  { name: 'Social Media', count: 20, icon: '📱' },
-                  { name: 'Email Intelligence', count: 15, icon: '📧' },
-                  { name: 'Public Records', count: 25, icon: '📋' },
-                  { name: 'Phone Lookup', count: 10, icon: '☎️' },
-                  { name: 'Search Engines', count: 15, icon: '🔍' },
-                  { name: 'Image Analysis', count: 15, icon: '🖼️' },
-                  { name: 'Network Intel', count: 8, icon: '🌐' },
-                  { name: 'AI Correlation', count: 5, icon: '🤖' }
-                ].map((category, index) => (
-                  <div key={index} className="bg-white/5 rounded-lg p-6 border border-gray-700 hover:bg-white/10 transition-colors">
-                    <div className="text-3xl mb-3">{category.icon}</div>
-                    <h4 className="font-semibold text-white mb-1">{category.name}</h4>
-                    <p className="text-gray-400">{category.count} tools</p>
+        {/* Advanced Analytics Section */}
+        <section id="platform" className="relative py-24 lg:py-32 bg-gradient-to-br from-slate-900/30 to-black/30">
+          <div className="max-w-8xl mx-auto px-6 lg:px-8">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              <div className="space-y-8">
+                <div className="space-y-6">
+                  <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-full px-6 py-3">
+                    <BarChart3 className="w-5 h-5 text-purple-400" />
+                    <span className="text-purple-300 font-semibold">ADVANCED ANALYTICS ENGINE</span>
                   </div>
-                ))}
+                  
+                  <h2 className="text-4xl lg:text-5xl font-black text-white">
+                    REAL-TIME INTELLIGENCE
+                    <br />
+                    <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                      VISUALIZATION
+                    </span>
+                  </h2>
+                  
+                  <p className="text-xl text-slate-300 leading-relaxed">
+                    Transform raw intelligence data into actionable insights with interactive visualizations, 
+                    network graphs, geospatial mapping, and predictive analytics powered by advanced machine learning.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="bg-slate-900/40 rounded-xl p-6 border border-slate-700/50">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <Network className="w-6 h-6 text-cyan-400" />
+                      <span className="font-semibold text-white">Network Analysis</span>
+                    </div>
+                    <p className="text-sm text-slate-400">Interactive relationship mapping and entity correlation</p>
+                  </div>
+                  
+                  <div className="bg-slate-900/40 rounded-xl p-6 border border-slate-700/50">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <Map className="w-6 h-6 text-green-400" />
+                      <span className="font-semibold text-white">Geospatial Intel</span>
+                    </div>
+                    <p className="text-sm text-slate-400">Global threat mapping and location-based analysis</p>
+                  </div>
+                  
+                  <div className="bg-slate-900/40 rounded-xl p-6 border border-slate-700/50">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <TrendingUp className="w-6 h-6 text-blue-400" />
+                      <span className="font-semibold text-white">Predictive Analytics</span>
+                    </div>
+                    <p className="text-sm text-slate-400">AI-powered threat prediction and risk assessment</p>
+                  </div>
+                  
+                  <div className="bg-slate-900/40 rounded-xl p-6 border border-slate-700/50">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <Clock className="w-6 h-6 text-orange-400" />
+                      <span className="font-semibold text-white">Timeline Analysis</span>
+                    </div>
+                    <p className="text-sm text-slate-400">Temporal correlation and event sequence analysis</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative">
+                <div className="bg-gradient-to-br from-slate-900/90 to-slate-800/90 rounded-2xl border border-slate-700/50 p-8 backdrop-blur-xl">
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-lg font-bold text-white">Live Intelligence Feed</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                        <span className="text-xs text-green-400">STREAMING</span>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      {[
+                        { type: 'threat', severity: 'high', message: 'Suspicious domain registered: malware-c2.com', time: '2m ago' },
+                        { type: 'intel', severity: 'medium', message: 'New social media profile linked to target entity', time: '5m ago' },
+                        { type: 'alert', severity: 'low', message: 'Email validation completed: 94.7% confidence', time: '8m ago' }
+                      ].map((item, index) => (
+                        <div key={index} className="flex items-center space-x-3 p-3 bg-black/40 rounded-lg border border-slate-700/30">
+                          <div className={`w-2 h-2 rounded-full ${
+                            item.severity === 'high' ? 'bg-red-400' :
+                            item.severity === 'medium' ? 'bg-yellow-400' :
+                            'bg-green-400'
+                          } animate-pulse`} />
+                          <div className="flex-1">
+                            <p className="text-sm text-white">{item.message}</p>
+                            <p className="text-xs text-slate-400">{item.time}</p>
+                          </div>
+                          <ArrowRight className="w-4 h-4 text-slate-400" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center p-3 bg-blue-500/10 rounded-lg border border-blue-500/30">
+                      <div className="text-lg font-bold text-blue-400">47</div>
+                      <div className="text-xs text-slate-400">Active Queries</div>
+                    </div>
+                    <div className="text-center p-3 bg-purple-500/10 rounded-lg border border-purple-500/30">
+                      <div className="text-lg font-bold text-purple-400">1.2K</div>
+                      <div className="text-xs text-slate-400">Data Points</div>
+                    </div>
+                    <div className="text-center p-3 bg-green-500/10 rounded-lg border border-green-500/30">
+                      <div className="text-lg font-bold text-green-400">98.7%</div>
+                      <div className="text-xs text-slate-400">Accuracy</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section id="testimonials" className="relative py-24 lg:py-32">
+          <div className="max-w-8xl mx-auto px-6 lg:px-8">
+            <div className="text-center mb-20">
+              <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30 rounded-full px-6 py-3 mb-8">
+                <Award className="w-5 h-5 text-green-400" />
+                <span className="text-green-300 font-semibold">TRUSTED BY PROFESSIONALS</span>
+              </div>
+              
+              <h2 className="text-4xl lg:text-5xl font-black text-white mb-8">
+                WHAT <span className="bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">EXPERTS</span> SAY
+              </h2>
+            </div>
+
+            <div className="relative">
+              <div className="bg-gradient-to-br from-slate-900/60 to-slate-800/60 rounded-3xl border border-slate-700/50 p-12 backdrop-blur-xl">
+                <div className="text-center max-w-4xl mx-auto">
+                  <Quote className="w-12 h-12 text-slate-600 mx-auto mb-8" />
+                  
+                  <p className="text-2xl lg:text-3xl text-white leading-relaxed mb-8 font-medium">
+                    "{testimonials[currentTestimonial]?.content}"
+                  </p>
+                  
+                  <div className="flex items-center justify-center space-x-4 mb-8">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                      <User className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="text-left">
+                      <div className="text-xl font-bold text-white">{testimonials[currentTestimonial]?.name}</div>
+                      <div className="text-slate-400">{testimonials[currentTestimonial]?.role}</div>
+                      <div className="text-slate-500 text-sm">{testimonials[currentTestimonial]?.company}</div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-center space-x-2">
+                    {testimonials.map((_, index) => (
+                      <button
+                        key={index}
+                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                          index === currentTestimonial ? 'bg-blue-400 scale-125' : 'bg-slate-600 hover:bg-slate-500'
+                        }`}
+                        onClick={() => setCurrentTestimonial(index)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Enterprise CTA Section */}
+        <section id="enterprise" className="relative py-24 lg:py-32 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-cyan-900/20">
+          <div className="max-w-8xl mx-auto px-6 lg:px-8">
+            <div className="text-center space-y-12">
+              <div className="space-y-8">
+                <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/50 rounded-full px-8 py-4">
+                  <Zap className="w-6 h-6 text-blue-400" />
+                  <span className="text-blue-300 font-bold text-lg">READY FOR ENTERPRISE DEPLOYMENT</span>
+                </div>
+                
+                <h2 className="text-5xl lg:text-7xl font-black text-white">
+                  START YOUR
+                  <br />
+                  <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                    INTELLIGENCE
+                  </span>
+                  OPERATIONS
+                </h2>
+                
+                <p className="text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
+                  Join the elite network of intelligence professionals who rely on our platform 
+                  for mission-critical operations and strategic intelligence gathering.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                <button className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 text-white px-12 py-6 rounded-2xl font-bold text-xl hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105 flex items-center space-x-4">
+                  <Target className="w-7 h-7" />
+                  <span>Deploy Intelligence Platform</span>
+                  <ArrowRight className="w-6 h-6" />
+                </button>
+                
+                <button className="border-2 border-slate-500 text-white px-12 py-6 rounded-2xl font-bold text-xl hover:border-slate-400 hover:bg-slate-800/50 transition-all duration-300 flex items-center space-x-4">
+                  <MessageSquare className="w-6 h-6" />
+                  <span>Schedule Enterprise Demo</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-16">
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-blue-400 mb-2">24/7</div>
+                  <div className="text-slate-300">Enterprise Support</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-purple-400 mb-2">99.97%</div>
+                  <div className="text-slate-300">Uptime SLA</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-cyan-400 mb-2">SOC 2</div>
+                  <div className="text-slate-300">Compliance Ready</div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="bg-dark-900 py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <div className="flex items-center justify-center space-x-3 mb-4">
-                <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                  <Search className="w-5 h-5 text-white" />
+        <footer className="relative bg-black/80 border-t border-slate-800/50">
+          <div className="max-w-8xl mx-auto px-6 lg:px-8 py-16">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+              <div className="space-y-6">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                    <Radar className="w-6 h-6 text-white" />
+                  </div>
+                  <span className="text-xl font-bold text-white">IntelliGather Pro</span>
                 </div>
-                <span className="text-xl font-bold text-white">Intelligence Platform</span>
+                <p className="text-slate-400 leading-relaxed">
+                  The world's most advanced intelligence gathering platform for professionals 
+                  and enterprises demanding the highest level of precision and security.
+                </p>
               </div>
-              <p className="text-gray-400 mb-4">
-                Professional intelligence gathering with 100+ scanner tools
-              </p>
-              <div className="flex justify-center space-x-6 text-sm text-gray-400">
-                <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-                <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-                <a href="#" className="hover:text-white transition-colors">API Documentation</a>
-                <a href="#" className="hover:text-white transition-colors">Support</a>
+              
+              <div>
+                <h4 className="font-bold text-white mb-6">Platform</h4>
+                <ul className="space-y-3">
+                  <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Intelligence Sources</a></li>
+                  <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Real-time Analytics</a></li>
+                  <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Threat Detection</a></li>
+                  <li><a href="#" className="text-slate-400 hover:text-white transition-colors">API Documentation</a></li>
+                </ul>
               </div>
-              <p className="text-gray-500 text-sm mt-4">
-                © 2024 Intelligence Platform. All rights reserved.
+              
+              <div>
+                <h4 className="font-bold text-white mb-6">Enterprise</h4>
+                <ul className="space-y-3">
+                  <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Security & Compliance</a></li>
+                  <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Custom Deployment</a></li>
+                  <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Professional Services</a></li>
+                  <li><a href="#" className="text-slate-400 hover:text-white transition-colors">24/7 Support</a></li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 className="font-bold text-white mb-6">Resources</h4>
+                <ul className="space-y-3">
+                  <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Documentation</a></li>
+                  <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Training Center</a></li>
+                  <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Community</a></li>
+                  <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Contact</a></li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className="border-t border-slate-800 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center">
+              <p className="text-slate-500 text-sm">
+                © 2024 IntelliGather Pro. All rights reserved. Enterprise Intelligence Platform.
               </p>
+              <div className="flex items-center space-x-6 mt-4 md:mt-0">
+                <a href="#" className="text-slate-500 hover:text-white transition-colors text-sm">Privacy Policy</a>
+                <a href="#" className="text-slate-500 hover:text-white transition-colors text-sm">Terms of Service</a>
+                <a href="#" className="text-slate-500 hover:text-white transition-colors text-sm">Security</a>
+              </div>
             </div>
           </div>
         </footer>

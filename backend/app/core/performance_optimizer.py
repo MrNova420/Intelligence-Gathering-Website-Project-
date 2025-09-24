@@ -877,3 +877,62 @@ redis_cache = RedisCache()
 cache_manager = CacheManager(redis_cache)
 performance_monitor = PerformanceMonitor()
 async_orchestrator = AsyncScannerOrchestrator(cache_manager)
+
+
+class PerformanceOptimizer:
+    """Main performance optimizer class that coordinates all optimization components"""
+    
+    def __init__(self):
+        self.cache_manager = cache_manager
+        self.performance_monitor = performance_monitor
+        self.async_orchestrator = async_orchestrator
+        self.db_optimizer = DatabaseOptimizer()
+        
+        logger.info("PerformanceOptimizer initialized")
+    
+    async def initialize(self):
+        """Initialize all performance optimization components"""
+        try:
+            # Initialize components
+            logger.info("Initializing performance optimization components...")
+            await self.cache_manager.initialize()
+            await self.performance_monitor.start_monitoring()
+            logger.info("✅ Performance optimization initialized")
+        except Exception as e:
+            logger.error(f"❌ Performance optimization initialization failed: {e}")
+    
+    async def optimize_query(self, query_key: str, query_func, *args, **kwargs):
+        """Optimize query execution with caching and monitoring"""
+        start_time = time.time()
+        
+        # Try cache first
+        cached_result = await self.cache_manager.get(query_key)
+        if cached_result:
+            execution_time = time.time() - start_time
+            self.performance_monitor.record_metric("cache_hit", 1)
+            self.performance_monitor.record_metric("query_execution_time", execution_time)
+            return cached_result
+        
+        # Execute query
+        try:
+            result = await query_func(*args, **kwargs)
+            execution_time = time.time() - start_time
+            
+            # Cache result
+            await self.cache_manager.set(query_key, result, ttl=3600)
+            
+            # Record metrics
+            self.performance_monitor.record_metric("cache_miss", 1)
+            self.performance_monitor.record_metric("query_execution_time", execution_time)
+            
+            return result
+            
+        except Exception as e:
+            execution_time = time.time() - start_time
+            self.performance_monitor.record_metric("query_error", 1)
+            self.performance_monitor.record_metric("query_execution_time", execution_time)
+            raise e
+    
+    def get_health_status(self) -> Dict[str, Any]:
+        """Get overall performance health status"""
+        return self.performance_monitor.get_health_status()
