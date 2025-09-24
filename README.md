@@ -105,12 +105,54 @@ This is a **fully operational, enterprise-grade intelligence gathering platform*
 ## ⚡ **QUICK START DEPLOYMENT**
 
 ### **Prerequisites**
-- Docker 20.10+ and Docker Compose 2.0+
-- Linux/macOS/WSL2 (recommended for production)
-- 4GB+ RAM and 20GB+ disk space
-- Domain name and SSL certificates (for production)
+- **Python 3.8+** (for standalone/Termux deployment)
+- **Docker 20.10+ and Docker Compose 2.0+** (for containerized deployment)
+- **Linux/macOS/Windows/Android (Termux)** - Cross-platform compatible
+- **2GB+ RAM and 10GB+ disk space** (minimum requirements)
+- **Domain name and SSL certificates** (for production only)
 
-### **1. Development Setup (Local Testing)**
+### **🚀 Option 1: Termux/Standalone Deployment (Recommended for Testing)**
+
+Perfect for Android devices, development, and testing environments:
+
+```bash
+# Clone the repository
+git clone https://github.com/MrNova420/Intelligence-Gathering-Website-Project-.git
+cd Intelligence-Gathering-Website-Project-
+
+# Install Python dependencies
+pip install -r backend/requirements.txt
+
+# Setup environment variables
+cp .env.example .env
+nano .env  # Edit with your settings
+
+# Run database setup (SQLite for standalone)
+python backend/app/db/setup_standalone.py
+
+# Start the application
+python backend/run_standalone.py
+
+# Test the platform
+python backend/run_validation.py
+```
+
+**Termux-Specific Setup:**
+```bash
+# Update Termux packages
+pkg update && pkg upgrade
+
+# Install required packages
+pkg install python git nodejs redis
+
+# Follow standard setup above
+git clone https://github.com/MrNova420/Intelligence-Gathering-Website-Project-.git
+cd Intelligence-Gathering-Website-Project-
+pip install -r backend/requirements.txt
+python backend/run_standalone.py
+```
+
+### **🐳 Option 2: Docker Deployment (Production Ready)**
 
 ```bash
 # Clone the repository
@@ -131,12 +173,18 @@ docker-compose ps
 ```
 
 **Access Points:**
-- 🖥️ **Frontend**: http://localhost:3000
+- 🖥️ **Frontend**: http://localhost:3000 (Docker) or http://localhost:8080 (Standalone)
 - 🔧 **Backend API**: http://localhost:8000
 - 📚 **API Documentation**: http://localhost:8000/docs
 - ❤️ **Health Check**: http://localhost:8000/health
+- 🧪 **Testing Suite**: `python backend/run_validation.py`
 
-### **2. Production Deployment (Secure & Scalable)**
+**Termux Access Points:**
+- 📱 **Mobile API**: http://localhost:8000 (accessible from other devices on same network)
+- 🔧 **Local Testing**: All endpoints work locally on Android device
+- 📊 **Validation**: `python backend/comprehensive_enhancement_test.py`
+
+### **🚀 Option 3: Production Deployment (Secure & Scalable)**
 
 ```bash
 # Run the automated deployment script
@@ -153,6 +201,28 @@ docker-compose -f docker-compose.prod.yml up -d
 - 🌐 **Website**: https://your-domain.com
 - 🔧 **API**: https://your-domain.com/api
 - 📚 **Documentation**: https://your-domain.com/docs
+
+### **📱 Termux-Specific Instructions**
+
+For detailed Termux/Android setup, see: **[TERMUX_SETUP.md](TERMUX_SETUP.md)**
+
+**Quick Termux Setup:**
+```bash
+# Update Termux
+pkg update && pkg upgrade
+
+# Install requirements
+pkg install python git nodejs redis
+
+# Clone and setup
+git clone https://github.com/MrNova420/Intelligence-Gathering-Website-Project-.git
+cd Intelligence-Gathering-Website-Project-
+pip install -r backend/requirements.txt
+
+# Initialize and run
+python backend/app/db/setup_standalone.py
+python backend/run_standalone.py
+```
 
 ---
 

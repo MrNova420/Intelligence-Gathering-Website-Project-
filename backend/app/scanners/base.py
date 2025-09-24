@@ -1,11 +1,61 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional, List
-from sqlalchemy.ext.asyncio import AsyncSession
 import asyncio
 import logging
 from datetime import datetime
 
-from app.db.models import Query, ScanResult, ScannerType, QueryStatus
+# Conditional imports with fallbacks
+try:
+    from sqlalchemy.ext.asyncio import AsyncSession
+    from app.db.models import Query, ScanResult, ScannerType, QueryStatus
+    SQLALCHEMY_AVAILABLE = True
+except ImportError:
+    SQLALCHEMY_AVAILABLE = False
+    # Mock classes
+    class MockAsyncSession:
+        async def commit(self):
+            pass
+        async def refresh(self, obj):
+            pass
+    
+    AsyncSession = MockAsyncSession
+    
+    # Mock enums and models
+    class MockScannerType:
+        EMAIL_INTELLIGENCE = "email_intelligence"
+        EMAIL_VERIFICATION = "email_verification"
+        PHONE_LOOKUP = "phone_lookup"
+        SOCIAL_MEDIA = "social_media"
+        PUBLIC_RECORDS = "public_records"
+        IMAGE_ANALYSIS = "image_analysis"
+    
+    class MockQueryStatus:
+        PENDING = "pending"
+        RUNNING = "running" 
+        COMPLETED = "completed"
+        FAILED = "failed"
+    
+    class MockQuery:
+        def __init__(self):
+            self.id = 1
+            self.query_value = ""
+            self.query_type = ""
+    
+    class MockScanResult:
+        def __init__(self):
+            self.id = 1
+            self.status = MockQueryStatus.PENDING
+            self.data = {}
+            self.processed_data = {}
+            self.entities_found = []
+            self.confidence_score = 0.0
+            self.relevance_score = 0.0
+            self.completed_at = None
+    
+    Query = MockQuery
+    ScanResult = MockScanResult
+    ScannerType = MockScannerType
+    QueryStatus = MockQueryStatus
 
 logger = logging.getLogger(__name__)
 
