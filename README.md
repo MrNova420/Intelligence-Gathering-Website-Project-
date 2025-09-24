@@ -120,11 +120,12 @@ Perfect for Android devices, development, and testing environments:
 git clone https://github.com/MrNova420/Intelligence-Gathering-Website-Project-.git
 cd Intelligence-Gathering-Website-Project-
 
-# Install Python dependencies
-pip install -r backend/requirements-lite.txt
+# For Termux/Android - Use the automated script:
+./start_termux.sh
 
-# Alternative for troubleshooting:
-# pip install fastapi uvicorn sqlalchemy pydantic dnspython phonenumbers python-dotenv requests passlib[bcrypt] cryptography
+# OR Manual setup:
+# Install Python dependencies (SQLite-only for Termux)
+pip install -r backend/requirements-lite.txt
 
 # Setup SQLite database
 python backend/app/db/setup_standalone.py
@@ -133,14 +134,11 @@ python backend/app/db/setup_standalone.py
 cp .env.example .env
 nano .env  # Edit with your settings
 
-# Run database setup (SQLite for standalone)
-python backend/app/db/setup_standalone.py
-
 # Start the application
 python backend/run_standalone.py
 
 # Test the platform
-python backend/run_validation.py
+python verify_fixes.py
 ```
 
 **Termux-Specific Setup:**
@@ -149,13 +147,30 @@ python backend/run_validation.py
 pkg update && pkg upgrade
 
 # Install required packages
-pkg install python git nodejs redis
+pkg install python git nodejs
 
-# Follow standard setup above
+# Clone and run the automated setup
 git clone https://github.com/MrNova420/Intelligence-Gathering-Website-Project-.git
 cd Intelligence-Gathering-Website-Project-
-pip install -r backend/requirements.txt
-python backend/run_standalone.py
+
+# Use the Termux-optimized script (handles everything automatically)
+./start_termux.sh
+```
+
+**Manual Termux Setup (if needed):**
+```bash
+# Install Python dependencies (SQLite-only)
+pip install -r backend/requirements-lite.txt
+
+# Setup database
+python backend/app/db/setup_standalone.py
+
+# Install frontend dependencies
+cd frontend && npm install && cd ..
+
+# Start backend and frontend manually
+python backend/run_standalone.py &
+cd frontend && npm run dev
 ```
 
 ### **🐳 Option 2: Docker Deployment (Production Ready)**

@@ -31,6 +31,25 @@ pkg install nano vim
 
 ## 🔧 **Platform Installation**
 
+### **🚀 Option 1: Automated Setup (Recommended)**
+```bash
+# Clone repository
+git clone https://github.com/MrNova420/Intelligence-Gathering-Website-Project-.git
+cd Intelligence-Gathering-Website-Project-
+
+# Run the automated Termux setup script
+./start_termux.sh
+
+# That's it! The script will:
+# - Install Python dependencies (SQLite-only)
+# - Setup the database
+# - Install Node.js dependencies  
+# - Start both backend and frontend
+# - Open the full website on localhost
+```
+
+### **🔧 Option 2: Manual Setup**
+
 ### **Step 1: Clone Repository**
 ```bash
 # Clone the project
@@ -91,7 +110,27 @@ export USE_REDIS_FALLBACK=true
 
 ## 🚀 **Running the Platform**
 
-### **Start the Server**
+### **🌐 Complete Website (Backend + Frontend)**
+```bash
+# Option 1: Use the automated script
+./start_termux.sh
+
+# Option 2: Manual startup
+# Terminal 1 - Backend:
+python backend/run_standalone.py
+
+# Terminal 2 - Frontend:
+cd frontend
+npm install  # First time only
+npm run dev
+
+# Access the complete platform:
+# 🌐 Website: http://localhost:3000
+# 🔧 API: http://localhost:8000  
+# 📖 API Docs: http://localhost:8000/docs
+```
+
+### **🔧 Backend Only**
 ```bash
 # Run the standalone server
 python backend/run_standalone.py
@@ -102,6 +141,25 @@ python backend/run_standalone.py
 # 🌐 Access Points:
 #    • API Server: http://localhost:8000
 #    • API Docs: http://localhost:8000/docs
+```
+
+### **📱 Using tmux for Better Management**
+```bash
+# Install tmux for session management
+pkg install tmux
+
+# Create session with both services
+tmux new-session -d -s intel
+tmux send-keys -t intel:0 'cd backend && python run_standalone.py' Enter
+tmux new-window -t intel
+tmux send-keys -t intel:1 'cd frontend && npm run dev' Enter
+
+# Attach to see both services
+tmux attach -t intel
+
+# Switch between windows: Ctrl+B then 0 or 1
+# Detach: Ctrl+B then D
+# Kill session: tmux kill-session -t intel
 ```
 
 ### **Test the Platform**
