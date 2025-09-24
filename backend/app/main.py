@@ -128,6 +128,18 @@ def create_application() -> FastAPI:
     except Exception as e:
         logger.warning(f"⚠️ Could not include API router: {e}")
     
+    # Include WebSocket endpoint for real-time scanning (as promised in PR #2)
+    try:
+        from app.api.websocket import websocket_endpoint
+        
+        @app.websocket("/ws/{client_id}")
+        async def websocket_handler(websocket, client_id: str):
+            await websocket_endpoint(websocket, client_id)
+        
+        logger.info("✅ WebSocket real-time scanning enabled")
+    except Exception as e:
+        logger.warning(f"⚠️ Could not enable WebSocket: {e}")
+    
     # Health check endpoint
     @app.get("/health", tags=["System"])
     async def health_check():
