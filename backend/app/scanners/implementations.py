@@ -170,3 +170,9 @@ def register_additional_mock_scanners():
         count += 1
     
     return count
+
+
+def get_all_scanners():
+    """Get all registered scanner instances"""
+    from .base import scanner_registry
+    return scanner_registry.get_all_scanners()
