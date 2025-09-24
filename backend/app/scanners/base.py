@@ -325,3 +325,6 @@ class ScannerRegistry:
 
 # Global scanner registry
 scanner_registry = ScannerRegistry()
+
+# Backward compatibility alias
+BaseScanner = BaseScannerModule
