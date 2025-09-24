@@ -1,15 +1,15 @@
 {
-  "timestamp": "2025-09-24T00:47:43.742251",
-  "overall_score": "16/17",
-  "percentage": "94.1%",
+  "timestamp": "2025-09-24T05:15:30.182172",
+  "overall_score": "14/16",
+  "percentage": "87.5%",
   "status": "PRODUCTION READY",
   "code_metrics": {
-    "total_files": 119,
-    "total_lines": 27459,
-    "python_files": 42,
-    "python_lines": 16213,
-    "frontend_files": 6,
-    "frontend_lines": 1160,
+    "total_files": 138,
+    "total_lines": 42878,
+    "python_files": 58,
+    "python_lines": 28787,
+    "frontend_files": 8,
+    "frontend_lines": 2338,
     "test_files": 6,
     "test_lines": 2529
   },
@@ -17,14 +17,14 @@
     "\u2705 File Structure: All 14 required files present",
     "\u2705 Scanner Implementations: All 6 scanner classes instantiated",
     "\u2705 Core Engines: All 4 engines initialized",
-    "\u2705 API Endpoints: 12 API routes registered",
     "\u2705 Frontend Components: All 3 React components valid",
-    "\u2705 Documentation: 4 comprehensive docs (62,161 chars)",
+    "\u2705 Documentation: 4 comprehensive docs (64,284 chars)",
     "\u2705 Functional Tests: Email normalization working",
     "\u2705 Functional Tests: Password strength calculation working"
   ],
   "issues": [
-    "\u26a0\ufe0f  Dependencies: Missing packages: ['dnspython']"
+    "\u26a0\ufe0f  Dependencies: Missing packages: ['fastapi', 'uvicorn', 'sqlalchemy', 'redis', 'aiohttp', 'dnspython', 'phonenumbers', 'pyotp', 'qrcode', 'reportlab', 'email_validator']",
+    "\u26a0\ufe0f  API Endpoints: Failed to load API endpoints: No module named 'fastapi'"
   ],
   "recommendations": [
     "Address all identified issues before production deployment",
