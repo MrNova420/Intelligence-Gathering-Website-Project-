@@ -10,6 +10,7 @@ import secrets
 import hashlib
 import hmac
 import logging
+import json
 from typing import Optional, Dict, Any, List
 from datetime import datetime, timedelta
 import base64
@@ -252,6 +253,104 @@ class EnhancedSecurityManager:
         except Exception as e:
             logger.error(f"API key validation failed: {e}")
             return None
+
+
+class PasswordValidator:
+    """Enterprise-grade password validation with security best practices"""
+    
+    def __init__(self):
+        self.min_length = 8
+        self.max_length = 128
+        self.require_uppercase = True
+        self.require_lowercase = True
+        self.require_digits = True
+        self.require_special = True
+        self.special_chars = "!@#$%^&*()_+-=[]{}|;:,.<>?"
+        
+    def validate_password(self, password: str) -> Dict[str, Any]:
+        """Validate password strength and return detailed results"""
+        if not isinstance(password, str):
+            return {"valid": False, "errors": ["Password must be a string"]}
+        
+        errors = []
+        score = 0
+        
+        # Length checks
+        if len(password) < self.min_length:
+            errors.append(f"Password must be at least {self.min_length} characters long")
+        elif len(password) >= 12:
+            score += 2
+        else:
+            score += 1
+            
+        if len(password) > self.max_length:
+            errors.append(f"Password must not exceed {self.max_length} characters")
+        
+        # Character type checks
+        if self.require_uppercase and not any(c.isupper() for c in password):
+            errors.append("Password must contain at least one uppercase letter")
+        elif any(c.isupper() for c in password):
+            score += 1
+            
+        if self.require_lowercase and not any(c.islower() for c in password):
+            errors.append("Password must contain at least one lowercase letter")
+        elif any(c.islower() for c in password):
+            score += 1
+            
+        if self.require_digits and not any(c.isdigit() for c in password):
+            errors.append("Password must contain at least one digit")
+        elif any(c.isdigit() for c in password):
+            score += 1
+            
+        if self.require_special and not any(c in self.special_chars for c in password):
+            errors.append(f"Password must contain at least one special character: {self.special_chars}")
+        elif any(c in self.special_chars for c in password):
+            score += 1
+        
+        # Additional security checks
+        if password.lower() in ['password', '123456', 'qwerty', 'admin', 'letmein']:
+            errors.append("Password is too common and easily guessable")
+            score = 0
+            
+        # Calculate strength
+        strength = "weak"
+        if score >= 6:
+            strength = "very strong"
+        elif score >= 4:
+            strength = "strong"
+        elif score >= 2:
+            strength = "medium"
+        
+        return {
+            "valid": len(errors) == 0,
+            "errors": errors,
+            "score": score,
+            "strength": strength,
+            "suggestions": self._get_password_suggestions(password, errors)
+        }
+    
+    def _get_password_suggestions(self, password: str, errors: List[str]) -> List[str]:
+        """Provide helpful password improvement suggestions"""
+        suggestions = []
+        
+        if len(password) < self.min_length:
+            suggestions.append("Consider using a passphrase with multiple words")
+        
+        if not any(c.isupper() for c in password):
+            suggestions.append("Add uppercase letters for better security")
+            
+        if not any(c.islower() for c in password):
+            suggestions.append("Add lowercase letters for variety")
+            
+        if not any(c.isdigit() for c in password):
+            suggestions.append("Include numbers to strengthen your password")
+            
+        if not any(c in self.special_chars for c in password):
+            suggestions.append("Add special characters like !@#$%^&*")
+        
+        suggestions.append("Consider using a password manager for unique, strong passwords")
+        
+        return suggestions
 
 
 class SecurityManager:
