@@ -42,14 +42,17 @@ cd Intelligence-Gathering-Website-Project-
 
 ### **Step 2: Install Python Dependencies**
 ```bash
-# Install backend dependencies
-pip install -r backend/requirements.txt
+# Install lightweight dependencies (SQLite only - recommended for Termux)
+pip install -r backend/requirements-lite.txt
 
-# If you encounter build errors, try:
-pip install --no-cache-dir -r backend/requirements.txt
+# If you encounter build errors with requirements-lite.txt, try minimal install:
+pip install fastapi uvicorn sqlalchemy pydantic dnspython phonenumbers python-dotenv requests passlib[bcrypt] cryptography
 
-# For problematic packages, install individually:
-pip install fastapi uvicorn sqlalchemy pydantic requests
+# Alternative for problematic packages (install one by one):
+pip install --no-cache-dir fastapi uvicorn sqlalchemy pydantic requests
+
+# If psycopg2-binary fails (common on Termux):
+# Skip it - SQLite will be used instead of PostgreSQL
 ```
 
 ### **Step 3: Configure Environment**
@@ -213,14 +216,25 @@ chmod +x backend/app/db/setup_standalone.py
 
 #### **2. Package Installation Failures**
 ```bash
-# Update pip
+# Common solution: Use lightweight requirements
+pip install -r backend/requirements-lite.txt
+
+# If psycopg2-binary fails (common in Termux):
+# Skip it - SQLite will be used instead
+
+# Update pip first
 pip install --upgrade pip
 
-# Install build essentials
+# Install build essentials if needed
 pkg install build-essential clang
 
-# For specific package issues:
-pip install --no-binary :all: package-name
+# For cryptography issues:
+pkg install openssl-dev libffi-dev
+
+# Install minimal packages individually:
+pip install fastapi uvicorn sqlalchemy pydantic dnspython phonenumbers
+
+# Platform will use fallback implementations for missing packages
 ```
 
 #### **3. Database Connection Issues**

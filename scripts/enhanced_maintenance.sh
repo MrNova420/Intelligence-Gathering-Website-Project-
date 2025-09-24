@@ -95,10 +95,27 @@ check_service_status() {
     local service_name="$1"
     local description="$2"
     
-    if systemctl is-active --quiet "$service_name"; then
-        info "  ✅ $description is running"
+    if command -v systemctl &> /dev/null; then
+        if systemctl is-active --quiet "$service_name"; then
+            info "  ✅ $description is running"
+        else
+            warn "  ❌ $description is not running"
+        fi
     else
-        warn "  ❌ $description is not running"
+        warn "  ⚠️ systemctl not available - cannot check $description status"
+        # Try alternative methods
+        case "$service_name" in
+            "docker")
+                if command -v docker &> /dev/null && docker info &> /dev/null; then
+                    info "  ✅ $description is available"
+                else
+                    warn "  ❌ $description is not available"
+                fi
+                ;;
+            *)
+                warn "  ⚠️ Cannot verify $description status without systemctl"
+                ;;
+        esac
     fi
 }
 
@@ -145,7 +162,7 @@ create_enhanced_backup() {
     mkdir -p "$backup_path"
     
     # Database backup
-    if docker ps --format '{{.Names}}' | grep -q "intelligence_db"; then
+    if command -v docker &> /dev/null && docker ps --format '{{.Names}}' | grep -q "intelligence_db"; then
         log "🗄️ Creating database backup..."
         docker exec intelligence_db pg_dump -U intelligence_user intelligence_db > "${backup_path}/database.sql"
         
@@ -275,6 +292,8 @@ optimize_performance() {
         log "🐳 Cleaning Docker resources..."
         docker system prune -f --volumes
         info "  ✅ Docker cleanup completed"
+    else
+        warn "⚠️ Docker not available - skipping container cleanup"
     fi
     
     # Clean up logs
@@ -288,9 +307,16 @@ optimize_performance() {
     fi
     
     # Optimize database (if running)
-    if docker ps --format '{{.Names}}' | grep -q "intelligence_db"; then
+    if command -v docker &> /dev/null && docker ps --format '{{.Names}}' | grep -q "intelligence_db"; then
         log "🗄️ Running database maintenance..."
         docker exec intelligence_db psql -U intelligence_user -d intelligence_db -c "VACUUM ANALYZE;" || warn "Database optimization failed"
+    else
+        warn "⚠️ PostgreSQL container not available - trying SQLite optimization"
+        # Try SQLite optimization if available
+        if [[ -f "./intelligence_platform.db" ]]; then
+            log "🗄️ SQLite database optimization..."
+            sqlite3 ./intelligence_platform.db "VACUUM; ANALYZE;" 2>/dev/null || warn "SQLite optimization failed"
+        fi
     fi
     
     log "✅ Performance optimization completed"

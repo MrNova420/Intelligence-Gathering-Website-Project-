@@ -33,7 +33,31 @@ except ImportError:
             return b"encrypted_" + data
         def decrypt(self, data):
             return data.replace(b"encrypted_", b"")
+        
+        @staticmethod
+        def generate_key():
+            """Generate a mock key for fallback scenarios"""
+            return base64.urlsafe_b64encode(b'mock_key_32_bytes_for_fallback_')[:44]
+    
+    class MockPBKDF2HMAC:
+        def __init__(self, algorithm, length, salt, iterations):
+            self.algorithm = algorithm
+            self.length = length
+            self.salt = salt
+            self.iterations = iterations
+        
+        def derive(self, key_material):
+            """Mock key derivation - simple hash for fallback"""
+            return hashlib.sha256((str(key_material) + str(self.salt)).encode()).digest()[:self.length]
+    
+    class MockHashes:
+        @staticmethod
+        def SHA256():
+            return "sha256"
+    
     Fernet = MockFernet
+    PBKDF2HMAC = MockPBKDF2HMAC
+    hashes = MockHashes()
 
 try:
     import jwt

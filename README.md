@@ -121,7 +121,13 @@ git clone https://github.com/MrNova420/Intelligence-Gathering-Website-Project-.g
 cd Intelligence-Gathering-Website-Project-
 
 # Install Python dependencies
-pip install -r backend/requirements.txt
+pip install -r backend/requirements-lite.txt
+
+# Alternative for troubleshooting:
+# pip install fastapi uvicorn sqlalchemy pydantic dnspython phonenumbers python-dotenv requests passlib[bcrypt] cryptography
+
+# Setup SQLite database
+python backend/app/db/setup_standalone.py
 
 # Setup environment variables
 cp .env.example .env
