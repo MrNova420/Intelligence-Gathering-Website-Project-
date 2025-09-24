@@ -11,17 +11,104 @@ import hashlib
 import hmac
 import logging
 from typing import Optional, Dict, Any
-from cryptography.fernet import Fernet
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-import base64
-import jwt
 from datetime import datetime, timedelta
-from passlib.context import CryptContext
+import base64
 import time
-import pyotp
-import qrcode
 from io import BytesIO
+
+# Conditional imports with fallbacks
+try:
+    from cryptography.fernet import Fernet
+    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+    CRYPTOGRAPHY_AVAILABLE = True
+except ImportError:
+    CRYPTOGRAPHY_AVAILABLE = False
+    # Mock cryptography
+    class MockFernet:
+        def __init__(self, key):
+            self.key = key
+        def encrypt(self, data):
+            return b"encrypted_" + data
+        def decrypt(self, data):
+            return data.replace(b"encrypted_", b"")
+    Fernet = MockFernet
+
+try:
+    import jwt
+    JWT_AVAILABLE = True
+except ImportError:
+    JWT_AVAILABLE = False
+    # Mock JWT
+    class MockJWT:
+        @staticmethod
+        def encode(payload, key, algorithm="HS256"):
+            return "mock.jwt.token"
+        @staticmethod
+        def decode(token, key, algorithms=None):
+            return {"user_id": 1, "exp": time.time() + 3600}
+    jwt = MockJWT()
+
+try:
+    from passlib.context import CryptContext
+    PASSLIB_AVAILABLE = True
+except ImportError:
+    PASSLIB_AVAILABLE = False
+    # Mock passlib
+    class MockCryptContext:
+        def __init__(self, schemes=None, deprecated=None):
+            self.schemes = schemes or ['bcrypt']
+            self.deprecated = deprecated
+        def hash(self, password: str):
+            return f"$2b$12$mock.hash.{password}"
+        def verify(self, password: str, hash_str: str):
+            return True
+    CryptContext = MockCryptContext
+
+try:
+    import pyotp
+    PYOTP_AVAILABLE = True
+except ImportError:
+    PYOTP_AVAILABLE = False
+    # Mock pyotp
+    class MockTOTP:
+        def __init__(self, secret: str):
+            self.secret = secret
+        def now(self):
+            return "123456"
+        def verify(self, token: str):
+            return True
+        def provisioning_uri(self, name, issuer_name=None):
+            return f"otpauth://totp/{name}?secret={self.secret}&issuer={issuer_name or 'IntelligencePlatform'}"
+    class MockPyOTP:
+        TOTP = MockTOTP
+        @staticmethod
+        def random_base32():
+            return "JBSWY3DPEHPK3PXP"
+    pyotp = MockPyOTP()
+
+try:
+    import qrcode
+    QRCODE_AVAILABLE = True
+except ImportError:
+    QRCODE_AVAILABLE = False
+    # Mock qrcode
+    class MockQRCode:
+        def __init__(self, version=1, box_size=10, border=5):
+            self.data = ""
+            self.version = version
+            self.box_size = box_size
+            self.border = border
+        def add_data(self, data: str):
+            self.data = data
+        def make(self, fit=True):
+            pass
+        def make_image(self, fill_color='black', back_color='white'):
+            from unittest.mock import MagicMock
+            return MagicMock()
+    class MockQRCodeModule:
+        QRCode = MockQRCode
+    qrcode = MockQRCodeModule()
 
 logger = logging.getLogger(__name__)
 

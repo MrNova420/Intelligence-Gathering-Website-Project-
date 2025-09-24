@@ -25,6 +25,6 @@ phonenumbers==8.13.26
 pyotp==2.9.0
 qrcode[pil]==7.4.2
 reportlab==4.0.7
-difflib2==0.1
-Levenshtein==0.25.0
+python-Levenshtein==0.25.0
 textdistance==4.6.1
+email-validator==2.1.0

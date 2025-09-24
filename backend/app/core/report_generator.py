@@ -851,3 +851,7 @@ class ReportGenerator:
 def create_report_generator() -> ReportGenerator:
     """Create and return a configured ReportGenerator instance"""
     return ReportGenerator()
+
+
+# Alias for backward compatibility and enhanced naming
+EnhancedReportGenerator = ReportGenerator

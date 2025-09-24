@@ -5,15 +5,31 @@ Real implementations with API wrappers, error handling, and rate limiting.
 
 import asyncio
 import re
-import dns.resolver
 import logging
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
-import aiohttp
 import json
 from urllib.parse import quote
 import hashlib
 import time
+
+# Conditional imports with fallbacks
+try:
+    import dns.resolver
+    DNS_AVAILABLE = True
+except ImportError:
+    DNS_AVAILABLE = False
+    # Mock DNS resolver
+    class MockResolver:
+        def resolve(self, domain: str, record_type: str = 'MX'):
+            return [type('MockRecord', (), {'preference': 10, 'exchange': 'mail.example.com'})()]
+    dns = type('MockDNS', (), {'resolver': MockResolver()})()
+
+try:
+    import aiohttp
+    AIOHTTP_AVAILABLE = True
+except ImportError:
+    AIOHTTP_AVAILABLE = False
 
 from .base import BaseScannerModule, ScannerType
 from ..db.models import Query

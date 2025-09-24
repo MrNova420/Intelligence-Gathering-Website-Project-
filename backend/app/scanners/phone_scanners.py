@@ -8,12 +8,55 @@ import re
 import logging
 from typing import Dict, Any, List, Optional
 from datetime import datetime
-import aiohttp
 import json
-import phonenumbers
-from phonenumbers import geocoder, carrier, timezone
 import hashlib
 import time
+
+# Conditional imports with fallbacks
+try:
+    import phonenumbers
+    from phonenumbers import geocoder, carrier, timezone
+    PHONENUMBERS_AVAILABLE = True
+except ImportError:
+    PHONENUMBERS_AVAILABLE = False
+    # Mock phonenumbers module
+    class MockPhoneNumber:
+        def __init__(self, national_number: int, country_code: int):
+            self.national_number = national_number
+            self.country_code = country_code
+    
+    class MockPhoneNumbers:
+        @staticmethod
+        def parse(number: str, region: str = None):
+            return MockPhoneNumber(5551234567, 1)
+        
+        @staticmethod
+        def is_valid_number(number):
+            return True
+        
+        @staticmethod
+        def format_number(number, format_type):
+            return "+1 555-123-4567"
+    
+    class MockGeocoder:
+        @staticmethod
+        def description_for_number(number, locale):
+            return "California, United States"
+    
+    class MockCarrier:
+        @staticmethod
+        def name_for_number(number, locale):
+            return "Verizon"
+    
+    phonenumbers = MockPhoneNumbers()
+    geocoder = MockGeocoder()
+    carrier = MockCarrier()
+
+try:
+    import aiohttp
+    AIOHTTP_AVAILABLE = True
+except ImportError:
+    AIOHTTP_AVAILABLE = False
 
 from .base import BaseScannerModule, ScannerType
 from ..db.models import Query

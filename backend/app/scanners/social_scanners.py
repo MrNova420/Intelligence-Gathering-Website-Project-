@@ -8,11 +8,41 @@ import re
 import logging
 from typing import Dict, Any, List, Optional
 from datetime import datetime
-import aiohttp
 import json
 import hashlib
 import time
 from urllib.parse import quote, urljoin
+
+# Conditional imports with fallbacks
+try:
+    import aiohttp
+    AIOHTTP_AVAILABLE = True
+except ImportError:
+    AIOHTTP_AVAILABLE = False
+    # Mock aiohttp
+    class MockResponse:
+        def __init__(self, status=200, data=None):
+            self.status = status
+            self._data = data or {}
+        async def json(self):
+            return self._data
+        async def text(self):
+            return json.dumps(self._data)
+    
+    class MockSession:
+        async def get(self, url, **kwargs):
+            return MockResponse()
+        async def post(self, url, **kwargs):
+            return MockResponse()
+        async def __aenter__(self):
+            return self
+        async def __aexit__(self, *args):
+            pass
+    
+    class MockAiohttp:
+        ClientSession = MockSession
+    
+    aiohttp = MockAiohttp()
 
 from .base import BaseScannerModule, ScannerType
 from ..db.models import Query

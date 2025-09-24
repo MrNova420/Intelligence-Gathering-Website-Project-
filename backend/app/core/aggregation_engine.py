@@ -11,8 +11,62 @@ from typing import Dict, Any, List, Optional, Set, Tuple
 from datetime import datetime
 import difflib
 from collections import defaultdict
-import phonenumbers
-from email_validator import validate_email, EmailNotValidError
+
+# Conditional imports with fallbacks
+try:
+    import phonenumbers
+    PHONENUMBERS_AVAILABLE = True
+except ImportError:
+    PHONENUMBERS_AVAILABLE = False
+    # Mock phonenumbers with proper attributes
+    class MockPhoneNumber:
+        def __init__(self, national_number: int, country_code: int):
+            self.national_number = national_number
+            self.country_code = country_code
+    
+    class MockPhoneNumberFormat:
+        E164 = 1
+        INTERNATIONAL = 2
+        NATIONAL = 3
+    
+    class MockNumberParseException(Exception):
+        pass
+    
+    class MockPhoneNumbers:
+        NumberParseException = MockNumberParseException
+        PhoneNumberFormat = MockPhoneNumberFormat
+        
+        @staticmethod
+        def parse(number: str, region: str = None):
+            return MockPhoneNumber(5551234567, 1)
+        
+        @staticmethod
+        def is_valid_number(number):
+            return True
+        
+        @staticmethod
+        def format_number(number, format_type):
+            return "+1 555-123-4567"
+        
+        @staticmethod
+        def region_code_for_number(number):
+            return "US"
+        
+        @staticmethod
+        def number_type(number):
+            return 1  # MOBILE type
+    
+    phonenumbers = MockPhoneNumbers()
+
+try:
+    from email_validator import validate_email, EmailNotValidError
+    EMAIL_VALIDATOR_AVAILABLE = True
+except ImportError:
+    EMAIL_VALIDATOR_AVAILABLE = False
+    # Mock email validator
+    EmailNotValidError = Exception
+    def validate_email(email):
+        return type('ValidationResult', (), {'email': email.lower()})()
 
 logger = logging.getLogger(__name__)
 

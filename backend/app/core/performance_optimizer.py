@@ -823,3 +823,10 @@ def create_performance_optimizer() -> Dict[str, Any]:
         "db_optimizer": db_optimizer,
         "performance_monitor": performance_monitor
     }
+
+
+# Global instances for easy access
+redis_cache = RedisCache()
+cache_manager = CacheManager(redis_cache)
+performance_monitor = PerformanceMonitor()
+async_orchestrator = AsyncScannerOrchestrator(cache_manager)
