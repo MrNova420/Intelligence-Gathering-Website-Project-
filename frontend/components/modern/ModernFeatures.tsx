@@ -112,7 +112,7 @@ const ModernFeatures: React.FC = () => {
     }
   ]
 
-  const categories = [...new Set(features.map(f => f.category))]
+  const categories = Array.from(new Set(features.map(f => f.category)))
 
   const containerVariants = {
     hidden: { opacity: 0 },

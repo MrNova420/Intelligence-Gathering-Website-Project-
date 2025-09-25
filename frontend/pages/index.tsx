@@ -1,6 +1,6 @@
 import Head from 'next/head'
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence, useAnimation } from 'framer-motion'
 import { 
   Search, Shield, Target, Zap, Users, BarChart3, Lock, Globe, 
   TrendingUp, Calendar, FileText, Download, Eye, Clock, 
@@ -14,84 +14,96 @@ import {
   Server, Terminal, GitMerge, Hexagon, PenTool,
   Lightbulb, MessageSquare, TrendingDown, Monitor, Code,
   Gauge, Mic, Video, Headphones, BookOpen, Hash, AtSign,
-  Command, GitPullRequest, Package, Briefcase, Building
+  Command, GitPullRequest, Package, Briefcase, Building,
+  Zap as ZapIcon, Bot, Cpu as ProcessorIcon, Orbit
 } from 'lucide-react'
 
-// Ultra-Futuristic Intelligence Platform - Next Generation Design
-export default function UltraFuturisticIntelliSearch() {
+// Next-Gen Quantum Intelligence Platform - Revolutionary Design Vision
+export default function QuantumIntelliSearch() {
   const [searchQuery, setSearchQuery] = useState('')
-  const [searchType, setSearchType] = useState('phone')
+  const [searchType, setSearchType] = useState('quantum-phone')
   const [isSearching, setIsSearching] = useState(false)
   const [searchResults, setSearchResults] = useState(null)
-  const [showPreview, setShowPreview] = useState(false)
+  const [showResults, setShowResults] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const [hologramEffect, setHologramEffect] = useState(false)
+  const [quantumField, setQuantumField] = useState(false)
+  const [aiThinking, setAiThinking] = useState(false)
+  const canvasRef = useRef(null)
+  const controls = useAnimation()
 
-  // Live metrics with real-time updates
-  const [liveMetrics, setLiveMetrics] = useState({
-    usersOnline: 4892,
-    searchesToday: 78234,
-    accuracy: 98.7,
-    threats: 1247,
-    aiProcessing: 94.2,
-    networksScanned: 23456
+  // Revolutionary live metrics with quantum fluctuations
+  const [quantumMetrics, setQuantumMetrics] = useState({
+    quantumUsers: 7429,
+    multiDimensionalScans: 124876,
+    aiConfidence: 99.4,
+    threatMatrix: 892,
+    quantumEntanglement: 97.8,
+    neuralNetworks: 34567,
+    darkWebNodes: 8934,
+    blockchainValidations: 45678
   })
 
-  // Advanced search types with futuristic descriptions
-  const searchTypes = [
+  // Next-generation quantum search capabilities
+  const quantumSearchTypes = [
     { 
-      id: 'phone', 
-      name: 'Neural Phone Intel', 
-      icon: <Smartphone className="w-8 h-8" />, 
-      placeholder: 'Enter phone number for quantum analysis...',
-      description: 'AI-powered carrier detection, location mapping, social network correlation',
-      color: 'from-cyan-400 via-blue-500 to-purple-600',
-      glow: 'shadow-cyan-500/50'
+      id: 'quantum-phone', 
+      name: 'Quantum Phone Intelligence', 
+      icon: <Smartphone className="w-10 h-10" />, 
+      placeholder: 'Quantum phone analysis - enter target number...',
+      description: 'Multi-dimensional carrier mapping, quantum location tracking, parallel reality social correlation',
+      gradient: 'from-cyan-300 via-blue-400 to-indigo-600',
+      particles: 'cyan',
+      confidence: 99.2
     },
     { 
-      id: 'email', 
-      name: 'Quantum Email Trace', 
-      icon: <Mail className="w-8 h-8" />, 
-      placeholder: 'Enter email for molecular verification...',
-      description: 'Breach detection, quantum verification, multi-dimensional account linking',
-      color: 'from-purple-400 via-pink-500 to-red-600',
-      glow: 'shadow-purple-500/50'
+      id: 'neuro-email', 
+      name: 'Neuro Email Synthesis', 
+      icon: <Mail className="w-10 h-10" />, 
+      placeholder: 'Neural email trace - quantum verification...',
+      description: 'AI-powered breach prediction, quantum encryption analysis, temporal email tracking',
+      gradient: 'from-purple-300 via-pink-400 to-red-500',
+      particles: 'purple',
+      confidence: 98.7
     },
     { 
-      id: 'username', 
-      name: 'Social DNA Mapping', 
-      icon: <AtSign className="w-8 h-8" />, 
-      placeholder: 'Enter username for DNA profiling...',
-      description: 'Cross-platform correlation, behavioral pattern analysis, digital fingerprinting',
-      color: 'from-green-400 via-emerald-500 to-teal-600',
-      glow: 'shadow-green-500/50'
+      id: 'bio-identity', 
+      name: 'Bio-Quantum Identity Matrix', 
+      icon: <User className="w-10 h-10" />, 
+      placeholder: 'Biometric quantum search - full spectrum analysis...',
+      description: 'Dimensional identity mapping, quantum behavioral analysis, parallel universe tracking',
+      gradient: 'from-green-300 via-emerald-400 to-teal-600',
+      particles: 'green',
+      confidence: 97.9
     },
     { 
-      id: 'name', 
-      name: 'Identity Synthesis', 
-      icon: <User className="w-8 h-8" />, 
-      placeholder: 'Enter name for holographic reconstruction...',
-      description: 'Multi-dimensional identity mapping, temporal analysis, quantum verification',
-      color: 'from-orange-400 via-red-500 to-pink-600',
-      glow: 'shadow-orange-500/50'
+      id: 'neural-social', 
+      name: 'Neural Social Web', 
+      icon: <Users className="w-10 h-10" />, 
+      placeholder: 'Social quantum entanglement analysis...',
+      description: 'Cross-dimensional social mapping, quantum relationship analysis, temporal connection tracking',
+      gradient: 'from-orange-300 via-amber-400 to-yellow-500',
+      particles: 'orange',
+      confidence: 96.8
     },
     { 
-      id: 'image', 
-      name: 'Biometric Hologram', 
-      icon: <Image className="w-8 h-8" />, 
-      placeholder: 'Upload image for neural reconstruction...',
-      description: 'Quantum facial recognition, dimensional analysis, reality mapping',
-      color: 'from-indigo-400 via-purple-500 to-blue-600',
-      glow: 'shadow-indigo-500/50'
+      id: 'quantum-image', 
+      name: 'Quantum Visual Recognition', 
+      icon: <Image className="w-10 h-10" />, 
+      placeholder: 'Multi-dimensional image analysis...',
+      description: 'Quantum facial reconstruction, parallel reality image matching, temporal visual tracking',
+      gradient: 'from-rose-300 via-pink-400 to-fuchsia-600',
+      particles: 'pink',
+      confidence: 98.1
     },
     { 
-      id: 'ip', 
-      name: 'Network Topology', 
-      icon: <Globe className="w-8 h-8" />, 
-      placeholder: 'Enter IP for dimensional mapping...',
-      description: 'Quantum geolocation, neural network analysis, threat matrix calculation',
-      color: 'from-teal-400 via-cyan-500 to-blue-600',
-      glow: 'shadow-teal-500/50'
+      id: 'darkweb-intel', 
+      name: 'Dark Web Quantum Scan', 
+      icon: <Globe className="w-10 h-10" />, 
+      placeholder: 'Deep quantum web intelligence...',
+      description: 'Multi-layer dark web analysis, quantum anonymity breaking, temporal footprint tracking',
+      gradient: 'from-slate-400 via-gray-500 to-zinc-600',
+      particles: 'gray',
+      confidence: 95.4
     }
   ]
 
