@@ -764,7 +764,18 @@ document.addEventListener('DOMContentLoaded', () => {
         @self.app.get("/reports", response_class=HTMLResponse)
         async def reports_page(request: Request):
             """Reports page"""
-            return HTMLResponse("<h1>Reports - Coming Soon</h1>")
+            return self.templates.TemplateResponse("reports.html", {
+                "request": request,
+                "datetime": datetime
+            })
+        
+        @self.app.get("/admin", response_class=HTMLResponse)
+        async def admin_page(request: Request):
+            """System administration page"""
+            return self.templates.TemplateResponse("admin.html", {
+                "request": request,
+                "datetime": datetime
+            })
         
         @self.app.get("/privacy", response_class=HTMLResponse)
         async def privacy_page(request: Request):
@@ -1006,6 +1017,14 @@ document.addEventListener('DOMContentLoaded', () => {
             logger.info("✅ Performance Monitoring API routes included")
         except ImportError:
             logger.warning("⚠️ Performance API not available")
+        
+        # Include Automation API
+        try:
+            from backend.app.api.automation_api import automation_api
+            self.app.include_router(automation_api.router)
+            logger.info("✅ Automation API routes included")
+        except ImportError:
+            logger.warning("⚠️ Automation API not available")
         
         # Add enhanced API endpoints for dashboard data
         @self.app.get("/api/v1/dashboard/metrics")
