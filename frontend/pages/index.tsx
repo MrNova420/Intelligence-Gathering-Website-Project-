@@ -9,582 +9,948 @@ import {
   Map, Smartphone, Mail, Link as LinkIcon, Image, Network,
   Brain, Radar, Fingerprint, Crosshair, Star, ArrowRight,
   Play, Pause, Volume2, ChevronLeft, ChevronRight, Quote,
-  Award, Layers, Cpu, Cloud, GitBranch, Workflow, Zap as ZapIcon,
+  Award, Layers, Cpu, Cloud, GitBranch, Workflow,
   MousePointer, Sparkles, Infinity, CircuitBoard, Satellite,
   Server, Terminal, GitMerge, Hexagon, PenTool,
   Lightbulb, MessageSquare, TrendingDown, Monitor, Code,
   Gauge, Mic, Video, Headphones, BookOpen, Hash, AtSign,
-  Command, GitPullRequest, Package, Briefcase, Building,
-  Crown, Gem, Diamond, Palette, Layers3, Box, Component,
-  Gamepad2, Joystick, Trophy, Medal, FlaskConical, Beaker,
-  Microscope, TestTube, Dna, Atom, Orbit, Rocket, Plane,
-  Car, Train, Ship, Anchor, Compass, Wind, Sun, Moon,
-  Sunrise, Sunset, CloudRain, CloudSnow, Thermometer
+  Command, GitPullRequest, Package, Briefcase, Building
 } from 'lucide-react'
 
-// Enhanced Intelligence Platform inspired by industry leaders:
-// GitHub (clean interface, search), Linear (modern gradients, animations)
-// Discord (live activity, dark theme), Notion (organized content)
-// Vercel (performance focus), Stripe (payment UX), Figma (design system)
-export default function IntelliSearchPro() {
+// Ultra-Futuristic Intelligence Platform - Next Generation Design
+export default function UltraFuturisticIntelliSearch() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchType, setSearchType] = useState('phone')
   const [isSearching, setIsSearching] = useState(false)
   const [searchResults, setSearchResults] = useState(null)
   const [showPreview, setShowPreview] = useState(false)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [hologramEffect, setHologramEffect] = useState(false)
 
-  // Search types available
-  const searchTypes = [
-    { id: 'phone', name: 'Phone Number', icon: <Smartphone className="w-5 h-5" />, placeholder: 'Enter phone number...' },
-    { id: 'email', name: 'Email Address', icon: <Mail className="w-5 h-5" />, placeholder: 'Enter email address...' },
-    { id: 'username', name: 'Username/Social', icon: <AtSign className="w-5 h-5" />, placeholder: 'Enter username...' },
-    { id: 'name', name: 'Full Name', icon: <User className="w-5 h-5" />, placeholder: 'Enter full name...' },
-    { id: 'image', name: 'Reverse Image', icon: <Image className="w-5 h-5" />, placeholder: 'Upload or paste image URL...' },
-    { id: 'ip', name: 'IP Address', icon: <Globe className="w-5 h-5" />, placeholder: 'Enter IP address...' }
-  ]
-
-  // Advanced features inspired by industry leaders
-  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false)
-  const [selectedFilters, setSelectedFilters] = useState([])
-  const [recentSearches, setRecentSearches] = useState([
-    { query: 'john.doe@gmail.com', type: 'email', time: '2 min ago', results: 23 },
-    { query: '+1-555-0123', type: 'phone', time: '5 min ago', results: 15 },
-    { query: 'jane_smith', type: 'username', time: '8 min ago', results: 31 }
-  ])
-  
-  // Collaboration features inspired by GitHub/Linear
-  const [teamActivity, setTeamActivity] = useState([
-    { user: 'Detective_Mike', action: 'completed phone lookup', target: '+1-555-0199', confidence: 94, time: '3 min ago' },
-    { user: 'Analyst_Sarah', action: 'found email breaches', target: 'target@domain.com', severity: 'high', time: '7 min ago' },
-    { user: 'OSINT_Expert', action: 'traced social profiles', target: '@username123', profiles: 8, time: '12 min ago' }
-  ])
-
-  // Real-time notifications like Discord
-  const [notifications, setNotifications] = useState([
-    { id: 1, type: 'success', message: 'New intelligence match found', time: '30s ago', unread: true },
-    { id: 2, type: 'warning', message: 'Potential data breach detected', time: '2 min ago', unread: true },
-    { id: 3, type: 'info', message: 'Weekly intelligence report ready', time: '1 hour ago', unread: false }
-  ])
-
-  // Live stats for social proof with enhanced metrics
-  const [liveStats, setLiveStats] = useState({
-    searchesToday: 24567,
-    recordsSearched: 8900000000,
-    successRate: 94.8,
-    usersOnline: 1247,
-    activeInvestigations: 189,
-    dataSources: 247,
-    countriesCovered: 89,
-    mlAccuracy: 97.3
+  // Live metrics with real-time updates
+  const [liveMetrics, setLiveMetrics] = useState({
+    usersOnline: 4892,
+    searchesToday: 78234,
+    accuracy: 98.7,
+    threats: 1247,
+    aiProcessing: 94.2,
+    networksScanned: 23456
   })
 
-  // Simulate live counter updates
+  // Advanced search types with futuristic descriptions
+  const searchTypes = [
+    { 
+      id: 'phone', 
+      name: 'Neural Phone Intel', 
+      icon: <Smartphone className="w-8 h-8" />, 
+      placeholder: 'Enter phone number for quantum analysis...',
+      description: 'AI-powered carrier detection, location mapping, social network correlation',
+      color: 'from-cyan-400 via-blue-500 to-purple-600',
+      glow: 'shadow-cyan-500/50'
+    },
+    { 
+      id: 'email', 
+      name: 'Quantum Email Trace', 
+      icon: <Mail className="w-8 h-8" />, 
+      placeholder: 'Enter email for molecular verification...',
+      description: 'Breach detection, quantum verification, multi-dimensional account linking',
+      color: 'from-purple-400 via-pink-500 to-red-600',
+      glow: 'shadow-purple-500/50'
+    },
+    { 
+      id: 'username', 
+      name: 'Social DNA Mapping', 
+      icon: <AtSign className="w-8 h-8" />, 
+      placeholder: 'Enter username for DNA profiling...',
+      description: 'Cross-platform correlation, behavioral pattern analysis, digital fingerprinting',
+      color: 'from-green-400 via-emerald-500 to-teal-600',
+      glow: 'shadow-green-500/50'
+    },
+    { 
+      id: 'name', 
+      name: 'Identity Synthesis', 
+      icon: <User className="w-8 h-8" />, 
+      placeholder: 'Enter name for holographic reconstruction...',
+      description: 'Multi-dimensional identity mapping, temporal analysis, quantum verification',
+      color: 'from-orange-400 via-red-500 to-pink-600',
+      glow: 'shadow-orange-500/50'
+    },
+    { 
+      id: 'image', 
+      name: 'Biometric Hologram', 
+      icon: <Image className="w-8 h-8" />, 
+      placeholder: 'Upload image for neural reconstruction...',
+      description: 'Quantum facial recognition, dimensional analysis, reality mapping',
+      color: 'from-indigo-400 via-purple-500 to-blue-600',
+      glow: 'shadow-indigo-500/50'
+    },
+    { 
+      id: 'ip', 
+      name: 'Network Topology', 
+      icon: <Globe className="w-8 h-8" />, 
+      placeholder: 'Enter IP for dimensional mapping...',
+      description: 'Quantum geolocation, neural network analysis, threat matrix calculation',
+      color: 'from-teal-400 via-cyan-500 to-blue-600',
+      glow: 'shadow-teal-500/50'
+    }
+  ]
+
+  // Mouse tracking for holographic effects
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY })
+    }
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
+  // Continuous metrics updates with realistic fluctuations
   useEffect(() => {
     const interval = setInterval(() => {
-      setLiveStats(prev => ({
-        ...prev,
-        searchesToday: prev.searchesToday + Math.floor(Math.random() * 3),
-        usersOnline: prev.usersOnline + (Math.random() > 0.5 ? 1 : -1)
+      setLiveMetrics(prev => ({
+        usersOnline: Math.max(4500, prev.usersOnline + Math.floor(Math.random() * 20 - 10)),
+        searchesToday: prev.searchesToday + Math.floor(Math.random() * 100),
+        accuracy: Math.min(99.9, Math.max(97.0, prev.accuracy + (Math.random() - 0.5) * 0.5)),
+        threats: Math.max(1000, prev.threats + Math.floor(Math.random() * 10 - 5)),
+        aiProcessing: Math.min(99.9, Math.max(85.0, prev.aiProcessing + (Math.random() - 0.5) * 2)),
+        networksScanned: prev.networksScanned + Math.floor(Math.random() * 500)
       }))
-    }, 3000)
+    }, 2000)
     return () => clearInterval(interval)
   }, [])
 
-  // Handle search
+  // Advanced search function
   const handleSearch = async () => {
     if (!searchQuery.trim()) return
     
     setIsSearching(true)
-    setShowPreview(false)
+    setHologramEffect(true)
     
-    // Simulate search
-    setTimeout(() => {
-      setSearchResults({
-        query: searchQuery,
-        type: searchType,
-        preview: {
-          found: true,
-          confidence: 94.7,
-          sources: 23,
-          dataPoints: 156
-        }
-      })
-      setShowPreview(true)
-      setIsSearching(false)
-    }, 2000)
+    // Simulate advanced processing
+    await new Promise(resolve => setTimeout(resolve, 2500))
+    
+    const mockResults = {
+      phone: {
+        location: 'San Francisco, CA, USA',
+        carrier: 'Quantum Wireless Networks',
+        lineType: 'Neural Interface Mobile',
+        confidence: 97.8,
+        socialProfiles: 15,
+        breachData: 2,
+        associatedEmails: 8,
+        threatLevel: 'Low',
+        lastActivity: '2 hours ago'
+      },
+      email: {
+        status: 'Quantum Verified & Active',
+        breaches: 3,
+        socialAccounts: 22,
+        lastSeen: '47 minutes ago',
+        confidence: 94.3,
+        riskScore: 'Medium-Low',
+        domainAge: '12 years',
+        aiTrustScore: 8.7
+      }
+    }
+    
+    setSearchResults(mockResults[searchType] || mockResults.phone)
+    setShowPreview(true)
+    setIsSearching(false)
+    setHologramEffect(false)
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-black text-white overflow-hidden relative">
       <Head>
-        <title>IntelliSearch Pro - Advanced People & Digital Intelligence Platform</title>
-        <meta name="description" content="Find anyone, anywhere. Advanced intelligence search for phone numbers, emails, usernames, and more. Get instant results from billions of records." />
-        <link rel="icon" href="/favicon.ico" />
+        <title>IntelliSearch Pro - Ultra-Futuristic Neural Intelligence Platform</title>
+        <meta name="description" content="Next-generation intelligence platform with quantum-level analysis, neural networks, and holographic visualization." />
       </Head>
 
-      <div className="min-h-screen bg-black text-white overflow-hidden">
-        {/* Futuristic Background */}
-        <div className="fixed inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-cyan-900/20" />
-          <div className="absolute inset-0" style={{
-            backgroundImage: `
-              radial-gradient(circle at 25% 25%, rgba(0, 100, 255, 0.1) 0%, transparent 50%),
-              radial-gradient(circle at 75% 75%, rgba(150, 0, 255, 0.1) 0%, transparent 50%),
-              radial-gradient(circle at 50% 0%, rgba(0, 255, 200, 0.1) 0%, transparent 50%)
-            `
-          }} />
-          {/* Animated grid */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="h-full w-full" style={{
-              backgroundImage: `
-                linear-gradient(rgba(0, 150, 255, 0.3) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 150, 255, 0.3) 1px, transparent 1px)
-              `,
-              backgroundSize: '40px 40px'
-            }} />
-          </div>
+      {/* Ultra-Advanced Background System */}
+      <div className="fixed inset-0 z-0 overflow-hidden">
+        {/* Dynamic Gradient Mesh */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-slate-900 to-purple-950/30" />
+        
+        {/* Animated Circuit Pattern */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="w-full h-full" 
+               style={{
+                 backgroundImage: `radial-gradient(circle at 25% 25%, cyan 0%, transparent 2%),
+                                   radial-gradient(circle at 75% 75%, purple 0%, transparent 2%),
+                                   linear-gradient(45deg, transparent 48%, cyan 50%, transparent 52%)`,
+                 backgroundSize: '100px 100px, 150px 150px, 200px 200px',
+                 animation: 'drift 20s linear infinite'
+               }} />
         </div>
 
-        {/* Enhanced Header - Inspired by GitHub/Linear/Vercel */}
-        <header className="relative z-10 border-b border-gray-800/50 bg-black/80 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
-              {/* Logo and Brand */}
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-xl shadow-blue-500/25">
-                  <Search className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                    IntelliSearch Pro
-                  </h1>
-                  <p className="text-sm text-gray-400">Advanced Intelligence Platform</p>
-                </div>
-              </div>
+        {/* Floating Particles */}
+        {[...Array(30)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-cyan-400 rounded-full opacity-60"
+            initial={{ 
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1920), 
+              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1080)
+            }}
+            animate={{
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1920),
+              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1080),
+              scale: [0.5, 1.5, 0.5],
+              opacity: [0.3, 0.8, 0.3]
+            }}
+            transition={{
+              duration: Math.random() * 20 + 10,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          />
+        ))}
 
-              {/* Advanced Navigation - GitHub style */}
-              <div className="hidden lg:flex items-center space-x-6">
-                {/* Navigation Links */}
-                <nav className="flex items-center space-x-1">
-                  <a href="#search" className="px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200 text-sm font-medium">
-                    Search
-                  </a>
-                  <a href="#analytics" className="px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200 text-sm font-medium">
-                    Analytics
-                  </a>
-                  <a href="#reports" className="px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200 text-sm font-medium">
-                    Reports
-                  </a>
-                  <a href="/pricing" className="px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200 text-sm font-medium">
-                    Pricing
-                  </a>
-                </nav>
+        {/* Mouse-following Holographic Orb */}
+        <motion.div
+          className="absolute w-96 h-96 rounded-full opacity-10 pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle, cyan 0%, purple 50%, transparent 70%)',
+            left: mousePosition.x - 192,
+            top: mousePosition.y - 192,
+            filter: 'blur(40px)'
+          }}
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.1, 0.3, 0.1]
+          }}
+          transition={{ duration: 3, repeat: Infinity }}
+        />
+      </div>
 
-                {/* Quick Search - Inspired by GitHub command palette */}
-                <div className="relative">
-                  <button 
-                    onClick={() => setShowAdvancedSearch(true)}
-                    className="flex items-center space-x-2 px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-gray-400 hover:bg-gray-700/50 hover:text-white transition-all duration-200"
-                  >
-                    <Search className="w-4 h-4" />
-                    <span className="text-sm">Quick search...</span>
-                    <div className="px-2 py-1 bg-gray-700 rounded text-xs">⌘K</div>
-                  </button>
-                </div>
-
-                {/* Notifications */}
-                <div className="relative">
-                  <button className="relative p-2 rounded-lg hover:bg-gray-800/50 transition-colors group">
-                    <Bell className="w-5 h-5 text-gray-400 group-hover:text-white" />
-                    {notifications.filter(n => n.unread).length > 0 && (
-                      <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center">
-                        <span className="text-xs text-white font-bold">{notifications.filter(n => n.unread).length}</span>
-                      </span>
-                    )}
-                  </button>
-                </div>
-
-                {/* User Menu */}
-                <button className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-green-500/25">
-                  <User className="w-4 h-4 text-white" />
-                </button>
-              </div>
-
-              {/* Mobile Navigation */}
-              <div className="flex lg:hidden items-center space-x-4">
-                <button className="relative p-2 rounded-lg hover:bg-gray-800/50 transition-colors">
-                  <Bell className="w-5 h-5 text-gray-400" />
-                  {notifications.filter(n => n.unread).length > 0 && (
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-                  )}
-                </button>
-                <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
-                  Sign In
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Enhanced Live Stats Bar - Inspired by Vercel/Linear dashboards */}
-        <div className="relative z-10 bg-gradient-to-r from-blue-900/50 via-purple-900/50 to-cyan-900/50 border-b border-gray-800/50">
-          <div className="max-w-7xl mx-auto px-6 py-3">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center space-x-8">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                  <span className="text-gray-300">{liveStats.usersOnline.toLocaleString()} users online</span>
-                </div>
-                <div className="text-gray-300 flex items-center space-x-1">
-                  <TrendingUp className="w-4 h-4 text-green-400" />
-                  <span>{liveStats.searchesToday.toLocaleString()} searches today</span>
-                </div>
-                <div className="text-gray-300">
-                  {(liveStats.recordsSearched / 1000000000).toFixed(1)}B+ records
-                </div>
-                <div className="hidden md:flex items-center space-x-1 text-gray-300">
-                  <Database className="w-4 h-4 text-blue-400" />
-                  <span>{liveStats.dataSources} sources</span>
-                </div>
-                <div className="hidden lg:flex items-center space-x-1 text-gray-300">
-                  <Brain className="w-4 h-4 text-purple-400" />
-                  <span>{liveStats.mlAccuracy}% ML accuracy</span>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <CheckCircle className="w-4 h-4 text-green-400" />
-                  <span className="text-green-400">{liveStats.successRate}% success</span>
-                </div>
-                <div className="hidden md:flex items-center space-x-1 text-gray-300">
-                  <Activity className="w-4 h-4 text-orange-400" />
-                  <span>{liveStats.activeInvestigations} active</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Hero Section */}
-        <main className="relative z-10">
-          <div className="max-w-7xl mx-auto px-6 py-16">
-            <div className="text-center max-w-4xl mx-auto mb-16">
-              <motion.h1 
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-5xl md:text-7xl font-bold mb-6"
-              >
-                Find Anyone,{' '}
-                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                  Anywhere
-                </span>
-              </motion.h1>
-              
-              <motion.p 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="text-xl md:text-2xl text-gray-300 mb-12"
-              >
-                Advanced intelligence search engine with access to billions of records.
-                <br />
-                <span className="text-blue-400">Get instant results</span> for phone numbers, emails, usernames, and more.
-              </motion.p>
-
-              {/* Search Interface */}
-              <motion.div 
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 mb-8"
-              >
-                {/* Search Type Selector */}
-                <div className="flex flex-wrap justify-center gap-2 mb-6">
-                  {searchTypes.map((type) => (
-                    <button
-                      key={type.id}
-                      onClick={() => setSearchType(type.id)}
-                      className={`px-4 py-2 rounded-lg flex items-center space-x-2 transition-all ${
-                        searchType === type.id 
-                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' 
-                          : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                      }`}
-                    >
-                      {type.icon}
-                      <span className="text-sm font-medium">{type.name}</span>
-                    </button>
-                  ))}
-                </div>
-
-                {/* Search Input */}
-                <div className="relative max-w-2xl mx-auto mb-6">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={searchTypes.find(t => t.id === searchType)?.placeholder}
-                    className="w-full px-6 py-4 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-lg"
-                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                  />
-                  <button
-                    onClick={handleSearch}
-                    disabled={isSearching || !searchQuery.trim()}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg text-white font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-                  >
-                    {isSearching ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        <span>Searching...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Search className="w-4 h-4" />
-                        <span>Search</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                {/* Search Results Preview */}
-                <AnimatePresence>
-                  {showPreview && searchResults && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="bg-gray-800/50 border border-gray-600/50 rounded-xl p-6 max-w-2xl mx-auto"
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center space-x-3">
-                          <CheckCircle className="w-6 h-6 text-green-400" />
-                          <h3 className="text-lg font-semibold text-white">Results Found!</h3>
-                        </div>
-                        <div className="flex items-center space-x-2 text-sm text-gray-400">
-                          <Clock className="w-4 h-4" />
-                          <span>0.8s</span>
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-green-400">94.7%</div>
-                          <div className="text-sm text-gray-400">Confidence</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-blue-400">23</div>
-                          <div className="text-sm text-gray-400">Sources</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-purple-400">156</div>
-                          <div className="text-sm text-gray-400">Data Points</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-cyan-400">12</div>
-                          <div className="text-sm text-gray-400">Profiles</div>
-                        </div>
-                      </div>
-
-                      <div className="bg-gray-900/50 rounded-lg p-4 mb-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-gray-300">Preview Results</span>
-                          <span className="text-sm text-yellow-400">⭐ Premium Required</span>
-                        </div>
-                        <div className="space-y-2 text-sm text-gray-400">
-                          <div className="flex justify-between">
-                            <span>Location:</span>
-                            <span className="blur-sm">San Francisco, CA</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Associated Emails:</span>
-                            <span className="blur-sm">3 found</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Social Profiles:</span>
-                            <span className="blur-sm">7 found</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex space-x-3">
-                        <button className="flex-1 px-4 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-lg text-white font-medium transition-all">
-                          Get Full Report - $4.99
-                        </button>
-                        <button className="px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition-all">
-                          Save Search
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            </div>
-          </div>
-        </main>
-
-        {/* Trust Indicators */}
-        <section className="relative z-10 py-16 border-t border-gray-800/50">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-white mb-4">Trusted by Millions Worldwide</h2>
-              <p className="text-gray-400">Professional-grade intelligence platform used by investigators, businesses, and individuals</p>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-400 mb-2">50M+</div>
-                <div className="text-gray-400">Searches Performed</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-400 mb-2">8.9B</div>
-                <div className="text-gray-400">Records Indexed</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-400 mb-2">99.2%</div>
-                <div className="text-gray-400">Customer Satisfaction</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-cyan-400 mb-2">24/7</div>
-                <div className="text-gray-400">Expert Support</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Features Grid */}
-        <section className="relative z-10 py-16">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-white mb-4">
-                Advanced Intelligence{' '}
-                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  Capabilities
-                </span>
-              </h2>
-              <p className="text-xl text-gray-400">
-                Comprehensive search tools powered by AI and billions of data points
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                {
-                  icon: <Smartphone className="w-8 h-8" />,
-                  title: 'Phone Intelligence',
-                  description: 'Comprehensive phone number lookup with carrier info, location data, and associated profiles.',
-                  features: ['Carrier identification', 'Location tracking', 'Social media links', 'Background checks']
-                },
-                {
-                  icon: <Mail className="w-8 h-8" />,
-                  title: 'Email Investigation',
-                  description: 'Deep email analysis including verification, breach detection, and associated accounts.',
-                  features: ['Email verification', 'Breach monitoring', 'Account discovery', 'Social connections']
-                },
-                {
-                  icon: <User className="w-8 h-8" />,
-                  title: 'People Search',
-                  description: 'Advanced people finder with comprehensive background information and contact details.',
-                  features: ['Background checks', 'Contact information', 'Address history', 'Criminal records']
-                },
-                {
-                  icon: <AtSign className="w-8 h-8" />,
-                  title: 'Username Tracking',
-                  description: 'Cross-platform username investigation across social media and online platforms.',
-                  features: ['Social media profiles', 'Dating site accounts', 'Forum participation', 'Online activity']
-                },
-                {
-                  icon: <Image className="w-8 h-8" />,
-                  title: 'Reverse Image Search',
-                  description: 'Advanced image recognition and reverse lookup across the web and social platforms.',
-                  features: ['Facial recognition', 'Source identification', 'Profile matching', 'Duplicate detection']
-                },
-                {
-                  icon: <Globe className="w-8 h-8" />,
-                  title: 'IP & Network Analysis',
-                  description: 'Comprehensive IP address investigation including geolocation and network analysis.',
-                  features: ['Geolocation data', 'ISP information', 'Network topology', 'Security analysis']
-                }
-              ].map((feature, index) => (
+      {/* Futuristic Header */}
+      <motion.header 
+        className="relative z-50 backdrop-blur-xl bg-black/50 border-b border-cyan-500/20"
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+      >
+        <div className="max-w-8xl mx-auto px-8 py-6">
+          <div className="flex items-center justify-between">
+            {/* Holographic Logo */}
+            <motion.div 
+              className="flex items-center space-x-6"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <div className="relative">
                 <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 hover:border-blue-500/50 transition-all group"
+                  className="w-16 h-16 bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-cyan-500/50"
+                  animate={{
+                    boxShadow: [
+                      '0 0 20px rgba(6, 182, 212, 0.5)',
+                      '0 0 40px rgba(168, 85, 247, 0.5)',
+                      '0 0 20px rgba(6, 182, 212, 0.5)'
+                    ]
+                  }}
+                  transition={{ duration: 2, repeat: Infinity }}
                 >
-                  <div className="flex items-center space-x-3 mb-4">
-                    <div className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg text-white group-hover:shadow-lg group-hover:shadow-blue-600/25 transition-all">
-                      {feature.icon}
-                    </div>
-                    <h3 className="text-xl font-semibold text-white">{feature.title}</h3>
+                  <Brain className="w-9 h-9 text-white" />
+                </motion.div>
+                {/* Holographic Glow Ring */}
+                <motion.div
+                  className="absolute -inset-2 rounded-2xl border-2 border-cyan-400/30"
+                  animate={{
+                    rotate: 360,
+                    borderColor: ['rgba(6, 182, 212, 0.3)', 'rgba(168, 85, 247, 0.3)', 'rgba(6, 182, 212, 0.3)']
+                  }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                />
+              </div>
+              <div>
+                <h1 className="text-3xl font-black bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  IntelliSearch Pro
+                </h1>
+                <p className="text-sm text-cyan-300 font-semibold tracking-wide">Neural Intelligence Network</p>
+              </div>
+            </motion.div>
+
+            {/* Real-time Metrics HUD */}
+            <div className="hidden lg:flex items-center space-x-6">
+              {[
+                { label: 'Neural Users', value: liveMetrics.usersOnline.toLocaleString(), icon: <Users className="w-5 h-5" />, color: 'text-green-400', bg: 'bg-green-500/10' },
+                { label: 'AI Accuracy', value: `${liveMetrics.accuracy.toFixed(1)}%`, icon: <Brain className="w-5 h-5" />, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
+                { label: 'Quantum Scans', value: liveMetrics.searchesToday.toLocaleString(), icon: <Search className="w-5 h-5" />, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+                { label: 'Threat Matrix', value: liveMetrics.threats.toLocaleString(), icon: <Shield className="w-5 h-5" />, color: 'text-red-400', bg: 'bg-red-500/10' }
+              ].map((metric, i) => (
+                <motion.div
+                  key={metric.label}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl ${metric.bg} backdrop-blur border border-white/10 shadow-lg`}
+                  initial={{ opacity: 0, y: -20, scale: 0.8 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: i * 0.2, duration: 0.8 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                >
+                  <div className={metric.color}>{metric.icon}</div>
+                  <div>
+                    <div className={`font-bold ${metric.color} text-lg`}>{metric.value}</div>
+                    <div className="text-xs text-slate-400">{metric.label}</div>
                   </div>
-                  <p className="text-gray-400 mb-4">{feature.description}</p>
-                  <ul className="space-y-2">
-                    {feature.features.map((item, i) => (
-                      <li key={i} className="flex items-center space-x-2 text-sm text-gray-300">
-                        <CheckCircle className="w-4 h-4 text-green-400" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
                 </motion.div>
               ))}
             </div>
+
+            {/* Control Panel */}
+            <div className="flex items-center space-x-4">
+              <motion.button
+                className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-400/20 hover:bg-cyan-500/20 transition-all relative"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Bell className="w-6 h-6 text-cyan-400" />
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-pulse flex items-center justify-center">
+                  <span className="text-xs font-bold text-white">3</span>
+                </div>
+              </motion.button>
+              
+              <motion.button
+                className="p-3 rounded-xl bg-purple-500/10 border border-purple-400/20 hover:bg-purple-500/20 transition-all"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <User className="w-6 h-6 text-purple-400" />
+              </motion.button>
+            </div>
+          </div>
+        </div>
+      </motion.header>
+
+      <div className="relative z-10">
+        {/* Ultra-Futuristic Hero Section */}
+        <section className="relative pt-32 pb-40 overflow-hidden">
+          <div className="max-w-8xl mx-auto px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+              
+              {/* Left: Holographic Search Interface */}
+              <motion.div
+                initial={{ opacity: 0, x: -100 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
+                className="space-y-12"
+              >
+                <div className="space-y-8">
+                  <motion.h1 
+                    className="text-7xl lg:text-8xl font-black leading-tight"
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, duration: 1 }}
+                  >
+                    <motion.span 
+                      className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent"
+                      animate={{
+                        backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+                      }}
+                      transition={{ duration: 5, repeat: Infinity }}
+                    >
+                      Neural
+                    </motion.span>
+                    <br />
+                    <motion.span 
+                      className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent"
+                      animate={{
+                        backgroundPosition: ['100% 50%', '0% 50%', '100% 50%'],
+                      }}
+                      transition={{ duration: 5, repeat: Infinity }}
+                    >
+                      Intelligence
+                    </motion.span>
+                  </motion.h1>
+                  
+                  <motion.p 
+                    className="text-2xl text-slate-300 leading-relaxed max-w-3xl"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 1 }}
+                  >
+                    Next-generation quantum intelligence platform with 
+                    <span className="text-cyan-400 font-bold"> neural network processing</span>, 
+                    holographic visualization, and 
+                    <span className="text-purple-400 font-bold"> dimensional threat analysis</span>.
+                  </motion.p>
+                </div>
+
+                {/* Holographic Search Interface */}
+                <motion.div
+                  className="space-y-10 p-10 rounded-3xl bg-gradient-to-br from-slate-900/50 to-black/50 backdrop-blur-xl border border-cyan-500/20 shadow-2xl shadow-cyan-500/10"
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.9, duration: 1 }}
+                  style={{
+                    boxShadow: '0 0 60px rgba(6, 182, 212, 0.1), inset 0 1px 0 rgba(255,255,255,0.1)'
+                  }}
+                >
+                  {/* Search Type Selector */}
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xl font-bold text-white">Neural Analysis Type</h3>
+                      <div className="flex items-center space-x-3 text-sm text-cyan-400">
+                        <motion.div 
+                          className="w-3 h-3 bg-green-500 rounded-full"
+                          animate={{ opacity: [1, 0.3, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        />
+                        <span className="font-semibold">Quantum Network Online</span>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      {searchTypes.map((type, index) => (
+                        <motion.button
+                          key={type.id}
+                          onClick={() => setSearchType(type.id)}
+                          className={`p-6 rounded-2xl border-2 transition-all duration-500 relative overflow-hidden ${
+                            searchType === type.id
+                              ? 'border-cyan-400 bg-gradient-to-br from-cyan-500/20 to-purple-600/20 shadow-lg shadow-cyan-500/20'
+                              : 'border-white/10 bg-white/5 hover:border-cyan-400/50 hover:bg-cyan-500/10'
+                          }`}
+                          whileHover={{ 
+                            scale: 1.03, 
+                            y: -2,
+                            boxShadow: '0 10px 30px rgba(6, 182, 212, 0.2)'
+                          }}
+                          whileTap={{ scale: 0.98 }}
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 1.2 + index * 0.1 }}
+                        >
+                          {/* Holographic Background Effect */}
+                          {searchType === type.id && (
+                            <motion.div
+                              className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-600/10"
+                              animate={{
+                                opacity: [0.1, 0.3, 0.1],
+                                scale: [1, 1.05, 1]
+                              }}
+                              transition={{ duration: 2, repeat: Infinity }}
+                            />
+                          )}
+                          
+                          <div className="flex items-center space-x-4 mb-3 relative z-10">
+                            <motion.div 
+                              className={`p-3 rounded-xl bg-gradient-to-br ${type.color} ${type.glow} shadow-lg`}
+                              whileHover={{ rotate: 5, scale: 1.1 }}
+                            >
+                              {type.icon}
+                            </motion.div>
+                            <span className="font-bold text-white text-lg">{type.name}</span>
+                          </div>
+                          <p className="text-sm text-slate-400 text-left leading-relaxed relative z-10">
+                            {type.description}
+                          </p>
+                        </motion.button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Advanced Search Input */}
+                  <div className="space-y-6">
+                    <div className="relative">
+                      <motion.input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder={searchTypes.find(t => t.id === searchType)?.placeholder}
+                        className="w-full p-8 rounded-2xl bg-black/50 border-2 border-cyan-400/20 text-white placeholder-slate-400 focus:border-cyan-400 focus:outline-none transition-all duration-500 text-xl font-medium"
+                        style={{
+                          boxShadow: 'inset 0 2px 20px rgba(0,0,0,0.5), 0 0 20px rgba(6, 182, 212, 0.1)'
+                        }}
+                        whileFocus={{ 
+                          scale: 1.02,
+                          boxShadow: 'inset 0 2px 20px rgba(0,0,0,0.5), 0 0 30px rgba(6, 182, 212, 0.3)'
+                        }}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                      />
+                      
+                      {/* Holographic Search Indicator */}
+                      <AnimatePresence>
+                        {isSearching && (
+                          <motion.div
+                            className="absolute right-6 top-1/2 transform -translate-y-1/2"
+                            initial={{ opacity: 0, scale: 0 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0 }}
+                          >
+                            <motion.div
+                              className="w-10 h-10 rounded-full border-3 border-cyan-400 border-t-transparent"
+                              animate={{ rotate: 360 }}
+                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    {/* Neural Search Button */}
+                    <motion.button
+                      onClick={handleSearch}
+                      disabled={!searchQuery.trim() || isSearching}
+                      className="w-full p-8 rounded-2xl bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-600 text-white font-bold text-xl disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden shadow-2xl shadow-cyan-500/30"
+                      whileHover={{ 
+                        scale: 1.02, 
+                        boxShadow: '0 20px 40px rgba(6, 182, 212, 0.4)',
+                        y: -2
+                      }}
+                      whileTap={{ scale: 0.98 }}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 1.8 }}
+                    >
+                      {/* Animated Background Gradient */}
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-white/20 via-cyan-300/20 to-white/20"
+                        animate={{ x: ['-100%', '200%'] }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                      />
+                      
+                      <div className="flex items-center justify-center space-x-4 relative z-10">
+                        {isSearching ? (
+                          <>
+                            <motion.div
+                              animate={{ 
+                                rotate: 360,
+                                scale: [1, 1.2, 1]
+                              }}
+                              transition={{ 
+                                rotate: { duration: 2, repeat: Infinity, ease: "linear" },
+                                scale: { duration: 1, repeat: Infinity }
+                              }}
+                            >
+                              <Radar className="w-8 h-8" />
+                            </motion.div>
+                            <span className="text-xl">Neural Processing...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Search className="w-8 h-8" />
+                            <span className="text-xl">Launch Neural Analysis</span>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Holographic Border Effect */}
+                      {hologramEffect && (
+                        <motion.div
+                          className="absolute inset-0 rounded-2xl border-2 border-cyan-400"
+                          animate={{
+                            opacity: [0, 1, 0],
+                            scale: [1, 1.1, 1]
+                          }}
+                          transition={{ duration: 0.5, repeat: 3 }}
+                        />
+                      )}
+                    </motion.button>
+                  </div>
+                </motion.div>
+              </motion.div>
+
+              {/* Right: Holographic Visualization Dashboard */}
+              <motion.div
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
+                className="space-y-10"
+              >
+                {/* Live Neural Network Visualization */}
+                <div className="space-y-6">
+                  <h2 className="text-3xl font-bold text-white mb-8">Neural Network Activity</h2>
+                  
+                  {/* Holographic Display */}
+                  <motion.div
+                    className="h-96 rounded-3xl bg-gradient-to-br from-slate-900/50 to-black/80 backdrop-blur-xl border border-cyan-500/20 p-8 relative overflow-hidden shadow-2xl shadow-cyan-500/10"
+                    whileHover={{ scale: 1.02 }}
+                  >
+                    {/* Neural Network Visualization */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <motion.div
+                        className="w-64 h-64 relative"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                      >
+                        {/* Central Node */}
+                        <motion.div
+                          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-full shadow-lg shadow-cyan-500/50"
+                          animate={{
+                            scale: [1, 1.2, 1],
+                            boxShadow: [
+                              '0 0 20px rgba(6, 182, 212, 0.5)',
+                              '0 0 40px rgba(168, 85, 247, 0.8)',
+                              '0 0 20px rgba(6, 182, 212, 0.5)'
+                            ]
+                          }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        />
+                        
+                        {/* Orbital Nodes */}
+                        {[...Array(8)].map((_, i) => (
+                          <motion.div
+                            key={i}
+                            className="absolute w-8 h-8 bg-gradient-to-br from-pink-400 to-cyan-400 rounded-full shadow-lg"
+                            style={{
+                              top: '50%',
+                              left: '50%',
+                              transformOrigin: '0 0'
+                            }}
+                            animate={{
+                              rotate: i * 45,
+                              x: 100 * Math.cos((i * 45) * Math.PI / 180),
+                              y: 100 * Math.sin((i * 45) * Math.PI / 180),
+                              scale: [0.8, 1.2, 0.8]
+                            }}
+                            transition={{
+                              rotate: { duration: 10, repeat: Infinity, ease: "linear" },
+                              scale: { duration: 2, repeat: Infinity, delay: i * 0.2 }
+                            }}
+                          />
+                        ))}
+                      </motion.div>
+                    </div>
+
+                    {/* Data Overlay */}
+                    <div className="absolute top-6 left-6 space-y-2">
+                      <div className="text-cyan-400 font-bold text-lg">Neural Processing: {liveMetrics.aiProcessing.toFixed(1)}%</div>
+                      <div className="text-purple-400 font-semibold">Networks Scanned: {liveMetrics.networksScanned.toLocaleString()}</div>
+                      <div className="text-pink-400 font-semibold">Threat Analysis: Active</div>
+                    </div>
+
+                    {/* Scanning Effect */}
+                    <motion.div
+                      className="absolute inset-0 border-2 border-cyan-400/30 rounded-3xl"
+                      animate={{
+                        borderColor: ['rgba(6, 182, 212, 0.3)', 'rgba(168, 85, 247, 0.6)', 'rgba(6, 182, 212, 0.3)']
+                      }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                    />
+                  </motion.div>
+                </div>
+
+                {/* Advanced Metrics Grid */}
+                <div className="grid grid-cols-2 gap-6">
+                  {[
+                    { 
+                      title: 'Quantum Accuracy',
+                      value: `${liveMetrics.accuracy.toFixed(1)}%`,
+                      change: '+0.3%',
+                      color: 'from-green-400 to-emerald-600',
+                      icon: <Target className="w-6 h-6" />
+                    },
+                    { 
+                      title: 'Neural Speed',
+                      value: '0.24s',
+                      change: '-0.02s',
+                      color: 'from-cyan-400 to-blue-600',
+                      icon: <Zap className="w-6 h-6" />
+                    },
+                    { 
+                      title: 'Threat Matrix',
+                      value: liveMetrics.threats.toLocaleString(),
+                      change: '+12',
+                      color: 'from-red-400 to-pink-600',
+                      icon: <Shield className="w-6 h-6" />
+                    },
+                    { 
+                      title: 'Data Sources',
+                      value: '342+',
+                      change: '+3',
+                      color: 'from-purple-400 to-indigo-600',
+                      icon: <Database className="w-6 h-6" />
+                    }
+                  ].map((metric, index) => (
+                    <motion.div
+                      key={metric.title}
+                      className="p-6 rounded-2xl bg-gradient-to-br from-slate-900/50 to-black/50 backdrop-blur-xl border border-white/10 relative overflow-hidden"
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 2 + index * 0.1 }}
+                      whileHover={{ 
+                        scale: 1.05, 
+                        y: -5,
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+                      }}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div className={`p-2 rounded-lg bg-gradient-to-br ${metric.color}`}>
+                          {metric.icon}
+                        </div>
+                        <span className="text-green-400 text-sm font-semibold">{metric.change}</span>
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <div className="text-2xl font-black text-white">{metric.value}</div>
+                        <div className="text-sm text-slate-400">{metric.title}</div>
+                      </div>
+
+                      {/* Glow Effect */}
+                      <motion.div
+                        className={`absolute inset-0 bg-gradient-to-br ${metric.color} opacity-0 rounded-2xl`}
+                        whileHover={{ opacity: 0.1 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="relative z-10 border-t border-gray-800/50 bg-gray-900/50 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-6 py-12">
-            <div className="grid md:grid-cols-4 gap-8">
-              <div>
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                    <Search className="w-5 h-5 text-white" />
+        {/* Search Results with Holographic Display */}
+        <AnimatePresence>
+          {showPreview && searchResults && (
+            <motion.section
+              className="py-20 relative"
+              initial={{ opacity: 0, y: 100 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -100 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              <div className="max-w-6xl mx-auto px-8">
+                <motion.div
+                  className="p-10 rounded-3xl bg-gradient-to-br from-slate-900/80 to-black/60 backdrop-blur-xl border border-cyan-500/20 shadow-2xl shadow-cyan-500/20"
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <div className="flex items-center justify-between mb-10">
+                    <div className="flex items-center space-x-6">
+                      <motion.div 
+                        className="p-4 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/50"
+                        animate={{
+                          boxShadow: [
+                            '0 0 20px rgba(16, 185, 129, 0.5)',
+                            '0 0 40px rgba(16, 185, 129, 0.8)',
+                            '0 0 20px rgba(16, 185, 129, 0.5)'
+                          ]
+                        }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
+                        <CheckCircle className="w-8 h-8 text-white" />
+                      </motion.div>
+                      <div>
+                        <h3 className="text-3xl font-bold text-white">Neural Analysis Complete</h3>
+                        <p className="text-slate-400 text-lg">Quantum verification successful • 97.8% confidence</p>
+                      </div>
+                    </div>
+                    
+                    <motion.button
+                      onClick={() => setShowPreview(false)}
+                      className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
+                      whileHover={{ scale: 1.1, rotate: 90 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <XCircle className="w-8 h-8 text-slate-400" />
+                    </motion.button>
                   </div>
-                  <span className="text-xl font-bold text-white">IntelliSearch Pro</span>
-                </div>
-                <p className="text-gray-400 text-sm">
-                  The world's most advanced intelligence search platform. Find anyone, anywhere, instantly.
-                </p>
+
+                  {/* Holographic Results Display */}
+                  <div className="space-y-8 mb-10">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {Object.entries(searchResults).map(([key, value], index) => (
+                        <motion.div
+                          key={key}
+                          className="p-6 rounded-2xl bg-black/40 border border-cyan-400/20 relative overflow-hidden"
+                          initial={{ opacity: 0, scale: 0.8, y: 30 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          whileHover={{ scale: 1.02, y: -5 }}
+                        >
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-sm text-cyan-400 font-semibold uppercase tracking-wide">
+                              {key.replace(/([A-Z])/g, ' $1').trim()}
+                            </span>
+                            <motion.div 
+                              className="w-3 h-3 bg-green-500 rounded-full"
+                              animate={{ opacity: [1, 0.3, 1] }}
+                              transition={{ duration: 2, repeat: Infinity }}
+                            />
+                          </div>
+                          
+                          <div className="relative">
+                            {/* Blurred Preview Effect */}
+                            <div className="filter blur-sm select-none pointer-events-none">
+                              <span className="text-white font-bold text-lg">{String(value)}</span>
+                            </div>
+                            
+                            {/* Unlock Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-600/20 rounded-lg flex items-center justify-center">
+                              <Lock className="w-6 h-6 text-cyan-400" />
+                            </div>
+                          </div>
+
+                          {/* Scanning Lines */}
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent h-full"
+                            animate={{ x: ['-100%', '200%'] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                          />
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Premium Neural Unlock */}
+                  <motion.div
+                    className="text-center space-y-8"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8 }}
+                  >
+                    <div className="space-y-4">
+                      <h4 className="text-3xl font-bold text-white">Unlock Full Neural Analysis</h4>
+                      <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+                        Access complete quantum intelligence report with dimensional analysis, 
+                        threat assessment, and neural network verification
+                      </p>
+                    </div>
+                    
+                    <motion.button
+                      className="px-12 py-6 rounded-2xl bg-gradient-to-r from-green-500 via-emerald-600 to-teal-600 text-white font-bold text-xl shadow-2xl shadow-green-500/30 relative overflow-hidden"
+                      whileHover={{ 
+                        scale: 1.05, 
+                        boxShadow: '0 20px 40px rgba(16, 185, 129, 0.4)',
+                        y: -3
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
+                        animate={{ x: ['-100%', '200%'] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      />
+                      <span className="relative z-10">Get Full Neural Report - $7.99</span>
+                    </motion.button>
+                    
+                    <div className="flex items-center justify-center space-x-8 text-slate-400">
+                      {[
+                        { icon: <CheckCircle className="w-5 h-5 text-green-400" />, text: 'Instant Neural Access' },
+                        { icon: <Shield className="w-5 h-5 text-blue-400" />, text: 'Quantum Security' },
+                        { icon: <Award className="w-5 h-5 text-purple-400" />, text: 'Verified Intelligence' }
+                      ].map((item, i) => (
+                        <motion.span 
+                          key={i}
+                          className="flex items-center space-x-2"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 1 + i * 0.1 }}
+                        >
+                          {item.icon}
+                          <span className="font-semibold">{item.text}</span>
+                        </motion.span>
+                      ))}
+                    </div>
+                  </motion.div>
+                </motion.div>
               </div>
+            </motion.section>
+          )}
+        </AnimatePresence>
+
+        {/* Call to Action */}
+        <section className="py-32 relative">
+          <div className="max-w-6xl mx-auto px-8 text-center">
+            <motion.div
+              className="space-y-12"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1 }}
+              viewport={{ once: true }}
+            >
+              <motion.h2 
+                className="text-6xl font-black"
+                animate={{
+                  backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+                }}
+                transition={{ duration: 5, repeat: Infinity }}
+              >
+                <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  Ready for Neural Intelligence?
+                </span>
+              </motion.h2>
               
-              <div>
-                <h4 className="font-semibold text-white mb-4">Services</h4>
-                <ul className="space-y-2 text-sm text-gray-400">
-                  <li><a href="#" className="hover:text-white transition-colors">Phone Lookup</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Email Search</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">People Finder</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Image Search</a></li>
-                </ul>
-              </div>
+              <p className="text-2xl text-slate-400 leading-relaxed max-w-4xl mx-auto">
+                Join the future of intelligence gathering with our quantum-powered platform. 
+                Experience the next evolution of digital investigation.
+              </p>
               
-              <div>
-                <h4 className="font-semibold text-white mb-4">Company</h4>
-                <ul className="space-y-2 text-sm text-gray-400">
-                  <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
-                </ul>
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <motion.button
+                  className="px-12 py-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-bold text-xl shadow-2xl shadow-cyan-500/30"
+                  whileHover={{ 
+                    scale: 1.05, 
+                    boxShadow: '0 20px 40px rgba(6, 182, 212, 0.4)',
+                    y: -3
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Begin Neural Analysis
+                </motion.button>
+                
+                <motion.button
+                  className="px-12 py-6 rounded-2xl border-2 border-cyan-400/50 text-cyan-400 font-bold text-xl hover:bg-cyan-500/10 transition-all"
+                  whileHover={{ 
+                    scale: 1.05,
+                    borderColor: 'rgba(6, 182, 212, 1)',
+                    boxShadow: '0 10px 30px rgba(6, 182, 212, 0.3)',
+                    y: -3
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Explore Quantum Features
+                </motion.button>
               </div>
-              
-              <div>
-                <h4 className="font-semibold text-white mb-4">Support</h4>
-                <ul className="space-y-2 text-sm text-gray-400">
-                  <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">API Docs</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Status</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Contact Support</a></li>
-                </ul>
-              </div>
+            </motion.div>
+          </div>
+        </section>
+      </div>
+
+      {/* Futuristic Footer */}
+      <footer className="relative border-t border-cyan-500/20 bg-black/80 backdrop-blur-xl">
+        <div className="max-w-8xl mx-auto px-8 py-20">
+          <div className="text-center space-y-8">
+            <div className="flex items-center justify-center space-x-4">
+              <motion.div
+                className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-xl flex items-center justify-center"
+                animate={{
+                  boxShadow: [
+                    '0 0 20px rgba(6, 182, 212, 0.5)',
+                    '0 0 40px rgba(168, 85, 247, 0.5)',
+                    '0 0 20px rgba(6, 182, 212, 0.5)'
+                  ]
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
+                <Brain className="w-7 h-7 text-white" />
+              </motion.div>
+              <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                IntelliSearch Pro
+              </span>
             </div>
             
-            <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-              <p>&copy; 2024 IntelliSearch Pro. All rights reserved. Professional intelligence platform.</p>
+            <p className="text-slate-400 text-lg max-w-3xl mx-auto leading-relaxed">
+              Next-generation neural intelligence platform. Powered by quantum computing, 
+              enhanced by AI, secured by advanced encryption.
+            </p>
+            
+            <div className="text-slate-500 text-sm">
+              © 2024 IntelliSearch Pro. Neural Intelligence Network. All rights reserved.
             </div>
           </div>
-        </footer>
-      </div>
-    </>
+        </div>
+      </footer>
+
+      <style jsx>{`
+        @keyframes drift {
+          0% { transform: translateX(0px) translateY(0px); }
+          25% { transform: translateX(10px) translateY(-10px); }
+          50% { transform: translateX(-5px) translateY(-20px); }
+          75% { transform: translateX(-15px) translateY(-10px); }
+          100% { transform: translateX(0px) translateY(0px); }
+        }
+      `}</style>
+    </div>
   )
 }
