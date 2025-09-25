@@ -21,14 +21,14 @@ def main():
     print("-" * 60)
     
     # Check if we're in the right directory
-    if not Path("unified_app.py").exists():
-        print("❌ Error: unified_app.py not found")
+    if not Path("backend/unified_app.py").exists():
+        print("❌ Error: backend/unified_app.py not found")
         print("Please run this script from the project root directory")
         sys.exit(1)
     
     # Start the unified application
     try:
-        subprocess.run([sys.executable, "unified_app.py"], check=True)
+        subprocess.run([sys.executable, "backend/unified_app.py"], check=True)
     except KeyboardInterrupt:
         print("\n🛑 Platform stopped by user")
     except subprocess.CalledProcessError as e:
