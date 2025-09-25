@@ -1,0 +1,552 @@
+{% extends "base.html" %}
+{% block title %}Privacy & Compliance - Intelligence Platform{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="d-flex align-items-center mb-2">
+            <i class="fas fa-shield-alt me-3 text-primary"></i>
+            Privacy & Compliance Center
+        </h1>
+        <p class="text-muted">Manage your privacy rights, data preferences, and view compliance information</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <div class="dropdown">
+            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-download me-2"></i>Download My Data
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#" onclick="requestDataExport('json')">JSON Format</a></li>
+                <li><a class="dropdown-item" href="#" onclick="requestDataExport('csv')">CSV Format</a></li>
+                <li><a class="dropdown-item" href="#" onclick="requestDataExport('pdf')">PDF Report</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Rights Cards -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0"><i class="fas fa-user-shield me-2 text-success"></i>Your Privacy Rights</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-3">Under GDPR and CCPA, you have the following rights regarding your personal data:</p>
+                
+                <div class="privacy-right mb-3">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h6 class="mb-1">Right to Access</h6>
+                            <small class="text-muted">View all personal data we have about you</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="submitPrivacyRequest('access')">Request</button>
+                    </div>
+                </div>
+                
+                <div class="privacy-right mb-3">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h6 class="mb-1">Right to Rectification</h6>
+                            <small class="text-muted">Correct inaccurate personal data</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-warning" onclick="submitPrivacyRequest('rectification')">Request</button>
+                    </div>
+                </div>
+                
+                <div class="privacy-right mb-3">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h6 class="mb-1">Right to Erasure</h6>
+                            <small class="text-muted">Delete your personal data ('right to be forgotten')</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger" onclick="submitPrivacyRequest('erasure')">Request</button>
+                    </div>
+                </div>
+                
+                <div class="privacy-right mb-3">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h6 class="mb-1">Right to Data Portability</h6>
+                            <small class="text-muted">Export your data in a machine-readable format</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-info" onclick="submitPrivacyRequest('portability')">Request</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0"><i class="fas fa-cog me-2 text-info"></i>Privacy Preferences</h5>
+            </div>
+            <div class="card-body">
+                <form id="privacyPreferencesForm">
+                    <div class="consent-item mb-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1">Data Processing</h6>
+                                <small class="text-muted">Essential for platform functionality</small>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="consent_data_processing" checked disabled>
+                                <label class="form-check-label text-muted" for="consent_data_processing">Required</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="consent-item mb-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1">Analytics & Performance</h6>
+                                <small class="text-muted">Help us improve the platform with usage analytics</small>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="consent_analytics" checked onchange="updateConsent('analytics', this.checked)">
+                                <label class="form-check-label" for="consent_analytics"></label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="consent-item mb-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1">Marketing Communications</h6>
+                                <small class="text-muted">Receive updates about new features and improvements</small>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="consent_marketing" onchange="updateConsent('marketing', this.checked)">
+                                <label class="form-check-label" for="consent_marketing"></label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="consent-item mb-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1">Third-party Integrations</h6>
+                                <small class="text-muted">Allow data sharing with approved partners for enhanced features</small>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="consent_integrations" onchange="updateConsent('integrations', this.checked)">
+                                <label class="form-check-label" for="consent_integrations"></label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <small class="text-muted">Last updated: <span id="consent-last-updated">Just now</span></small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Requests Status -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-list-alt me-2 text-warning"></i>Privacy Requests Status</h5>
+                <button class="btn btn-sm btn-outline-primary" onclick="refreshPrivacyRequests()">
+                    <i class="fas fa-sync-alt me-1"></i>Refresh
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="privacy-requests-container">
+                    <div class="text-center py-4">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <h6 class="text-muted">No privacy requests submitted</h6>
+                        <p class="text-muted small">Your privacy requests will appear here once submitted</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data Summary -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0"><i class="fas fa-database me-2 text-secondary"></i>Your Data Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="data-category mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">Scan History</h6>
+                            <small class="text-muted">Intelligence scans you've performed</small>
+                        </div>
+                        <span class="badge bg-primary">47 scans</span>
+                    </div>
+                </div>
+                
+                <div class="data-category mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">Generated Reports</h6>
+                            <small class="text-muted">PDF and data export reports</small>
+                        </div>
+                        <span class="badge bg-success">12 reports</span>
+                    </div>
+                </div>
+                
+                <div class="data-category mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">Account Information</h6>
+                            <small class="text-muted">Profile and preference data</small>
+                        </div>
+                        <span class="badge bg-info">1 profile</span>
+                    </div>
+                </div>
+                
+                <div class="data-category mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">Audit Logs</h6>
+                            <small class="text-muted">Activity and security logs</small>
+                        </div>
+                        <span class="badge bg-warning">156 entries</span>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <button class="btn btn-outline-primary btn-sm" onclick="viewDetailedDataSummary()">
+                        <i class="fas fa-eye me-1"></i>View Detailed Summary
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0"><i class="fas fa-shield-check me-2 text-success"></i>Compliance Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="compliance-indicator mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>GDPR Compliant</strong>
+                    </div>
+                    <small class="text-muted">European data protection regulation compliance</small>
+                </div>
+                
+                <div class="compliance-indicator mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>CCPA Compliant</strong>
+                    </div>
+                    <small class="text-muted">California consumer privacy act compliance</small>
+                </div>
+                
+                <div class="compliance-indicator mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>SOC 2 Type II</strong>
+                    </div>
+                    <small class="text-muted">Security, availability, and confidentiality controls</small>
+                </div>
+                
+                <div class="compliance-indicator mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-lock text-primary me-2"></i>
+                        <strong>Data Encryption</strong>
+                    </div>
+                    <small class="text-muted">AES-256 encryption for data at rest and in transit</small>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <a href="/compliance/report" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-certificate me-1"></i>View Compliance Report
+                    </a>
+                </div>  
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Request Modal -->
+<div class="modal fade" id="privacyRequestModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-user-shield me-2"></i>Submit Privacy Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="privacyRequestForm">
+                    <div class="mb-3">
+                        <label for="requestType" class="form-label">Request Type</label>
+                        <select class="form-select" id="requestType" name="request_type" required>
+                            <option value="">Select request type...</option>
+                            <option value="access">Data Access Request</option>
+                            <option value="rectification">Data Correction Request</option>
+                            <option value="erasure">Data Deletion Request</option>
+                            <option value="portability">Data Export Request</option>
+                            <option value="restriction">Processing Restriction</option>
+                            <option value="objection">Object to Processing</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="requestDetails" class="form-label">Additional Details (Optional)</label>
+                        <textarea class="form-control" id="requestDetails" name="details" rows="3" 
+                                placeholder="Please provide any additional details about your request..."></textarea>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Processing Time:</strong> We will respond to your request within 30 days as required by GDPR/CCPA regulations.
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitPrivacyRequestForm()">
+                    <i class="fas fa-paper-plane me-2"></i>Submit Request
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.privacy-right {
+    border-left: 3px solid var(--bs-primary);
+    padding-left: 1rem;
+    background-color: rgba(13, 110, 253, 0.05);
+    border-radius: 0 8px 8px 0;
+}
+
+.consent-item {
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: rgba(248, 249, 250, 0.5);
+}
+
+.data-category {
+    padding: 0.75rem;
+    border-radius: 8px;
+    background-color: rgba(248, 249, 250, 0.8);
+    border-left: 4px solid var(--bs-info);
+}
+
+.compliance-indicator {
+    padding: 0.5rem;
+    border-radius: 6px;
+    background-color: rgba(25, 135, 84, 0.05);
+}
+
+.form-check-input:checked {
+    background-color: var(--bs-success);
+    border-color: var(--bs-success);
+}
+</style>
+
+<script>
+// Current user ID (would be set from session/auth)
+const currentUserId = 'user_123';
+
+// Load user consent status on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadUserConsentStatus();
+    loadPrivacyRequests();
+});
+
+async function loadUserConsentStatus() {
+    try {
+        const response = await fetch(`/api/v1/compliance/consent/${currentUserId}`);
+        const data = await response.json();
+        
+        if (data.success && data.data.consents) {
+            const consents = data.data.consents;
+            
+            // Update consent toggles
+            if (consents.analytics) {
+                document.getElementById('consent_analytics').checked = consents.analytics.granted;
+            }
+            if (consents.marketing) {
+                document.getElementById('consent_marketing').checked = consents.marketing.granted;
+            }
+            
+            // Update last updated time
+            document.getElementById('consent-last-updated').textContent = 
+                new Date(data.data.last_updated).toLocaleString();
+        }
+    } catch (error) {
+        console.error('Error loading consent status:', error);
+    }
+}
+
+async function updateConsent(consentType, granted) {
+    try {
+        const response = await fetch(`/api/v1/compliance/consent?user_id=${currentUserId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                consent_type: consentType,
+                granted: granted,
+                consent_text: `User ${granted ? 'granted' : 'withdrew'} consent for ${consentType}`
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('success', `Consent ${granted ? 'granted' : 'withdrawn'} successfully`);
+            document.getElementById('consent-last-updated').textContent = 'Just now';
+        } else {
+            showAlert('danger', 'Failed to update consent preferences');
+        }
+    } catch (error) {
+        console.error('Error updating consent:', error);
+        showAlert('danger', 'Error updating consent preferences');
+    }
+}
+
+async function submitPrivacyRequest(requestType) {
+    // Show modal with pre-selected request type
+    document.getElementById('requestType').value = requestType;
+    const modal = new bootstrap.Modal(document.getElementById('privacyRequestModal'));
+    modal.show();
+}
+
+async function submitPrivacyRequestForm() {
+    const form = document.getElementById('privacyRequestForm');
+    const formData = new FormData(form);
+    
+    try {
+        const response = await fetch(`/api/v1/compliance/privacy-requests?user_id=${currentUserId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_email: 'user@example.com', // Would get from user profile
+                request_type: formData.get('request_type'),
+                details: { message: formData.get('details') }
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('success', `Privacy request submitted successfully. Request ID: ${result.request_id}`);
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('privacyRequestModal'));
+            modal.hide();
+            
+            // Refresh privacy requests list
+            loadPrivacyRequests();
+        } else {
+            showAlert('danger', 'Failed to submit privacy request');
+        }
+    } catch (error) {
+        console.error('Error submitting privacy request:', error);
+        showAlert('danger', 'Error submitting privacy request');
+    }
+}
+
+async function loadPrivacyRequests() {
+    // This would load actual privacy requests from the API
+    // For now, we'll show placeholder content
+    const container = document.getElementById('privacy-requests-container');
+    
+    // Mock request for demonstration
+    const mockRequests = [
+        {
+            id: 'req_001',
+            type: 'Data Access',
+            status: 'Processing',
+            submitted: '2024-01-15',
+            estimated_completion: '2024-02-14'
+        }
+    ];
+    
+    if (mockRequests.length > 0) {
+        container.innerHTML = mockRequests.map(req => `
+            <div class="privacy-request-item border rounded p-3 mb-3">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <strong>${req.type}</strong>
+                        <br><small class="text-muted">ID: ${req.id}</small>
+                    </div>
+                    <div class="col-md-2">
+                        <span class="badge bg-warning">${req.status}</span>
+                    </div>
+                    <div class="col-md-3">
+                        <small class="text-muted">Submitted: ${req.submitted}</small>
+                    </div>
+                    <div class="col-md-3">
+                        <small class="text-muted">Est. completion: ${req.estimated_completion}</small>
+                    </div>
+                    <div class="col-md-1">
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewRequestDetails('${req.id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+async function requestDataExport(format) {
+    showAlert('info', `Preparing data export in ${format.toUpperCase()} format...`);
+    // Would trigger actual data export
+}
+
+async function viewDetailedDataSummary() {
+    try {
+        const response = await fetch(`/api/v1/compliance/data-summary/${currentUserId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            // Would show detailed data summary in a modal or new page
+            showAlert('info', 'Loading detailed data summary...');
+            console.log('Data summary:', data.data);
+        }
+    } catch (error) {
+        console.error('Error loading data summary:', error);
+    }
+}
+
+function refreshPrivacyRequests() {
+    loadPrivacyRequests();
+    showAlert('success', 'Privacy requests refreshed');
+}
+
+function viewRequestDetails(requestId) {
+    // Would show detailed request status
+    showAlert('info', `Loading details for request ${requestId}...`);
+}
+
+// Alert helper function
+function showAlert(type, message) {
+    const alertsContainer = document.getElementById('alertsContainer');
+    if (!alertsContainer) return;
+    
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type} alert-dismissible fade show`;
+    alert.innerHTML = `
+        <i class="fas fa-info-circle me-2"></i>${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    alertsContainer.appendChild(alert);
+    
+    setTimeout(() => alert.remove(), 5000);
+}
+</script>
+{% endblock %}

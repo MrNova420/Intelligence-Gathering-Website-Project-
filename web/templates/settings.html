@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+{% block title %}Settings - Intelligence Platform{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <!-- Settings Sidebar -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-cog me-2"></i>Settings</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="#preferences" class="list-group-item list-group-item-action active" data-bs-toggle="pill">
+                    <i class="fas fa-palette me-2"></i>Preferences
+                </a>
+                <a href="#account" class="list-group-item list-group-item-action" data-bs-toggle="pill">
+                    <i class="fas fa-user me-2"></i>Account
+                </a>
+                <a href="#security" class="list-group-item list-group-item-action" data-bs-toggle="pill">
+                    <i class="fas fa-shield-alt me-2"></i>Security
+                </a>
+                <a href="#notifications" class="list-group-item list-group-item-action" data-bs-toggle="pill">
+                    <i class="fas fa-bell me-2"></i>Notifications
+                </a>
+                <a href="#api" class="list-group-item list-group-item-action" data-bs-toggle="pill">
+                    <i class="fas fa-code me-2"></i>API Keys
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <div class="tab-content">
+            <!-- Preferences Tab -->
+            <div class="tab-pane fade show active" id="preferences">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-palette me-2"></i>User Preferences</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="preferencesForm" method="POST" action="/api/v1/preferences">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="theme" class="form-label">Theme</label>
+                                        <select class="form-select" id="theme" name="theme">
+                                            <option value="dark" {% if preferences.theme == 'dark' %}selected{% endif %}>Dark Mode</option>
+                                            <option value="light" {% if preferences.theme == 'light' %}selected{% endif %}>Light Mode</option>
+                                            <option value="auto" {% if preferences.theme == 'auto' %}selected{% endif %}>Auto (System)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="language" class="form-label">Language</label>
+                                        <select class="form-select" id="language" name="language">
+                                            <option value="en" {% if preferences.language == 'en' %}selected{% endif %}>English</option>
+                                            <option value="es" {% if preferences.language == 'es' %}selected{% endif %}>Español</option>
+                                            <option value="fr" {% if preferences.language == 'fr' %}selected{% endif %}>Français</option>
+                                            <option value="de" {% if preferences.language == 'de' %}selected{% endif %}>Deutsch</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="default_scan_type" class="form-label">Default Scan Type</label>
+                                        <select class="form-select" id="default_scan_type" name="default_scan_type">
+                                            <option value="email" {% if preferences.default_scan_type == 'email' %}selected{% endif %}>Email Investigation</option>
+                                            <option value="phone" {% if preferences.default_scan_type == 'phone' %}selected{% endif %}>Phone Investigation</option>
+                                            <option value="domain" {% if preferences.default_scan_type == 'domain' %}selected{% endif %}>Domain Analysis</option>
+                                            <option value="social" {% if preferences.default_scan_type == 'social' %}selected{% endif %}>Social Media</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="auto_refresh" class="form-label">Dashboard Auto-refresh (seconds)</label>
+                                        <input type="range" class="form-range" id="auto_refresh" name="auto_refresh" min="10" max="300" value="{{ preferences.auto_refresh }}" step="10">
+                                        <div class="d-flex justify-content-between">
+                                            <small class="text-muted">10s</small>
+                                            <small class="text-muted" id="refresh-value">{{ preferences.auto_refresh }}s</small>
+                                            <small class="text-muted">5min</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="notifications" name="notifications" {% if preferences.notifications %}checked{% endif %}>
+                                            <label class="form-check-label" for="notifications">
+                                                Enable Notifications
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="auto_save" name="auto_save" checked>
+                                            <label class="form-check-label" for="auto_save">
+                                                Auto-save Scan Results
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="advanced_mode" name="advanced_mode">
+                                            <label class="form-check-label" for="advanced_mode">
+                                                Advanced Mode (Power Users)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary" onclick="resetToDefaults()">
+                                    <i class="fas fa-undo me-2"></i>Reset to Defaults
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Save Preferences
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Account Tab -->
+            <div class="tab-pane fade" id="account">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-user me-2"></i>Account Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 text-center">
+                                <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 100px; height: 100px;">
+                                    <i class="fas fa-user fa-3x text-white"></i>
+                                </div>
+                                <h6>Professional User</h6>
+                                <span class="badge bg-success">Active</span>
+                            </div>
+                            <div class="col-md-8">
+                                <h6>Account Statistics</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-calendar me-2 text-muted"></i>Member since: <strong>January 2024</strong></li>
+                                    <li><i class="fas fa-search me-2 text-muted"></i>Total scans: <strong>1,247</strong></li>
+                                    <li><i class="fas fa-file-pdf me-2 text-muted"></i>Reports generated: <strong>156</strong></li>
+                                    <li><i class="fas fa-clock me-2 text-muted"></i>Last activity: <strong>2 minutes ago</strong></li>
+                                </ul>
+                                
+                                <hr>
+                                
+                                <h6>Subscription</h6>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-crown me-2"></i>
+                                    <strong>Professional Plan</strong> - Unlimited scans, advanced features, priority support
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Security Tab -->
+            <div class="tab-pane fade" id="security">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-shield-alt me-2"></i>Security Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Your account security is up to date
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Authentication</h6>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="two_factor" checked>
+                                    <label class="form-check-label" for="two_factor">
+                                        Two-Factor Authentication
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="login_alerts" checked>
+                                    <label class="form-check-label" for="login_alerts">
+                                        Login Alerts
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6>Session Management</h6>
+                                <p class="text-muted small">Active sessions: <strong>2</strong></p>
+                                <button class="btn btn-outline-danger btn-sm">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Terminate All Sessions
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notifications Tab -->
+            <div class="tab-pane fade" id="notifications">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-bell me-2"></i>Notification Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Email Notifications</h6>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="email_scan_complete" checked>
+                                    <label class="form-check-label" for="email_scan_complete">
+                                        Scan completion
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="email_weekly_report">
+                                    <label class="form-check-label" for="email_weekly_report">
+                                        Weekly reports
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="email_security_alerts" checked>
+                                    <label class="form-check-label" for="email_security_alerts">
+                                        Security alerts
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6>Browser Notifications</h6>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="browser_scan_updates" checked>
+                                    <label class="form-check-label" for="browser_scan_updates">
+                                        Scan status updates
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="browser_system_alerts" checked>
+                                    <label class="form-check-label" for="browser_system_alerts">
+                                        System alerts
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- API Tab -->
+            <div class="tab-pane fade" id="api">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-code me-2"></i>API Keys & Integration</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            API keys allow you to integrate the Intelligence Platform with external applications.
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Primary API Key</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control font-monospace" value="sk_live_abc123def456ghi789" readonly id="apiKey">
+                                <button class="btn btn-outline-secondary" type="button" onclick="toggleApiKeyVisibility()">
+                                    <i class="fas fa-eye" id="apiKeyIcon"></i>
+                                </button>
+                                <button class="btn btn-outline-primary" type="button" onclick="copyApiKey()">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted">Created: Jan 15, 2024 | Last used: 2 hours ago</small>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success">
+                                <i class="fas fa-plus me-2"></i>Generate New Key
+                            </button>
+                            <button class="btn btn-outline-danger">
+                                <i class="fas fa-trash me-2"></i>Revoke Key
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-refresh slider value display
+document.getElementById('auto_refresh').addEventListener('input', function() {
+    document.getElementById('refresh-value').textContent = this.value + 's';
+});
+
+// Preferences form submission
+document.getElementById('preferencesForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    try {
+        const response = await fetch('/api/v1/preferences', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('success', 'Preferences updated successfully!');
+            
+            // Apply theme change immediately
+            const theme = formData.get('theme');
+            if (theme !== 'auto') {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+                localStorage.setItem('theme', theme);
+            }
+        } else {
+            showAlert('danger', 'Failed to update preferences: ' + result.error);
+        }
+    } catch (error) {
+        showAlert('danger', 'Error updating preferences: ' + error.message);
+    }
+});
+
+// Reset to defaults
+function resetToDefaults() {
+    if (confirm('Are you sure you want to reset all preferences to defaults?')) {
+        document.getElementById('theme').value = 'dark';
+        document.getElementById('language').value = 'en';
+        document.getElementById('default_scan_type').value = 'email';
+        document.getElementById('auto_refresh').value = '30';
+        document.getElementById('refresh-value').textContent = '30s';
+        document.getElementById('notifications').checked = true;
+        document.getElementById('auto_save').checked = true;
+        document.getElementById('advanced_mode').checked = false;
+    }
+}
+
+// API Key visibility toggle
+function toggleApiKeyVisibility() {
+    const apiKey = document.getElementById('apiKey');
+    const icon = document.getElementById('apiKeyIcon');
+    
+    if (apiKey.type === 'password') {
+        apiKey.type = 'text';
+        icon.className = 'fas fa-eye-slash';
+    } else {
+        apiKey.type = 'password';
+        icon.className = 'fas fa-eye';
+    }
+}
+
+// Copy API key
+function copyApiKey() {
+    const apiKey = document.getElementById('apiKey');
+    apiKey.select();
+    document.execCommand('copy');
+    showAlert('success', 'API key copied to clipboard!');
+}
+
+// Alert helper
+function showAlert(type, message) {
+    const alertsContainer = document.getElementById('alertsContainer');
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type} alert-dismissible fade show`;
+    alert.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    alertsContainer.appendChild(alert);
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+        alert.remove();
+    }, 5000);
+}
+</script>
+{% endblock %}

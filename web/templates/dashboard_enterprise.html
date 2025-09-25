@@ -1,0 +1,635 @@
+{% extends "base.html" %}
+{% block title %}Intelligence Dashboard - Enterprise Edition{% endblock %}
+
+{% block content %}
+<!-- Enhanced Dashboard Header - GitHub Inspired -->
+<div class="dashboard-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <div class="dashboard-title text-gradient">
+                <i class="fas fa-chart-line me-3"></i>Intelligence Dashboard
+            </div>
+            <p class="dashboard-subtitle mb-0">
+                Real-time intelligence analytics and system monitoring
+                <span class="badge bg-success ms-2">Live</span>
+            </p>
+        </div>
+        <div class="col-md-4 text-end">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-primary" onclick="refreshDashboard()">
+                    <i class="fas fa-sync-alt me-1"></i>Refresh
+                </button>
+                <button type="button" class="btn btn-outline-primary" onclick="quickScan()">
+                    <i class="fas fa-bolt me-1"></i>Quick Scan
+                </button>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fas fa-download me-1"></i>Export
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="exportAdvanced('pdf')">
+                            <i class="fas fa-file-pdf me-2"></i>PDF Report
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="exportAdvanced('json')">
+                            <i class="fas fa-file-code me-2"></i>JSON Data
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="exportAdvanced('csv')">
+                            <i class="fas fa-file-csv me-2"></i>CSV Export
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Status Banner -->
+<div class="alert alert-success alert-dismissible fade show glass-effect" role="alert">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-shield-check fa-2x me-3 text-success"></i>
+                <div>
+                    <h6 class="mb-1">
+                        <strong>System Status:</strong> 
+                        <span id="system-status" class="status-indicator status-online">Operational</span>
+                    </h6>
+                    <small class="text-muted">
+                        Uptime: 99.9% | Response Time: <span id="response-time">245ms</span> | 
+                        <span id="current-time"></span>
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-end">
+            <div class="d-flex justify-content-end align-items-center">
+                <span class="me-3">
+                    <i class="fas fa-users me-1"></i>
+                    <span id="active-users">127</span> active users
+                </span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Metrics Grid -->
+<div class="row mb-4" id="dashboard-metrics">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="metric-card fade-in glow-effect">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="metric-icon">
+                    <i class="fas fa-search fa-2x text-primary"></i>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/scan">View Details</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="quickScan('email')">Quick Email Scan</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="metric-value text-gradient" id="metric-total-scans">{{ metrics.total_scans or 0 }}</div>
+            <div class="metric-label">Total Scans</div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up me-1"></i>+12% this week
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="metric-card fade-in">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="metric-icon">
+                    <i class="fas fa-chart-bar fa-2x text-info"></i>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/reports">View Reports</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="exportAdvanced('pdf')">Export PDF</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="metric-value" id="metric-active-reports">{{ metrics.active_reports or 0 }}</div>
+            <div class="metric-label">Active Reports</div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up me-1"></i>+8% this month
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="metric-card fade-in">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="metric-icon">
+                    <i class="fas fa-shield-alt fa-2x text-warning"></i>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/privacy">Privacy Center</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="runSecurityScan()">Security Scan</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="metric-value" id="metric-security-score">{{ metrics.security_score or 95 }}%</div>
+            <div class="metric-label">Security Score</div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up me-1"></i>+2% improvement
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="metric-card fade-in">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="metric-icon">
+                    <i class="fas fa-bolt fa-2x text-success"></i>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/admin">System Admin</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="optimizePerformance()">Optimize</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="metric-value" id="metric-performance-score">{{ metrics.performance_score or 98 }}%</div>
+            <div class="metric-label">Performance</div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up me-1"></i>Excellent
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Advanced Charts Section - Discord/GitHub Inspired -->
+<div class="row mb-4">
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-area me-2"></i>Intelligence Activity
+                </h5>
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn btn-outline-primary active" data-period="7d">7D</button>
+                    <button type="button" class="btn btn-outline-primary" data-period="30d">30D</button>
+                    <button type="button" class="btn btn-outline-primary" data-period="90d">90D</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="activityChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-pie-chart me-2"></i>Scan Types
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 250px;">
+                    <canvas id="scanTypesChart"></canvas>
+                </div>
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted">Email Scans</span>
+                        <span class="fw-bold">45%</span>
+                    </div>
+                    <div class="progress mb-3" style="height: 4px;">
+                        <div class="progress-bar" style="width: 45%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted">Domain Analysis</span>
+                        <span class="fw-bold">30%</span>
+                    </div>
+                    <div class="progress mb-3" style="height: 4px;">
+                        <div class="progress-bar bg-info" style="width: 30%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted">Phone Lookup</span>
+                        <span class="fw-bold">25%</span>
+                    </div>
+                    <div class="progress" style="height: 4px;">
+                        <div class="progress-bar bg-warning" style="width: 25%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Feature Grid - Modern Enterprise Style -->
+<div class="feature-grid mb-4">
+    <div class="feature-card slide-in-left">
+        <i class="fas fa-search-plus feature-icon"></i>
+        <h4 class="feature-title">Advanced Intelligence</h4>
+        <p class="feature-description">
+            Multi-source intelligence gathering with AI-powered analysis and threat detection capabilities.
+        </p>
+        <div class="mt-3">
+            <button class="btn btn-primary btn-sm" onclick="quickScan()">
+                <i class="fas fa-bolt me-1"></i>Start Scan
+            </button>
+            <a href="/scan" class="btn btn-outline-primary btn-sm ms-2">
+                <i class="fas fa-cog me-1"></i>Advanced Options
+            </a>
+        </div>
+    </div>
+
+    <div class="feature-card slide-in-right">
+        <i class="fas fa-shield-check feature-icon"></i>
+        <h4 class="feature-title">Enterprise Security</h4>
+        <p class="feature-description">
+            GDPR/CCPA compliant with enterprise-grade encryption, audit logging, and access controls.
+        </p>
+        <div class="mt-3">
+            <a href="/privacy" class="btn btn-primary btn-sm">
+                <i class="fas fa-user-shield me-1"></i>Privacy Center
+            </a>
+            <a href="/admin" class="btn btn-outline-primary btn-sm ms-2">
+                <i class="fas fa-tools me-1"></i>Admin Panel
+            </a>
+        </div>
+    </div>
+
+    <div class="feature-card fade-in">
+        <i class="fas fa-chart-line feature-icon"></i>
+        <h4 class="feature-title">Business Intelligence</h4>
+        <p class="feature-description">
+            Real-time analytics, custom reports, and actionable insights for data-driven decisions.
+        </p>
+        <div class="mt-3">
+            <a href="/reports" class="btn btn-primary btn-sm">
+                <i class="fas fa-chart-bar me-1"></i>View Reports
+            </a>
+            <button class="btn btn-outline-primary btn-sm ms-2" onclick="exportAdvanced('pdf')">
+                <i class="fas fa-download me-1"></i>Export
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity Feed - GitHub Inspired -->
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-history me-2"></i>Recent Activity
+                </h5>
+                <a href="/activity" class="btn btn-sm btn-outline-primary">
+                    View All <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="activity-feed">
+                    <div class="activity-item">
+                        <div class="activity-icon bg-success">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Email scan completed</div>
+                            <div class="activity-description">Analyzed john.doe@example.com - 15 data points found</div>
+                            <div class="activity-meta">2 minutes ago</div>
+                        </div>
+                        <div class="activity-actions">
+                            <button class="btn btn-sm btn-outline-primary">View Results</button>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon bg-info">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Report generated</div>
+                            <div class="activity-description">Weekly intelligence summary ready for download</div>
+                            <div class="activity-meta">15 minutes ago</div>
+                        </div>
+                        <div class="activity-actions">
+                            <button class="btn btn-sm btn-outline-primary">Download</button>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon bg-warning">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Security alert resolved</div>
+                            <div class="activity-description">Unusual login attempt from new location verified</div>
+                            <div class="activity-meta">1 hour ago</div>
+                        </div>
+                        <div class="activity-actions">
+                            <button class="btn btn-sm btn-outline-secondary">Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-rocket me-2"></i>Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-primary" onclick="quickScan('email')">
+                        <i class="fas fa-envelope me-2"></i>Email Intelligence
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" onclick="quickScan('domain')">
+                        <i class="fas fa-globe me-2"></i>Domain Analysis
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" onclick="quickScan('phone')">
+                        <i class="fas fa-phone me-2"></i>Phone Lookup
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" onclick="quickScan('social')">
+                        <i class="fas fa-users me-2"></i>Social Media
+                    </button>
+                    <hr>
+                    <button type="button" class="btn btn-outline-secondary" onclick="exportAdvanced('pdf')">
+                        <i class="fas fa-file-pdf me-2"></i>Generate Report
+                    </button>
+                    <a href="/batch-scan" class="btn btn-outline-secondary">
+                        <i class="fas fa-layer-group me-2"></i>Batch Processing
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Health Widget -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-heartbeat me-2"></i>System Health
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="health-metric mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small">CPU Usage</span>
+                        <span class="small fw-bold">23%</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: 23%"></div>
+                    </div>
+                </div>
+                
+                <div class="health-metric mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small">Memory</span>
+                        <span class="small fw-bold">45%</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-info" style="width: 45%"></div>
+                    </div>
+                </div>
+                
+                <div class="health-metric">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small">Storage</span>
+                        <span class="small fw-bold">67%</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-warning" style="width: 67%"></div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <a href="/admin" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-tools me-1"></i>System Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced CSS for Activity Feed -->
+<style>
+.activity-feed {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    transition: var(--transition-fast);
+}
+
+.activity-item:hover {
+    background: var(--hover-color);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.875rem;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.activity-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.activity-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.activity-description {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.activity-meta {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.activity-actions {
+    margin-left: 1rem;
+    flex-shrink: 0;
+}
+
+.health-metric .progress {
+    border-radius: 3px;
+    background: var(--hover-color);
+}
+</style>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/enterprise.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Enhanced Dashboard Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCharts();
+    setupRealTimeUpdates();
+    
+    // Period selector for activity chart
+    document.querySelectorAll('[data-period]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('[data-period]').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            updateActivityChart(this.dataset.period);
+        });
+    });
+});
+
+function initializeCharts() {
+    // Activity Chart
+    const activityCtx = document.getElementById('activityChart');
+    if (activityCtx) {
+        new Chart(activityCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Scans',
+                    data: [12, 19, 3, 5, 2, 3, 8],
+                    borderColor: '#238636',
+                    backgroundColor: 'rgba(35, 134, 54, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Reports',
+                    data: [8, 12, 6, 9, 4, 6, 12],
+                    borderColor: '#1f6feb',
+                    backgroundColor: 'rgba(31, 111, 235, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#f0f6fc' }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#30363d' },
+                        ticks: { color: '#8b949e' }
+                    },
+                    x: {
+                        grid: { color: '#30363d' },
+                        ticks: { color: '#8b949e' }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Scan Types Chart
+    const scanTypesCtx = document.getElementById('scanTypesChart');
+    if (scanTypesCtx) {
+        new Chart(scanTypesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Email', 'Domain', 'Phone', 'Social'],
+                datasets: [{
+                    data: [45, 30, 15, 10],
+                    backgroundColor: ['#238636', '#1f6feb', '#ffa500', '#da3633'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+}
+
+function updateActivityChart(period) {
+    // Simulate data update based on period
+    console.log(`Updating chart for period: ${period}`);
+}
+
+function setupRealTimeUpdates() {
+    // Update system metrics every 30 seconds
+    setInterval(async () => {
+        try {
+            const response = await fetch('/api/v1/dashboard/realtime');
+            const data = await response.json();
+            if (data.success) {
+                updateRealtimeMetrics(data.data);
+            }
+        } catch (error) {
+            console.error('Failed to update realtime metrics:', error);
+        }
+    }, 30000);
+}
+
+function updateRealtimeMetrics(data) {
+    // Update response time
+    const responseTimeEl = document.getElementById('response-time');
+    if (responseTimeEl && data.response_time) {
+        responseTimeEl.textContent = `${data.response_time}ms`;
+    }
+    
+    // Update active users
+    const activeUsersEl = document.getElementById('active-users');
+    if (activeUsersEl && data.active_users) {
+        activeUsersEl.textContent = data.active_users;
+    }
+}
+
+// Additional utility functions
+function runSecurityScan() {
+    window.platformAAA?.notifications.show('Security scan initiated...', 'info');
+    // Implement security scan logic
+}
+
+function optimizePerformance() {
+    window.platformAAA?.notifications.show('Performance optimization started...', 'info');
+    // Implement performance optimization logic
+}
+</script>
+{% endblock %}

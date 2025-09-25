@@ -1,0 +1,677 @@
+{% extends "base.html" %}
+{% block title %}System Administration - Intelligence Platform{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="d-flex align-items-center mb-2">
+            <i class="fas fa-cogs me-3 text-primary"></i>
+            System Administration
+        </h1>
+        <p class="text-muted">Integrated automation and system management dashboard</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-success" onclick="startPlatform()">
+                <i class="fas fa-play me-2"></i>Start Platform
+            </button>
+            <button type="button" class="btn btn-warning" onclick="runMaintenance()">
+                <i class="fas fa-tools me-2"></i>Maintenance
+            </button>
+            <button type="button" class="btn btn-danger" onclick="stopPlatform()">
+                <i class="fas fa-stop me-2"></i>Stop Platform
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- System Status Overview -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <i class="fas fa-server fa-2x text-success"></i>
+                </div>
+                <h4 class="mb-1" id="systemStatus">Online</h4>
+                <p class="text-muted mb-0">System Status</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <i class="fas fa-microchip fa-2x text-info"></i>
+                </div>
+                <h4 class="mb-1" id="cpuUsage">25%</h4>
+                <p class="text-muted mb-0">CPU Usage</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <i class="fas fa-memory fa-2x text-warning"></i>
+                </div>
+                <h4 class="mb-1" id="memoryUsage">68%</h4>
+                <p class="text-muted mb-0">Memory Usage</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <i class="fas fa-hdd fa-2x text-primary"></i>
+                </div>
+                <h4 class="mb-1" id="diskUsage">45%</h4>
+                <p class="text-muted mb-0">Disk Usage</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Admin Sections -->
+<div class="row">
+    <!-- Platform Management -->
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-rocket me-2"></i>Platform Management
+                </h5>
+                <span class="badge bg-success">Active</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="d-grid">
+                            <button class="btn btn-outline-success" onclick="startPlatform('development')">
+                                <i class="fas fa-code me-2"></i>Start Development
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-grid">
+                            <button class="btn btn-outline-primary" onclick="startPlatform('production')">
+                                <i class="fas fa-industry me-2"></i>Start Production
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-grid">
+                            <button class="btn btn-outline-info" onclick="startPlatform('docker')">
+                                <i class="fab fa-docker me-2"></i>Start Docker
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-grid">
+                            <button class="btn btn-outline-danger" onclick="stopPlatform()">
+                                <i class="fas fa-stop me-2"></i>Stop All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small class="text-muted">Platform Status</small>
+                    <span class="badge bg-success" id="platformStatusBadge">Running</span>
+                </div>
+                <div class="progress mb-3" style="height: 5px;">
+                    <div class="progress-bar bg-success" style="width: 100%" id="platformStatusProgress"></div>
+                </div>
+                
+                <div class="row text-center">
+                    <div class="col">
+                        <small class="text-muted d-block">Uptime</small>
+                        <strong id="platformUptime">24h 15m</strong>
+                    </div>
+                    <div class="col">
+                        <small class="text-muted d-block">Requests</small>
+                        <strong id="platformRequests">12,453</strong>
+                    </div>
+                    <div class="col">
+                        <small class="text-muted d-block">Errors</small>
+                        <strong class="text-success" id="platformErrors">0</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- System Monitoring -->
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-line me-2"></i>System Monitoring
+                </h5>
+                <button class="btn btn-sm btn-outline-primary" onclick="refreshSystemHealth()">
+                    <i class="fas fa-sync-alt me-1"></i>Refresh
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <small class="text-muted">CPU Usage</small>
+                        <small class="text-muted" id="cpuPercentage">25%</small>
+                    </div>
+                    <div class="progress mb-2" style="height: 8px;">
+                        <div class="progress-bar bg-info" style="width: 25%" id="cpuProgressBar"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <small class="text-muted">Memory Usage</small>
+                        <small class="text-muted" id="memoryPercentage">68%</small>
+                    </div>
+                    <div class="progress mb-2" style="height: 8px;">
+                        <div class="progress-bar bg-warning" style="width: 68%" id="memoryProgressBar"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <small class="text-muted">Disk Usage</small>
+                        <small class="text-muted" id="diskPercentage">45%</small>
+                    </div>
+                    <div class="progress mb-2" style="height: 8px;">
+                        <div class="progress-bar bg-primary" style="width: 45%" id="diskProgressBar"></div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-success" onclick="optimizeSystem()">
+                        <i class="fas fa-magic me-2"></i>Optimize System
+                    </button>
+                    <button class="btn btn-outline-warning" onclick="runMaintenance()">
+                        <i class="fas fa-tools me-2"></i>Run Maintenance
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Deployment and Security Row -->
+<div class="row">
+    <!-- Deployment Management -->
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0">
+                    <i class="fas fa-upload me-2"></i>Deployment Management
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Environment</label>
+                    <select class="form-select" id="deploymentEnvironment">
+                        <option value="development">Development</option>
+                        <option value="production" selected>Production</option>
+                        <option value="docker">Docker</option>
+                    </select>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" onclick="deployPlatform()">
+                        <i class="fas fa-rocket me-2"></i>Deploy Platform
+                    </button>
+                    <button class="btn btn-outline-warning" onclick="rollbackDeployment()">
+                        <i class="fas fa-undo me-2"></i>Rollback
+                    </button>
+                    <button class="btn btn-outline-info" onclick="deployUpdates()">
+                        <i class="fas fa-download me-2"></i>Deploy Updates
+                    </button>
+                </div>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <small class="text-muted d-block">Last Deployment</small>
+                    <strong id="lastDeployment">2 hours ago</strong>
+                    <div class="mt-2">
+                        <span class="badge bg-success">Production v2.1.0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Security Management -->
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0">
+                    <i class="fas fa-shield-alt me-2"></i>Security Management
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="small">Security Status</span>
+                        <span class="badge bg-success">Secure</span>
+                    </div>
+                </div>
+                
+                <div class="security-checks mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small>File Permissions</small>
+                        <i class="fas fa-check-circle text-success"></i>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small>SSL Configuration</small>
+                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small>Security Updates</small>
+                        <i class="fas fa-check-circle text-success"></i>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small>Audit Logging</small>
+                        <i class="fas fa-check-circle text-success"></i>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" onclick="checkSecurityStatus()">
+                        <i class="fas fa-search me-2"></i>Security Scan
+                    </button>
+                    <button class="btn btn-outline-warning" onclick="viewSecurityLogs()">
+                        <i class="fas fa-list me-2"></i>View Logs
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Logs -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-file-alt me-2"></i>System Logs
+                </h5>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary" onclick="refreshLogs()">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                    </button>
+                    <button class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fas fa-filter me-1"></i>Filter
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="filterLogs('INFO')">INFO</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="filterLogs('WARNING')">WARNING</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="filterLogs('ERROR')">ERROR</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="filterLogs('DEBUG')">DEBUG</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Level</th>
+                                <th>Module</th>
+                                <th>Message</th>
+                            </tr>
+                        </thead>
+                        <tbody id="systemLogsTable">
+                            <tr>
+                                <td><small>2024-01-15 14:30:25</small></td>
+                                <td><span class="badge bg-info">INFO</span></td>
+                                <td><small>webapp</small></td>
+                                <td>System started successfully</td>
+                            </tr>
+                            <tr>
+                                <td><small>2024-01-15 14:30:24</small></td>
+                                <td><span class="badge bg-success">INFO</span></td>
+                                <td><small>automation</small></td>
+                                <td>Automation API routes included</td>
+                            </tr>
+                            <tr>
+                                <td><small>2024-01-15 14:30:23</small></td>
+                                <td><span class="badge bg-success">INFO</span></td>
+                                <td><small>compliance</small></td>
+                                <td>Compliance system initialized</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Admin interface functions
+async function startPlatform(mode = 'production') {
+    try {
+        showAlert('info', `Starting platform in ${mode} mode...`);
+        
+        const response = await fetch(`/api/v1/automation/start?mode=${mode}`, {
+            method: 'POST'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('success', `Platform started successfully in ${mode} mode`);
+            updatePlatformStatus('running');
+        } else {
+            showAlert('error', `Failed to start platform: ${result.error}`);
+        }
+    } catch (error) {
+        showAlert('error', `Error starting platform: ${error.message}`);
+    }
+}
+
+async function stopPlatform() {
+    if (!confirm('Are you sure you want to stop the platform? This will interrupt all active operations.')) {
+        return;
+    }
+    
+    try {
+        showAlert('warning', 'Stopping platform...');
+        
+        const response = await fetch('/api/v1/automation/stop', {
+            method: 'POST'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('success', 'Platform stopped successfully');
+            updatePlatformStatus('stopped');
+        } else {
+            showAlert('error', `Failed to stop platform: ${result.error}`);
+        }
+    } catch (error) {
+        showAlert('error', `Error stopping platform: ${error.message}`);
+    }
+}
+
+async function runMaintenance() {
+    try {
+        showAlert('info', 'Running maintenance tasks...');
+        
+        const response = await fetch('/api/v1/automation/maintenance', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tasks: [],
+                force: false
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('success', 'Maintenance completed successfully');
+        } else {
+            showAlert('error', `Maintenance failed: ${result.error}`);
+        }
+    } catch (error) {
+        showAlert('error', `Error running maintenance: ${error.message}`);
+    }
+}
+
+async function deployPlatform() {
+    const environment = document.getElementById('deploymentEnvironment').value;
+    
+    try {
+        showAlert('info', `Deploying to ${environment} environment...`);
+        
+        const response = await fetch('/api/v1/automation/deploy', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                environment: environment,
+                config: null
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('success', `Deployment to ${environment} completed successfully`);
+        } else {
+            showAlert('error', `Deployment failed: ${result.error}`);
+        }
+    } catch (error) {
+        showAlert('error', `Error deploying platform: ${error.message}`);
+    }
+}
+
+async function rollbackDeployment() {
+    if (!confirm('Are you sure you want to rollback to the previous deployment?')) {
+        return;
+    }
+    
+    try {
+        showAlert('warning', 'Rolling back deployment...');
+        
+        const response = await fetch('/api/v1/automation/rollback?version=previous', {
+            method: 'POST'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('success', 'Rollback completed successfully');
+        } else {
+            showAlert('error', `Rollback failed: ${result.error}`);
+        }
+    } catch (error) {
+        showAlert('error', `Error rolling back: ${error.message}`);
+    }
+}
+
+async function deployUpdates() {
+    try {
+        showAlert('info', 'Deploying updates...');
+        
+        const response = await fetch('/api/v1/automation/updates/deploy', {
+            method: 'POST'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('success', 'Updates deployed successfully');
+        } else {
+            showAlert('error', `Update deployment failed: ${result.error}`);
+        }
+    } catch (error) {
+        showAlert('error', `Error deploying updates: ${error.message}`);
+    }
+}
+
+async function optimizeSystem() {
+    try {
+        showAlert('info', 'Optimizing system...');
+        
+        const response = await fetch('/api/v1/automation/system/optimize', {
+            method: 'POST'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('success', 'System optimization completed');
+            refreshSystemHealth();
+        } else {
+            showAlert('error', `System optimization failed: ${result.error}`);
+        }
+    } catch (error) {
+        showAlert('error', `Error optimizing system: ${error.message}`);
+    }
+}
+
+async function refreshSystemHealth() {
+    try {
+        const response = await fetch('/api/v1/automation/system/health');
+        const result = await response.json();
+        
+        if (result.success && result.health_data) {
+            const healthData = result.health_data;
+            
+            // Update CPU usage
+            if (healthData.cpu && healthData.cpu.usage_percent !== undefined) {
+                const cpuPercent = Math.round(healthData.cpu.usage_percent);
+                document.getElementById('cpuUsage').textContent = `${cpuPercent}%`;
+                document.getElementById('cpuPercentage').textContent = `${cpuPercent}%`;
+                document.getElementById('cpuProgressBar').style.width = `${cpuPercent}%`;
+            }
+            
+            // Update Memory usage
+            if (healthData.memory && healthData.memory.percentage !== undefined) {
+                const memoryPercent = Math.round(healthData.memory.percentage);
+                document.getElementById('memoryUsage').textContent = `${memoryPercent}%`;
+                document.getElementById('memoryPercentage').textContent = `${memoryPercent}%`;
+                document.getElementById('memoryProgressBar').style.width = `${memoryPercent}%`;
+            }
+            
+            // Update Disk usage
+            if (healthData.disk && healthData.disk.percentage !== undefined) {
+                const diskPercent = Math.round(healthData.disk.percentage);
+                document.getElementById('diskUsage').textContent = `${diskPercent}%`;
+                document.getElementById('diskPercentage').textContent = `${diskPercent}%`;
+                document.getElementById('diskProgressBar').style.width = `${diskPercent}%`;
+            }
+        }
+    } catch (error) {
+        console.error('Error refreshing system health:', error);
+    }
+}
+
+async function checkSecurityStatus() {
+    try {
+        showAlert('info', 'Running security scan...');
+        
+        const response = await fetch('/api/v1/automation/security/status');
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('success', 'Security scan completed');
+            // Update security status display
+        } else {
+            showAlert('error', `Security scan failed: ${result.error}`);
+        }
+    } catch (error) {
+        showAlert('error', `Error checking security status: ${error.message}`);
+    }
+}
+
+async function refreshLogs() {
+    try {
+        const response = await fetch('/api/v1/automation/logs?lines=50');
+        const result = await response.json();
+        
+        if (result.success && result.logs) {
+            const tableBody = document.getElementById('systemLogsTable');
+            tableBody.innerHTML = '';
+            
+            result.logs.forEach(log => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><small>${new Date(log.timestamp).toLocaleString()}</small></td>
+                    <td><span class="badge bg-${getBadgeColor(log.level)}">${log.level}</span></td>
+                    <td><small>${log.module}</small></td>
+                    <td>${log.message}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+    } catch (error) {
+        console.error('Error refreshing logs:', error);
+    }
+}
+
+function getBadgeColor(level) {
+    switch (level.toUpperCase()) {
+        case 'ERROR': return 'danger';
+        case 'WARNING': return 'warning';
+        case 'INFO': return 'info';
+        case 'DEBUG': return 'secondary';
+        default: return 'primary';
+    }
+}
+
+function filterLogs(level) {
+    // Filter logs by level
+    refreshLogs(); // For now, just refresh
+}
+
+function viewSecurityLogs() {
+    // Navigate to security logs
+    showAlert('info', 'Opening security logs...');
+}
+
+function updatePlatformStatus(status) {
+    const badge = document.getElementById('platformStatusBadge');
+    const progress = document.getElementById('platformStatusProgress');
+    const systemStatus = document.getElementById('systemStatus');
+    
+    if (status === 'running') {
+        badge.className = 'badge bg-success';
+        badge.textContent = 'Running';
+        progress.style.width = '100%';
+        progress.className = 'progress-bar bg-success';
+        systemStatus.textContent = 'Online';
+    } else if (status === 'stopped') {
+        badge.className = 'badge bg-danger';
+        badge.textContent = 'Stopped';
+        progress.style.width = '0%';
+        progress.className = 'progress-bar bg-danger';
+        systemStatus.textContent = 'Offline';
+    }
+}
+
+// Helper function for alerts
+function showAlert(type, message) {
+    const alertsContainer = document.getElementById('alertsContainer');
+    if (!alertsContainer) return;
+    
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
+    alert.innerHTML = `
+        <i class="fas fa-info-circle me-2"></i>${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    alertsContainer.appendChild(alert);
+    
+    setTimeout(() => alert.remove(), 5000);
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    refreshSystemHealth();
+    refreshLogs();
+    
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+        refreshSystemHealth();
+    }, 30000);
+});
+</script>
+{% endblock %}

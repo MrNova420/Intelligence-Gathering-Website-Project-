@@ -1,0 +1,527 @@
+{% extends "base.html" %}
+{% block title %}Batch Processing - Intelligence Platform{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="d-flex align-items-center mb-0">
+                <i class="fas fa-layer-group me-3 text-primary"></i>
+                Batch Processing
+            </h1>
+            <small class="text-muted">Process multiple targets simultaneously for efficient analysis</small>
+        </div>
+        <div class="col-md-4 text-end">
+            <button type="button" class="btn btn-outline-primary" onclick="showBatchHistory()">
+                <i class="fas fa-history me-1"></i>View History
+            </button>
+            <a href="/" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Batch Upload Form -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-upload me-2"></i>Upload Targets for Processing
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="batchForm" enctype="multipart/form-data">
+                        <!-- Upload Method Selection -->
+                        <div class="mb-4">
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="uploadMethod" id="csvUpload" value="csv" checked>
+                                <label class="btn btn-outline-primary" for="csvUpload">
+                                    <i class="fas fa-file-csv me-1"></i>CSV Upload
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="uploadMethod" id="manualEntry" value="manual">
+                                <label class="btn btn-outline-primary" for="manualEntry">
+                                    <i class="fas fa-keyboard me-1"></i>Manual Entry
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="uploadMethod" id="apiImport" value="api">
+                                <label class="btn btn-outline-primary" for="apiImport">
+                                    <i class="fas fa-cloud-download-alt me-1"></i>API Import
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- CSV Upload Section -->
+                        <div id="csvSection" class="upload-section">
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-file-csv me-1"></i>Upload CSV File
+                                </label>
+                                <input type="file" class="form-control" id="csvFile" accept=".csv,.txt">
+                                <div class="form-text">
+                                    Supported formats: CSV, TXT. Maximum file size: 10MB
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-info-circle me-2"></i>CSV Format Requirements:</h6>
+                                <ul class="mb-0">
+                                    <li>First column: Target (email, domain, phone, etc.)</li>
+                                    <li>Second column: Type (email, domain, phone, social) - optional</li>
+                                    <li>Third column: Priority (high, medium, low) - optional</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Manual Entry Section -->
+                        <div id="manualSection" class="upload-section" style="display: none;">
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-keyboard me-1"></i>Enter Targets (one per line)
+                                </label>
+                                <textarea class="form-control" id="manualTargets" rows="10" 
+                                         placeholder="example@email.com&#10;domain.com&#10;+1234567890&#10;@username"></textarea>
+                                <div class="form-text">
+                                    Enter one target per line. Mix different types: emails, domains, phones, social handles
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- API Import Section -->
+                        <div id="apiSection" class="upload-section" style="display: none;">
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-link me-1"></i>API Endpoint URL
+                                </label>
+                                <input type="url" class="form-control" id="apiUrl" 
+                                       placeholder="https://api.example.com/targets">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">API Key (optional)</label>
+                                <input type="password" class="form-control" id="apiKey" 
+                                       placeholder="Your API key for authentication">
+                            </div>
+                        </div>
+
+                        <!-- Processing Options -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-cogs me-2"></i>Processing Options
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Scan Types</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="emailScan" checked>
+                                                <label class="form-check-label" for="emailScan">
+                                                    <i class="fas fa-envelope me-1"></i>Email Analysis
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="domainScan" checked>
+                                                <label class="form-check-label" for="domainScan">
+                                                    <i class="fas fa-globe me-1"></i>Domain Analysis
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="phoneScan">
+                                                <label class="form-check-label" for="phoneScan">
+                                                    <i class="fas fa-phone me-1"></i>Phone Lookup
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="socialScan">
+                                                <label class="form-check-label" for="socialScan">
+                                                    <i class="fas fa-users me-1"></i>Social Media
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Processing Priority</label>
+                                            <select class="form-select" id="processingPriority">
+                                                <option value="normal">Normal (Standard Queue)</option>
+                                                <option value="high">High (Priority Queue)</option>
+                                                <option value="low">Low (Background Processing)</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Concurrent Processing</label>
+                                            <select class="form-select" id="concurrentLimit">
+                                                <option value="5">5 concurrent scans</option>
+                                                <option value="10" selected>10 concurrent scans</option>
+                                                <option value="20">20 concurrent scans</option>
+                                                <option value="50">50 concurrent scans (Enterprise)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="notifyCompletion" checked>
+                                            <label class="form-check-label" for="notifyCompletion">
+                                                Notify when completed
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-play me-2"></i>Start Batch Processing
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Processing Status and Queue -->
+        <div class="col-lg-4">
+            <!-- Current Batch Jobs -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-tasks me-2"></i>Active Batch Jobs
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="activeBatchJobs">
+                        <div class="text-muted text-center py-3">
+                            <i class="fas fa-inbox fa-2x mb-2"></i>
+                            <p>No active batch jobs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Processing Statistics -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>Processing Statistics
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="metric-card">
+                                <div class="metric-value" id="totalProcessed">1,247</div>
+                                <div class="metric-label">Total Processed</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="metric-card">
+                                <div class="metric-value text-success" id="successRate">96.2%</div>
+                                <div class="metric-label">Success Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row text-center mt-3">
+                        <div class="col-6">
+                            <div class="metric-card">
+                                <div class="metric-value text-warning" id="queueSize">23</div>
+                                <div class="metric-label">In Queue</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="metric-card">
+                                <div class="metric-value text-info" id="processing">5</div>
+                                <div class="metric-label">Processing</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary btn-sm" onclick="downloadTemplate()">
+                            <i class="fas fa-download me-1"></i>Download CSV Template
+                        </button>
+                        <button class="btn btn-outline-info btn-sm" onclick="showProcessingQueue()">
+                            <i class="fas fa-list me-1"></i>View Processing Queue
+                        </button>
+                        <button class="btn btn-outline-success btn-sm" onclick="exportResults()">
+                            <i class="fas fa-file-export me-1"></i>Export All Results
+                        </button>
+                        <button class="btn btn-outline-warning btn-sm" onclick="pauseProcessing()">
+                            <i class="fas fa-pause me-1"></i>Pause Processing
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Processing Progress Modal -->
+    <div class="modal fade" id="processingModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-cogs me-2"></i>Batch Processing Progress
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Overall Progress</span>
+                            <span id="overallProgress">0%</span>
+                        </div>
+                        <div class="progress mb-3">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 id="overallProgressBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="h4 text-primary" id="totalTargets">0</div>
+                                <small class="text-muted">Total Targets</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="h4 text-success" id="completedTargets">0</div>
+                                <small class="text-muted">Completed</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="h4 text-warning" id="processingTargets">0</div>
+                                <small class="text-muted">Processing</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="h4 text-danger" id="failedTargets">0</div>
+                                <small class="text-muted">Failed</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="processing-log" style="max-height: 300px; overflow-y: auto;">
+                        <h6>Processing Log</h6>
+                        <div id="processingLog" class="font-monospace small">
+                            <div class="text-muted">Processing will begin shortly...</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-warning" onclick="pauseProcessing()">Pause</button>
+                    <button type="button" class="btn btn-success" onclick="exportCurrentResults()">Export Results</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Batch processing functionality
+document.addEventListener('DOMContentLoaded', function() {
+    setupBatchForm();
+    setupUploadMethodToggle();
+});
+
+function setupUploadMethodToggle() {
+    const radioButtons = document.querySelectorAll('input[name="uploadMethod"]');
+    const sections = document.querySelectorAll('.upload-section');
+    
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', function() {
+            sections.forEach(section => section.style.display = 'none');
+            
+            if (this.value === 'csv') {
+                document.getElementById('csvSection').style.display = 'block';
+            } else if (this.value === 'manual') {
+                document.getElementById('manualSection').style.display = 'block';
+            } else if (this.value === 'api') {
+                document.getElementById('apiSection').style.display = 'block';
+            }
+        });
+    });
+}
+
+function setupBatchForm() {
+    const form = document.getElementById('batchForm');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        startBatchProcessing();
+    });
+}
+
+async function startBatchProcessing() {
+    const formData = new FormData();
+    const uploadMethod = document.querySelector('input[name="uploadMethod"]:checked').value;
+    
+    let targets = [];
+    
+    if (uploadMethod === 'csv') {
+        const csvFile = document.getElementById('csvFile').files[0];
+        if (!csvFile) {
+            alert('Please select a CSV file');
+            return;
+        }
+        targets = await parseCSVFile(csvFile);
+    } else if (uploadMethod === 'manual') {
+        const manualText = document.getElementById('manualTargets').value;
+        if (!manualText.trim()) {
+            alert('Please enter targets');
+            return;
+        }
+        targets = manualText.split('\n').filter(line => line.trim());
+    } else if (uploadMethod === 'api') {
+        const apiUrl = document.getElementById('apiUrl').value;
+        if (!apiUrl) {
+            alert('Please enter API URL');
+            return;
+        }
+        targets = await fetchFromAPI(apiUrl);
+    }
+    
+    if (targets.length === 0) {
+        alert('No targets found to process');
+        return;
+    }
+    
+    // Show processing modal
+    const modal = new bootstrap.Modal(document.getElementById('processingModal'));
+    modal.show();
+    
+    // Start processing
+    processBatchTargets(targets);
+}
+
+async function parseCSVFile(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const text = e.target.result;
+            const lines = text.split('\n');
+            const targets = lines.filter(line => line.trim()).map(line => {
+                const parts = line.split(',');
+                return {
+                    target: parts[0]?.trim(),
+                    type: parts[1]?.trim() || 'auto',
+                    priority: parts[2]?.trim() || 'normal'
+                };
+            });
+            resolve(targets);
+        };
+        reader.readAsText(file);
+    });
+}
+
+async function fetchFromAPI(url) {
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.targets || [];
+    } catch (error) {
+        console.error('API fetch error:', error);
+        return [];
+    }
+}
+
+function processBatchTargets(targets) {
+    const totalTargets = targets.length;
+    let completed = 0;
+    let failed = 0;
+    let processing = 0;
+    
+    // Update modal
+    document.getElementById('totalTargets').textContent = totalTargets;
+    document.getElementById('completedTargets').textContent = completed;
+    document.getElementById('processingTargets').textContent = processing;
+    document.getElementById('failedTargets').textContent = failed;
+    
+    const logContainer = document.getElementById('processingLog');
+    
+    // Simulate processing
+    targets.forEach((target, index) => {
+        setTimeout(() => {
+            processing++;
+            document.getElementById('processingTargets').textContent = processing;
+            
+            logContainer.innerHTML += `<div class="text-info">[${new Date().toLocaleTimeString()}] Processing: ${target.target || target}</div>`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            // Simulate completion
+            setTimeout(() => {
+                processing--;
+                const success = Math.random() > 0.1; // 90% success rate
+                
+                if (success) {
+                    completed++;
+                    logContainer.innerHTML += `<div class="text-success">[${new Date().toLocaleTimeString()}] ✓ Completed: ${target.target || target}</div>`;
+                } else {
+                    failed++;
+                    logContainer.innerHTML += `<div class="text-danger">[${new Date().toLocaleTimeString()}] ✗ Failed: ${target.target || target}</div>`;
+                }
+                
+                document.getElementById('completedTargets').textContent = completed;
+                document.getElementById('processingTargets').textContent = processing;
+                document.getElementById('failedTargets').textContent = failed;
+                
+                const progressPercent = Math.round(((completed + failed) / totalTargets) * 100);
+                document.getElementById('overallProgress').textContent = `${progressPercent}%`;
+                document.getElementById('overallProgressBar').style.width = `${progressPercent}%`;
+                
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }, Math.random() * 3000 + 1000);
+            
+        }, index * 200);
+    });
+}
+
+function downloadTemplate() {
+    const csvContent = "target,type,priority\nexample@email.com,email,high\ndomain.com,domain,normal\n+1234567890,phone,low\n@username,social,normal";
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'batch_scan_template.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+}
+
+function showProcessingQueue() {
+    window.platformAAA?.notifications.show('Processing queue view coming soon', 'info');
+}
+
+function exportCurrentResults() {
+    window.platformAAA?.notifications.show('Exporting current results...', 'info');
+}
+
+function pauseProcessing() {
+    window.platformAAA?.notifications.show('Processing paused', 'warning');
+}
+
+function showBatchHistory() {
+    window.location.href = '/reports?filter=batch';
+}
+
+function exportResults() {
+    window.exportAdvanced?.('pdf', { type: 'batch' });
+}
+</script>
+{% endblock %}

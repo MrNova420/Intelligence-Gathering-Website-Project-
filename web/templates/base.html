@@ -1,33 +1,170 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Intelligence Gathering Platform{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Enhanced Meta Tags -->
+    <meta name="description" content="Professional Intelligence Gathering Platform - Advanced OSINT, Security Analysis, and Business Intelligence">
+    <meta name="keywords" content="intelligence, OSINT, security, analysis, compliance, GDPR, business intelligence">
+    <meta name="author" content="Intelligence Platform">
+    
+    <!-- Modern CSS Framework -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="/static/css/style.css" rel="stylesheet">
+    
+    <!-- PWA Support -->
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    
+    <!-- Performance Optimization -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- Enhanced Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-search me-2"></i>Intelligence Platform
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <i class="fas fa-shield-alt me-2 text-primary"></i>
+                <span class="fw-bold">Intelligence Platform</span>
+                <span class="badge bg-success ms-2 small">Pro</span>
             </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/">Dashboard</a>
-                <a class="nav-link" href="/scan">New Scan</a>
-                <a class="nav-link" href="/reports">Reports</a>
-                <a class="nav-link" href="/docs">API Docs</a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-tachometer-alt me-1"></i>Dashboard</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="fas fa-search me-1"></i>Intelligence
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/scan?type=email"><i class="fas fa-envelope me-2"></i>Email Analysis</a></li>
+                            <li><a class="dropdown-item" href="/scan?type=phone"><i class="fas fa-phone me-2"></i>Phone Lookup</a></li>
+                            <li><a class="dropdown-item" href="/scan?type=domain"><i class="fas fa-globe me-2"></i>Domain Analysis</a></li>
+                            <li><a class="dropdown-item" href="/scan?type=social"><i class="fas fa-users me-2"></i>Social Media</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/batch-scan"><i class="fas fa-layer-group me-2"></i>Batch Processing</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reports"><i class="fas fa-chart-bar me-1"></i>Reports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/privacy"><i class="fas fa-user-shield me-1"></i>Privacy</a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog me-1"></i>System
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/settings"><i class="fas fa-user-cog me-2"></i>Settings</a></li>
+                            <li><a class="dropdown-item" href="/docs"><i class="fas fa-book me-2"></i>API Docs</a></li>
+                            <li><a class="dropdown-item" href="/api/v1/performance/metrics"><i class="fas fa-chart-line me-2"></i>Performance</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/help"><i class="fas fa-question-circle me-2"></i>Help & Support</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link">
+                            <i class="fas fa-circle text-success me-1" style="font-size: 0.6em;"></i>
+                            <small>Online</small>
+                        </span>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
     
-    <main class="container mt-4">
+    <!-- Alert Container -->
+    <div id="alertsContainer" class="container mt-2"></div>
+    
+    <!-- Main Content -->
+    <main class="container-fluid mt-4">
         {% block content %}{% endblock %}
     </main>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Enhanced Footer -->
+    <footer class="bg-dark text-light mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6><i class="fas fa-shield-alt me-2"></i>Intelligence Platform</h6>
+                    <p class="small text-muted">Professional intelligence gathering and analysis solution with enterprise-grade security and compliance.</p>
+                </div>
+                <div class="col-md-3">
+                    <h6>Features</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="/scan" class="text-muted">Intelligence Scanning</a></li>
+                        <li><a href="/reports" class="text-muted">Advanced Reports</a></li>
+                        <li><a href="/privacy" class="text-muted">Privacy Controls</a></li>
+                        <li><a href="/docs" class="text-muted">API Access</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6>Compliance</h6>
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-check text-success me-1"></i>GDPR Compliant</li>
+                        <li><i class="fas fa-check text-success me-1"></i>CCPA Compliant</li>
+                        <li><i class="fas fa-check text-success me-1"></i>SOC 2 Type II</li>
+                        <li><i class="fas fa-shield-alt text-primary me-1"></i>Enterprise Security</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-3">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <small>&copy; 2024 Intelligence Platform. All rights reserved.</small>
+                </div>
+                <div class="col-md-6 text-end">
+                    <small>
+                        <a href="/privacy" class="text-muted me-3">Privacy Policy</a>
+                        <a href="/terms" class="text-muted me-3">Terms of Service</a>
+                        <span class="text-success">
+                            <i class="fas fa-lock me-1"></i>Secure Connection
+                        </span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Enhanced JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/app.js"></script>
+    
+    <!-- Progressive Enhancement -->
+    <script>
+        // Service Worker Registration for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js').catch(console.error);
+        }
+        
+        // Theme Detection and Management
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        const currentTheme = localStorage.getItem('theme') || (prefersDark.matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-bs-theme', currentTheme);
+        
+        // Performance Monitoring
+        window.addEventListener('load', () => {
+            const perfData = performance.getEntriesByType('navigation')[0];
+            if (perfData) {
+                console.log(`Page load time: ${perfData.loadEventEnd - perfData.loadEventStart}ms`);
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
