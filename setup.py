@@ -126,7 +126,8 @@ class PlatformSetup:
     def _install_packages(self, packages: List[str], ignore_errors: bool = False) -> bool:
         """Install Python packages"""
         try:
-            cmd = [self.python_executable, "-m", "pip", "install", "--user"] + packages
+            # Try without --user first, fallback to --user if needed
+            cmd = [self.python_executable, "-m", "pip", "install"] + packages
             
             result = subprocess.run(
                 cmd,
@@ -134,6 +135,17 @@ class PlatformSetup:
                 text=True,
                 timeout=300  # 5 minutes timeout
             )
+            
+            # If installation failed, try with --user flag
+            if result.returncode != 0:
+                logger.info("💡 Retrying with --user flag...")
+                cmd = [self.python_executable, "-m", "pip", "install", "--user"] + packages
+                result = subprocess.run(
+                    cmd,
+                    capture_output=True,
+                    text=True,
+                    timeout=300
+                )
             
             if result.returncode != 0:
                 if not ignore_errors:
