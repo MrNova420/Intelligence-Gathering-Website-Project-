@@ -766,6 +766,17 @@ document.addEventListener('DOMContentLoaded', () => {
             """Reports page"""
             return HTMLResponse("<h1>Reports - Coming Soon</h1>")
         
+        @self.app.get("/privacy", response_class=HTMLResponse)
+        async def privacy_page(request: Request):
+            """Privacy and compliance page"""
+            try:
+                return self.templates.TemplateResponse("privacy.html", {
+                    "request": request
+                })
+            except Exception as e:
+                logger.error(f"Privacy page error: {e}")
+                return HTMLResponse("Privacy page temporarily unavailable", status_code=500)
+        
         @self.app.get("/settings", response_class=HTMLResponse)
         async def settings_page(request: Request):
             """User settings and preferences page"""
@@ -979,6 +990,14 @@ document.addEventListener('DOMContentLoaded', () => {
             logger.info("✅ Business Intelligence API routes included")
         except ImportError:
             logger.warning("⚠️ Business Intelligence API not available")
+        
+        # Include Compliance and Privacy API
+        try:
+            from backend.app.api.compliance_api import compliance_api
+            self.app.include_router(compliance_api.router)
+            logger.info("✅ Compliance & Privacy API routes included")
+        except ImportError:
+            logger.warning("⚠️ Compliance API not available")
         
         # Add enhanced API endpoints for dashboard data
         @self.app.get("/api/v1/dashboard/metrics")
