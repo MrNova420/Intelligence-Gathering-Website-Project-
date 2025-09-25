@@ -73,24 +73,55 @@ class PlatformSetup:
     
     def install_dependencies(self) -> bool:
         """Install required dependencies"""
-        logger.info("📦 Installing dependencies...")
+        logger.info("📦 Checking and installing dependencies...")
         
-        # Core dependencies for unified web platform
-        core_dependencies = [
-            "fastapi>=0.104.1",
-            "uvicorn[standard]>=0.24.0",
-            "jinja2>=3.1.2",
+        # First check if core packages are already available
+        core_packages_check = {
+            "fastapi": "fastapi>=0.104.1",
+            "uvicorn": "uvicorn[standard]>=0.24.0",
+            "jinja2": "jinja2>=3.1.2",
+            "sqlalchemy": "sqlalchemy>=2.0.23",
+            "pydantic": "pydantic[email]>=2.5.0"
+        }
+        
+        missing_core = []
+        for package_name, package_spec in core_packages_check.items():
+            try:
+                __import__(package_name)
+                logger.info(f"✅ {package_name} already available")
+            except ImportError:
+                missing_core.append(package_spec)
+        
+        # Always ensure these packages are available (they're small and critical)
+        additional_core = [
+            "itsdangerous>=2.1.2",
             "python-multipart>=0.0.6",
-            "aiofiles>=23.2.1",
-            "sqlalchemy>=2.0.23",
-            "pydantic[email]>=2.5.0",
+            "aiofiles>=23.2.1", 
             "python-dotenv>=1.0.0",
             "aiohttp>=3.9.1",
-            "requests>=2.31.0",
-            "itsdangerous>=2.1.2"
+            "requests>=2.31.0"
         ]
+            
+        # Install missing + additional packages if needed
+        all_missing = missing_core + additional_core
+        if all_missing:
+            logger.info(f"📦 Installing missing dependencies: {', '.join(all_missing)}")
+            if not self._install_packages(all_missing):
+                logger.warning("⚠️ Some dependencies failed to install via pip")
+                logger.info("💡 Checking if dependencies were installed via other means...")
+                
+                # Try to verify key packages are still working
+                try:
+                    import fastapi
+                    import uvicorn
+                    logger.info("✅ Core web framework packages verified working") 
+                except ImportError:
+                    logger.error("❌ Critical dependencies missing")
+                    return False
+        else:
+            logger.info("✅ All core dependencies already verified")
         
-        # Enhanced features dependencies (optional)
+        # Enhanced features dependencies (optional) - always try to install missing ones
         enhanced_dependencies = [
             "psutil>=5.9.6",           # Performance monitoring
             "redis>=5.0.1",            # Caching (optional)
@@ -102,12 +133,6 @@ class PlatformSetup:
             "phonenumbers>=8.13.26",   # Phone validation
             "python-jose[cryptography]>=3.3.0"  # JWT tokens
         ]
-        
-        # Install core dependencies
-        logger.info("📦 Installing core dependencies...")
-        if not self._install_packages(core_dependencies):
-            logger.error("❌ Failed to install core dependencies")
-            return False
         
         # Install enhanced dependencies (with fallbacks)
         logger.info("📦 Installing enhanced features...")
@@ -127,35 +152,37 @@ class PlatformSetup:
         """Install Python packages"""
         try:
             # Try without --user first, fallback to --user if needed
-            cmd = [self.python_executable, "-m", "pip", "install"] + packages
+            cmd = [self.python_executable, "-m", "pip", "install", "--timeout", "60"] + packages
             
             result = subprocess.run(
                 cmd,
                 capture_output=True,
                 text=True,
-                timeout=300  # 5 minutes timeout
+                timeout=120  # 2 minutes timeout for first attempt
             )
             
             # If installation failed, try with --user flag
             if result.returncode != 0:
-                logger.info("💡 Retrying with --user flag...")
-                cmd = [self.python_executable, "-m", "pip", "install", "--user"] + packages
+                if not ignore_errors:
+                    logger.info("💡 Retrying with --user flag...")
+                cmd = [self.python_executable, "-m", "pip", "install", "--user", "--timeout", "60"] + packages
                 result = subprocess.run(
                     cmd,
                     capture_output=True,
                     text=True,
-                    timeout=300
+                    timeout=120
                 )
             
             if result.returncode != 0:
                 if not ignore_errors:
-                    logger.error(f"❌ pip install failed: {result.stderr}")
+                    logger.error(f"❌ pip install failed: {result.stderr[:500]}...")
                 return False
             
             return True
             
         except subprocess.TimeoutExpired:
-            logger.error("❌ Package installation timed out")
+            if not ignore_errors:
+                logger.warning("⚠️ Package installation timed out, but continuing...")
             return False
         except Exception as e:
             if not ignore_errors:
