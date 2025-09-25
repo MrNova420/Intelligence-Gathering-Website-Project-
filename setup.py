@@ -42,9 +42,12 @@ class PlatformSetup:
         """Check system requirements"""
         logger.info("🔍 Checking system requirements...")
         
-        # Check Python version
-        if sys.version_info < (3.8, 0):
-            logger.error("❌ Python 3.8+ required")
+        # Check Python version - use explicit version check for better compatibility
+        python_version = (sys.version_info.major, sys.version_info.minor, sys.version_info.micro)
+        required_version = (3, 8, 0)
+        
+        if python_version < required_version:
+            logger.error(f"❌ Python 3.8+ required (found {python_version[0]}.{python_version[1]}.{python_version[2]})")
             return False
         
         logger.info(f"✅ Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}")

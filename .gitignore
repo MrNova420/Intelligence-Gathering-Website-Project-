@@ -170,3 +170,20 @@ htmlcov/
 # Docker volumes
 postgres_data/
 redis_data/
+
+# Platform specific
+.env
+*.env
+data/database/
+data/scans/
+data/backups/
+logs/
+web/static/uploads/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.pytest_cache/
+.coverage
+htmlcov/
