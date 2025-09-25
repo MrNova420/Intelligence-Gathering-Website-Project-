@@ -22,6 +22,10 @@ import {
   Sunrise, Sunset, CloudRain, CloudSnow, Thermometer
 } from 'lucide-react'
 
+// Enhanced Intelligence Platform inspired by industry leaders:
+// GitHub (clean interface, search), Linear (modern gradients, animations)
+// Discord (live activity, dark theme), Notion (organized content)
+// Vercel (performance focus), Stripe (payment UX), Figma (design system)
 export default function IntelliSearchPro() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchType, setSearchType] = useState('phone')
@@ -39,12 +43,39 @@ export default function IntelliSearchPro() {
     { id: 'ip', name: 'IP Address', icon: <Globe className="w-5 h-5" />, placeholder: 'Enter IP address...' }
   ]
 
-  // Live stats for social proof
+  // Advanced features inspired by industry leaders
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false)
+  const [selectedFilters, setSelectedFilters] = useState([])
+  const [recentSearches, setRecentSearches] = useState([
+    { query: 'john.doe@gmail.com', type: 'email', time: '2 min ago', results: 23 },
+    { query: '+1-555-0123', type: 'phone', time: '5 min ago', results: 15 },
+    { query: 'jane_smith', type: 'username', time: '8 min ago', results: 31 }
+  ])
+  
+  // Collaboration features inspired by GitHub/Linear
+  const [teamActivity, setTeamActivity] = useState([
+    { user: 'Detective_Mike', action: 'completed phone lookup', target: '+1-555-0199', confidence: 94, time: '3 min ago' },
+    { user: 'Analyst_Sarah', action: 'found email breaches', target: 'target@domain.com', severity: 'high', time: '7 min ago' },
+    { user: 'OSINT_Expert', action: 'traced social profiles', target: '@username123', profiles: 8, time: '12 min ago' }
+  ])
+
+  // Real-time notifications like Discord
+  const [notifications, setNotifications] = useState([
+    { id: 1, type: 'success', message: 'New intelligence match found', time: '30s ago', unread: true },
+    { id: 2, type: 'warning', message: 'Potential data breach detected', time: '2 min ago', unread: true },
+    { id: 3, type: 'info', message: 'Weekly intelligence report ready', time: '1 hour ago', unread: false }
+  ])
+
+  // Live stats for social proof with enhanced metrics
   const [liveStats, setLiveStats] = useState({
     searchesToday: 24567,
     recordsSearched: 8900000000,
     successRate: 94.8,
-    usersOnline: 1247
+    usersOnline: 1247,
+    activeInvestigations: 189,
+    dataSources: 247,
+    countriesCovered: 89,
+    mlAccuracy: 97.3
   })
 
   // Simulate live counter updates
@@ -114,12 +145,13 @@ export default function IntelliSearchPro() {
           </div>
         </div>
 
-        {/* Header */}
+        {/* Enhanced Header - Inspired by GitHub/Linear/Vercel */}
         <header className="relative z-10 border-b border-gray-800/50 bg-black/80 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
+              {/* Logo and Brand */}
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-xl shadow-blue-500/25">
                   <Search className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -129,20 +161,72 @@ export default function IntelliSearchPro() {
                   <p className="text-sm text-gray-400">Advanced Intelligence Platform</p>
                 </div>
               </div>
-              
-              <nav className="hidden md:flex items-center space-x-8">
-                <a href="#search" className="text-gray-300 hover:text-white transition-colors">Search</a>
-                <a href="#pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</a>
-                <a href="#about" className="text-gray-300 hover:text-white transition-colors">About</a>
+
+              {/* Advanced Navigation - GitHub style */}
+              <div className="hidden lg:flex items-center space-x-6">
+                {/* Navigation Links */}
+                <nav className="flex items-center space-x-1">
+                  <a href="#search" className="px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200 text-sm font-medium">
+                    Search
+                  </a>
+                  <a href="#analytics" className="px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200 text-sm font-medium">
+                    Analytics
+                  </a>
+                  <a href="#reports" className="px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200 text-sm font-medium">
+                    Reports
+                  </a>
+                  <a href="/pricing" className="px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200 text-sm font-medium">
+                    Pricing
+                  </a>
+                </nav>
+
+                {/* Quick Search - Inspired by GitHub command palette */}
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowAdvancedSearch(true)}
+                    className="flex items-center space-x-2 px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-gray-400 hover:bg-gray-700/50 hover:text-white transition-all duration-200"
+                  >
+                    <Search className="w-4 h-4" />
+                    <span className="text-sm">Quick search...</span>
+                    <div className="px-2 py-1 bg-gray-700 rounded text-xs">⌘K</div>
+                  </button>
+                </div>
+
+                {/* Notifications */}
+                <div className="relative">
+                  <button className="relative p-2 rounded-lg hover:bg-gray-800/50 transition-colors group">
+                    <Bell className="w-5 h-5 text-gray-400 group-hover:text-white" />
+                    {notifications.filter(n => n.unread).length > 0 && (
+                      <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center">
+                        <span className="text-xs text-white font-bold">{notifications.filter(n => n.unread).length}</span>
+                      </span>
+                    )}
+                  </button>
+                </div>
+
+                {/* User Menu */}
+                <button className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-green-500/25">
+                  <User className="w-4 h-4 text-white" />
+                </button>
+              </div>
+
+              {/* Mobile Navigation */}
+              <div className="flex lg:hidden items-center space-x-4">
+                <button className="relative p-2 rounded-lg hover:bg-gray-800/50 transition-colors">
+                  <Bell className="w-5 h-5 text-gray-400" />
+                  {notifications.filter(n => n.unread).length > 0 && (
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                  )}
+                </button>
                 <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
                   Sign In
                 </button>
-              </nav>
+              </div>
             </div>
           </div>
         </header>
 
-        {/* Live Stats Bar */}
+        {/* Enhanced Live Stats Bar - Inspired by Vercel/Linear dashboards */}
         <div className="relative z-10 bg-gradient-to-r from-blue-900/50 via-purple-900/50 to-cyan-900/50 border-b border-gray-800/50">
           <div className="max-w-7xl mx-auto px-6 py-3">
             <div className="flex items-center justify-between text-sm">
@@ -151,16 +235,31 @@ export default function IntelliSearchPro() {
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                   <span className="text-gray-300">{liveStats.usersOnline.toLocaleString()} users online</span>
                 </div>
-                <div className="text-gray-300">
-                  {liveStats.searchesToday.toLocaleString()} searches today
+                <div className="text-gray-300 flex items-center space-x-1">
+                  <TrendingUp className="w-4 h-4 text-green-400" />
+                  <span>{liveStats.searchesToday.toLocaleString()} searches today</span>
                 </div>
                 <div className="text-gray-300">
                   {(liveStats.recordsSearched / 1000000000).toFixed(1)}B+ records
                 </div>
+                <div className="hidden md:flex items-center space-x-1 text-gray-300">
+                  <Database className="w-4 h-4 text-blue-400" />
+                  <span>{liveStats.dataSources} sources</span>
+                </div>
+                <div className="hidden lg:flex items-center space-x-1 text-gray-300">
+                  <Brain className="w-4 h-4 text-purple-400" />
+                  <span>{liveStats.mlAccuracy}% ML accuracy</span>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <CheckCircle className="w-4 h-4 text-green-400" />
-                <span className="text-green-400">{liveStats.successRate}% success rate</span>
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span className="text-green-400">{liveStats.successRate}% success</span>
+                </div>
+                <div className="hidden md:flex items-center space-x-1 text-gray-300">
+                  <Activity className="w-4 h-4 text-orange-400" />
+                  <span>{liveStats.activeInvestigations} active</span>
+                </div>
               </div>
             </div>
           </div>
