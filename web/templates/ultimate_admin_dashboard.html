@@ -1,0 +1,1168 @@
+{% extends "base.html" %}
+{% block title %}Ultimate Admin Dashboard - Enterprise Intelligence Platform{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Ultimate Enterprise Admin Dashboard Styles */
+    .ultimate-admin-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, 
+            rgba(0, 0, 0, 0.95) 0%, 
+            rgba(26, 26, 26, 0.9) 25%,
+            rgba(0, 255, 255, 0.02) 50%,
+            rgba(138, 43, 226, 0.02) 75%,
+            rgba(0, 0, 0, 0.95) 100%
+        );
+        position: relative;
+        overflow-x: hidden;
+    }
+    
+    .quantum-grid-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(circle at 1px 1px, rgba(0,255,255,0.05) 1px, transparent 0);
+        background-size: 20px 20px;
+        animation: grid-pulse 10s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 0;
+    }
+    
+    @keyframes grid-pulse {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 0.8; }
+    }
+    
+    .admin-header {
+        background: linear-gradient(135deg, 
+            rgba(255, 0, 0, 0.1) 0%,
+            rgba(138, 43, 226, 0.1) 50%,
+            rgba(0, 255, 255, 0.1) 100%
+        );
+        border: 2px solid transparent;
+        border-radius: 25px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        backdrop-filter: blur(20px);
+        background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+                          linear-gradient(135deg, #ff0000, #8a2be2, #00ffff);
+        background-origin: border-box;
+        background-clip: content-box, border-box;
+        box-shadow: 0 25px 50px rgba(255, 0, 0, 0.2);
+        position: relative;
+        z-index: 10;
+    }
+    
+    .ultimate-metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+        z-index: 10;
+        position: relative;
+    }
+    
+    .ultimate-metric-card {
+        background: linear-gradient(135deg, 
+            rgba(0, 0, 0, 0.9) 0%,
+            rgba(26, 26, 26, 0.8) 100%
+        );
+        border: 2px solid transparent;
+        border-radius: 20px;
+        padding: 2.5rem;
+        backdrop-filter: blur(15px);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), 
+                          linear-gradient(45deg, #00ffff, #8a2be2, #ff1493);
+        background-origin: border-box;
+        background-clip: content-box, border-box;
+    }
+    
+    .ultimate-metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(45deg, #00ffff, #8a2be2, #ff1493);
+        border-radius: 20px 20px 0 0;
+    }
+    
+    .ultimate-metric-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 30px 60px rgba(0, 255, 255, 0.3);
+        border-image: linear-gradient(45deg, #00ffff, #8a2be2, #ff1493) 1;
+    }
+    
+    .metric-value-ultimate {
+        font-size: 3.5rem;
+        font-weight: 900;
+        background: linear-gradient(45deg, #00ffff, #8a2be2, #ff1493);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        animation: glow-pulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes glow-pulse {
+        0%, 100% {
+            filter: brightness(1) drop-shadow(0 0 10px rgba(0, 255, 255, 0.3));
+        }
+        50% {
+            filter: brightness(1.2) drop-shadow(0 0 20px rgba(0, 255, 255, 0.6));
+        }
+    }
+    
+    .metric-label-ultimate {
+        color: #ffffff;
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    
+    .metric-change-ultimate {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 15px;
+        background: rgba(0, 0, 0, 0.5);
+    }
+    
+    .metric-change-ultimate.positive {
+        color: #00ff88;
+        border: 1px solid rgba(0, 255, 136, 0.3);
+    }
+    
+    .metric-change-ultimate.negative {
+        color: #ff4757;
+        border: 1px solid rgba(255, 71, 87, 0.3);
+    }
+    
+    .ultimate-chart-container {
+        background: linear-gradient(135deg, 
+            rgba(0, 0, 0, 0.9) 0%,
+            rgba(26, 26, 26, 0.8) 100%
+        );
+        border: 2px solid transparent;
+        border-radius: 20px;
+        padding: 2.5rem;
+        backdrop-filter: blur(15px);
+        margin-bottom: 2rem;
+        background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), 
+                          linear-gradient(45deg, #00ffff, #8a2be2, #ff1493);
+        background-origin: border-box;
+        background-clip: content-box, border-box;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .ultimate-table-container {
+        background: linear-gradient(135deg, 
+            rgba(0, 0, 0, 0.9) 0%,
+            rgba(26, 26, 26, 0.8) 100%
+        );
+        border: 2px solid transparent;
+        border-radius: 20px;
+        backdrop-filter: blur(15px);
+        overflow: hidden;
+        background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), 
+                          linear-gradient(45deg, #00ffff, #8a2be2, #ff1493);
+        background-origin: border-box;
+        background-clip: content-box, border-box;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .ultimate-table-header {
+        background: linear-gradient(135deg, 
+            rgba(0, 255, 255, 0.1) 0%,
+            rgba(138, 43, 226, 0.1) 100%
+        );
+        padding: 1.5rem;
+        border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+    }
+    
+    .ultimate-admin-table {
+        width: 100%;
+        color: #ffffff;
+        font-size: 1rem;
+    }
+    
+    .ultimate-admin-table th,
+    .ultimate-admin-table td {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: left;
+        vertical-align: middle;
+    }
+    
+    .ultimate-admin-table th {
+        background: linear-gradient(135deg, 
+            rgba(0, 255, 255, 0.1) 0%,
+            rgba(138, 43, 226, 0.1) 100%
+        );
+        font-weight: 700;
+        color: #00ffff;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .ultimate-admin-table tbody tr {
+        transition: all 0.3s ease;
+    }
+    
+    .ultimate-admin-table tbody tr:hover {
+        background: linear-gradient(135deg, 
+            rgba(0, 255, 255, 0.05) 0%,
+            rgba(138, 43, 226, 0.05) 100%
+        );
+        transform: scale(1.01);
+    }
+    
+    .ultimate-status-badge {
+        padding: 0.5rem 1.2rem;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 2px solid;
+    }
+    
+    .ultimate-status-active {
+        background: linear-gradient(45deg, rgba(0, 255, 136, 0.2), rgba(0, 255, 136, 0.1));
+        color: #00ff88;
+        border-color: #00ff88;
+        box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+    }
+    
+    .ultimate-status-processing {
+        background: linear-gradient(45deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.1));
+        color: #ffc107;
+        border-color: #ffc107;
+        box-shadow: 0 0 15px rgba(255, 193, 7, 0.3);
+        animation: pulse-glow 2s ease-in-out infinite;
+    }
+    
+    .ultimate-status-failed {
+        background: linear-gradient(45deg, rgba(255, 71, 87, 0.2), rgba(255, 71, 87, 0.1));
+        color: #ff4757;
+        border-color: #ff4757;
+        box-shadow: 0 0 15px rgba(255, 71, 87, 0.3);
+    }
+    
+    @keyframes pulse-glow {
+        0%, 100% {
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.3);
+        }
+        50% {
+            box-shadow: 0 0 25px rgba(255, 193, 7, 0.6);
+        }
+    }
+    
+    .ultimate-action-btn {
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 12px;
+        padding: 0.8rem 1.5rem;
+        color: #ffffff;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-right: 0.8rem;
+        cursor: pointer;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .ultimate-action-btn:hover {
+        background: linear-gradient(45deg, rgba(0, 255, 255, 0.1), rgba(138, 43, 226, 0.1));
+        border-color: #00ffff;
+        color: #00ffff;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 255, 255, 0.2);
+    }
+    
+    .ultimate-action-btn.danger {
+        border-color: rgba(255, 71, 87, 0.5);
+        color: #ff4757;
+    }
+    
+    .ultimate-action-btn.danger:hover {
+        background: linear-gradient(45deg, rgba(255, 71, 87, 0.1), rgba(255, 71, 87, 0.05));
+        border-color: #ff4757;
+        color: #ff4757;
+        box-shadow: 0 10px 20px rgba(255, 71, 87, 0.2);
+    }
+    
+    .ultimate-filters-section {
+        background: linear-gradient(135deg, 
+            rgba(0, 0, 0, 0.9) 0%,
+            rgba(26, 26, 26, 0.8) 100%
+        );
+        border: 2px solid transparent;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        backdrop-filter: blur(15px);
+        background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), 
+                          linear-gradient(45deg, #00ffff, #8a2be2, #ff1493);
+        background-origin: border-box;
+        background-clip: content-box, border-box;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .ultimate-real-time-indicator {
+        position: fixed;
+        top: 120px;
+        right: 30px;
+        background: linear-gradient(135deg, 
+            rgba(0, 0, 0, 0.95) 0%,
+            rgba(26, 26, 26, 0.9) 100%
+        );
+        border: 2px solid rgba(0, 255, 136, 0.5);
+        border-radius: 15px;
+        padding: 1.5rem;
+        backdrop-filter: blur(15px);
+        z-index: 1000;
+        box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
+    }
+    
+    .ultimate-live-pulse {
+        width: 16px;
+        height: 16px;
+        background: #00ff88;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 0.8rem;
+        animation: ultimate-pulse 2s infinite;
+        box-shadow: 0 0 15px rgba(0, 255, 136, 0.6);
+    }
+    
+    @keyframes ultimate-pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 15px rgba(0, 255, 136, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(0, 255, 136, 0);
+        }
+    }
+    
+    .ultimate-system-controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+    
+    .ultimate-control-panel {
+        background: linear-gradient(135deg, 
+            rgba(0, 0, 0, 0.9) 0%,
+            rgba(26, 26, 26, 0.8) 100%
+        );
+        border: 2px solid transparent;
+        border-radius: 20px;
+        padding: 2.5rem;
+        backdrop-filter: blur(15px);
+        background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), 
+                          linear-gradient(45deg, #00ffff, #8a2be2, #ff1493);
+        background-origin: border-box;
+        background-clip: content-box, border-box;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .ultimate-control-btn {
+        width: 100%;
+        padding: 1.2rem 2rem;
+        margin-bottom: 1rem;
+        border: 2px solid;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .ultimate-control-btn.danger {
+        background: linear-gradient(135deg, rgba(255, 71, 87, 0.1), rgba(255, 71, 87, 0.05));
+        border-color: #ff4757;
+        color: #ff4757;
+    }
+    
+    .ultimate-control-btn.warning {
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+        border-color: #ffc107;
+        color: #ffc107;
+    }
+    
+    .ultimate-control-btn.info {
+        background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(0, 255, 255, 0.05));
+        border-color: #00ffff;
+        color: #00ffff;
+    }
+    
+    .ultimate-control-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .ultimate-control-btn.danger:hover {
+        box-shadow: 0 15px 30px rgba(255, 71, 87, 0.3);
+    }
+    
+    .ultimate-control-btn.warning:hover {
+        box-shadow: 0 15px 30px rgba(255, 193, 7, 0.3);
+    }
+    
+    .ultimate-control-btn.info:hover {
+        box-shadow: 0 15px 30px rgba(0, 255, 255, 0.3);
+    }
+    
+    /* Enhanced form controls */
+    .ultimate-form-select {
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(26, 26, 26, 0.6));
+        border: 2px solid rgba(0, 255, 255, 0.3);
+        border-radius: 12px;
+        padding: 0.8rem 1.2rem;
+        color: #ffffff;
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+    
+    .ultimate-form-select:focus {
+        border-color: #00ffff;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    }
+    
+    .ultimate-form-select option {
+        background: #1a1a1a;
+        color: #ffffff;
+    }
+    
+    /* Responsive enhancements */
+    @media (max-width: 768px) {
+        .ultimate-metrics-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .ultimate-system-controls {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .ultimate-real-time-indicator {
+            position: relative;
+            top: auto;
+            right: auto;
+            margin-bottom: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ultimate-admin-container">
+    <!-- Quantum Grid Background -->
+    <div class="quantum-grid-bg"></div>
+    
+    <!-- Real-time Indicator -->
+    <div class="ultimate-real-time-indicator">
+        <div class="ultimate-live-pulse"></div>
+        <small style="color: #00ff88; font-weight: 600;">LIVE INTELLIGENCE STREAM</small>
+    </div>
+
+    <div class="container mt-4" style="position: relative; z-index: 10;">
+        <!-- Ultimate Admin Header -->
+        <div class="admin-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="mb-3" style="font-size: 3rem; font-weight: 900; background: linear-gradient(45deg, #ff0000, #8a2be2, #00ffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                        <i class="fas fa-brain me-3" style="color: #ff0000;"></i>
+                        ULTIMATE COMMAND CENTER
+                    </h1>
+                    <p class="mb-0" style="color: #cccccc; font-size: 1.2rem; font-weight: 500;">
+                        Real-time intelligence operations • 500+ data sources • AI-powered analytics
+                    </p>
+                </div>
+                <div class="text-end">
+                    <span class="badge" style="font-size: 1.2rem; padding: 1rem 2rem; background: linear-gradient(45deg, #ff0000, #8a2be2); border-radius: 25px;">
+                        <i class="fas fa-shield-alt me-2"></i>
+                        ENTERPRISE ADMIN
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ultimate Key Metrics -->
+        <div class="ultimate-metrics-grid">
+            <div class="ultimate-metric-card">
+                <div class="metric-value-ultimate" id="ultimateTotalUsers">12,847</div>
+                <div class="metric-label-ultimate">
+                    <i class="fas fa-users-cog" style="color: #00ffff;"></i>
+                    Active Intelligence Agents
+                </div>
+                <div class="metric-change-ultimate positive">
+                    <i class="fas fa-rocket"></i>
+                    <span>+347 today</span>
+                </div>
+            </div>
+            
+            <div class="ultimate-metric-card">
+                <div class="metric-value-ultimate" id="ultimateTotalSearches">189,394</div>
+                <div class="metric-label-ultimate">
+                    <i class="fas fa-satellite-dish" style="color: #8a2be2;"></i>
+                    Intelligence Operations
+                </div>
+                <div class="metric-change-ultimate positive">
+                    <i class="fas fa-chart-line"></i>
+                    <span>+2,847 today</span>
+                </div>
+            </div>
+            
+            <div class="ultimate-metric-card">
+                <div class="metric-value-ultimate" id="ultimateTotalRevenue">$284,950</div>
+                <div class="metric-label-ultimate">
+                    <i class="fas fa-coins" style="color: #ff1493;"></i>
+                    Mission Revenue
+                </div>
+                <div class="metric-change-ultimate positive">
+                    <i class="fas fa-trending-up"></i>
+                    <span>+$8,920 today</span>
+                </div>
+            </div>
+            
+            <div class="ultimate-metric-card">
+                <div class="metric-value-ultimate" id="ultimateConversionRate">94.7%</div>
+                <div class="metric-label-ultimate">
+                    <i class="fas fa-bullseye" style="color: #00ff88;"></i>
+                    Mission Success Rate
+                </div>
+                <div class="metric-change-ultimate positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+3.2% this week</span>
+                </div>
+            </div>
+            
+            <div class="ultimate-metric-card">
+                <div class="metric-value-ultimate" id="ultimateActiveScans">147</div>
+                <div class="metric-label-ultimate">
+                    <i class="fas fa-eye" style="color: #ffc107;"></i>
+                    Live Surveillance
+                </div>
+                <div class="metric-change-ultimate">
+                    <i class="fas fa-pulse"></i>
+                    <span>Real-time monitoring</span>
+                </div>
+            </div>
+            
+            <div class="ultimate-metric-card">
+                <div class="metric-value-ultimate" id="ultimateSystemHealth">99.97%</div>
+                <div class="metric-label-ultimate">
+                    <i class="fas fa-heartbeat" style="color: #ff6b35;"></i>
+                    System Integrity
+                </div>
+                <div class="metric-change-ultimate positive">
+                    <i class="fas fa-shield-check"></i>
+                    <span>All systems optimal</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ultimate Charts Section -->
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <div class="ultimate-chart-container">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 style="color: #ffffff; font-size: 1.8rem; font-weight: 700;">
+                            <i class="fas fa-chart-area me-3" style="color: #00ffff;"></i>
+                            QUANTUM REVENUE ANALYTICS
+                        </h3>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-sm ultimate-action-btn active" data-period="24h">24H</button>
+                            <button class="btn btn-sm ultimate-action-btn" data-period="7d">7D</button>
+                            <button class="btn btn-sm ultimate-action-btn" data-period="30d">30D</button>
+                            <button class="btn btn-sm ultimate-action-btn" data-period="90d">90D</button>
+                        </div>
+                    </div>
+                    <canvas id="ultimateRevenueChart" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="ultimate-chart-container">
+                    <h3 style="color: #ffffff; font-size: 1.8rem; font-weight: 700; margin-bottom: 2rem;">
+                        <i class="fas fa-users me-3" style="color: #8a2be2;"></i>
+                        AGENT DISTRIBUTION
+                    </h3>
+                    <canvas id="ultimateUserChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ultimate Filters -->
+        <div class="ultimate-filters-section">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <label class="form-label" style="color: #00ffff; font-weight: 600; font-size: 1.1rem;">
+                        <i class="fas fa-clock me-2"></i>Mission Timeline
+                    </label>
+                    <select class="ultimate-form-select" id="ultimatePeriodFilter">
+                        <option value="today">Today's Operations</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="quarter">This Quarter</option>
+                        <option value="all">All Missions</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" style="color: #8a2be2; font-weight: 600; font-size: 1.1rem;">
+                        <i class="fas fa-user-shield me-2"></i>Agent Classification
+                    </label>
+                    <select class="ultimate-form-select" id="ultimateUserTypeFilter">
+                        <option value="">All Agents</option>
+                        <option value="free">Field Operatives</option>
+                        <option value="premium">Elite Agents</option>
+                        <option value="enterprise">Command Staff</option>
+                        <option value="admin">Mission Control</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" style="color: #ff1493; font-weight: 600; font-size: 1.1rem;">
+                        <i class="fas fa-radar me-2"></i>Operation Type
+                    </label>
+                    <select class="ultimate-form-select" id="ultimateSearchTypeFilter">
+                        <option value="">All Operations</option>
+                        <option value="phone">Phone Intelligence</option>
+                        <option value="email">Email Surveillance</option>
+                        <option value="username">Social Infiltration</option>
+                        <option value="blockchain">Crypto Tracking</option>
+                        <option value="darkweb">Dark Web Monitoring</option>
+                        <option value="geospatial">Location Intelligence</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" style="color: transparent;">Action</label>
+                    <div class="d-grid">
+                        <button class="ultimate-control-btn info" onclick="applyUltimateFilters()">
+                            <i class="fas fa-search-plus"></i>
+                            ANALYZE DATA
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ultimate Activity Table -->
+        <div class="ultimate-table-container">
+            <div class="ultimate-table-header">
+                <h3 style="color: #ffffff; font-size: 1.8rem; font-weight: 700; margin: 0;">
+                    <i class="fas fa-satellite me-3" style="color: #00ffff;"></i>
+                    LIVE INTELLIGENCE OPERATIONS
+                </h3>
+            </div>
+            <div class="table-responsive">
+                <table class="ultimate-admin-table">
+                    <thead>
+                        <tr>
+                            <th>AGENT</th>
+                            <th>OPERATION</th>
+                            <th>CLASSIFICATION</th>
+                            <th>REVENUE</th>
+                            <th>STATUS</th>
+                            <th>TIMESTAMP</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ultimateActivityTable">
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3" style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(45deg, #00ffff, #8a2be2); display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-user-secret text-white"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 600; color: #00ffff;">AGENT-7741</div>
+                                        <small style="color: #cccccc;">Elite Operative</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="font-weight: 600;">Dark Web Intelligence</td>
+                            <td><span class="badge" style="background: linear-gradient(45deg, #8a2be2, #ff1493); padding: 0.5rem 1rem; border-radius: 15px;">CLASSIFIED</span></td>
+                            <td style="color: #00ff88; font-weight: 700; font-size: 1.1rem;">$4.99</td>
+                            <td><span class="ultimate-status-badge ultimate-status-active">COMPLETED</span></td>
+                            <td style="color: #cccccc;">2 minutes ago</td>
+                            <td>
+                                <button class="ultimate-action-btn" onclick="viewUltimateDetails('op_001')">
+                                    <i class="fas fa-eye"></i>INSPECT
+                                </button>
+                                <button class="ultimate-action-btn danger" onclick="flagUltimateActivity('op_001')">
+                                    <i class="fas fa-flag"></i>FLAG
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3" style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(45deg, #ff1493, #ffc107); display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-user-ninja text-white"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 600; color: #ff1493;">AGENT-3392</div>
+                                        <small style="color: #cccccc;">Field Operative</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="font-weight: 600;">Blockchain Surveillance</td>
+                            <td><span class="badge" style="background: linear-gradient(45deg, #ffc107, #ff6b35); padding: 0.5rem 1rem; border-radius: 15px;">ADVANCED</span></td>
+                            <td style="color: #00ff88; font-weight: 700; font-size: 1.1rem;">$2.99</td>
+                            <td><span class="ultimate-status-badge ultimate-status-processing">PROCESSING</span></td>
+                            <td style="color: #cccccc;">5 minutes ago</td>
+                            <td>
+                                <button class="ultimate-action-btn" onclick="viewUltimateDetails('op_002')">
+                                    <i class="fas fa-eye"></i>INSPECT
+                                </button>
+                                <button class="ultimate-action-btn" onclick="expediteUltimate('op_002')">
+                                    <i class="fas fa-rocket"></i>BOOST
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3" style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(45deg, #00ff88, #00ffff); display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-user-astronaut text-white"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 600; color: #00ff88;">AGENT-9156</div>
+                                        <small style="color: #cccccc;">Command Staff</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="font-weight: 600;">Geospatial Intelligence</td>
+                            <td><span class="badge" style="background: linear-gradient(45deg, #00ff88, #00ffff); padding: 0.5rem 1rem; border-radius: 15px;">ENTERPRISE</span></td>
+                            <td style="color: #00ff88; font-weight: 700; font-size: 1.1rem;">$4.99</td>
+                            <td><span class="ultimate-status-badge ultimate-status-active">COMPLETED</span></td>
+                            <td style="color: #cccccc;">8 minutes ago</td>
+                            <td>
+                                <button class="ultimate-action-btn" onclick="viewUltimateDetails('op_003')">
+                                    <i class="fas fa-eye"></i>INSPECT
+                                </button>
+                                <button class="ultimate-action-btn" onclick="downloadUltimateReport('op_003')">
+                                    <i class="fas fa-download"></i>EXTRACT
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Ultimate System Controls -->
+        <div class="ultimate-system-controls">
+            <div class="ultimate-control-panel">
+                <h3 style="color: #ffffff; font-size: 1.8rem; font-weight: 700; margin-bottom: 2rem;">
+                    <i class="fas fa-terminal me-3" style="color: #ff0000;"></i>
+                    MISSION CONTROL
+                </h3>
+                <div class="d-grid gap-3">
+                    <button class="ultimate-control-btn danger" onclick="manageUltimateSystem('lockdown')">
+                        <i class="fas fa-lock"></i>
+                        INITIATE LOCKDOWN
+                    </button>
+                    <button class="ultimate-control-btn warning" onclick="manageUltimateSystem('restart')">
+                        <i class="fas fa-power-off"></i>
+                        SYSTEM RESTART
+                    </button>
+                    <button class="ultimate-control-btn info" onclick="manageUltimateSystem('backup')">
+                        <i class="fas fa-shield-virus"></i>
+                        SECURE BACKUP
+                    </button>
+                </div>
+            </div>
+            <div class="ultimate-control-panel">
+                <h3 style="color: #ffffff; font-size: 1.8rem; font-weight: 700; margin-bottom: 2rem;">
+                    <i class="fas fa-chart-network me-3" style="color: #00ffff;"></i>
+                    INTELLIGENCE EXPORTS
+                </h3>
+                <div class="d-grid gap-3">
+                    <button class="ultimate-control-btn info" onclick="exportUltimateReport('revenue')">
+                        <i class="fas fa-coins"></i>
+                        REVENUE INTELLIGENCE
+                    </button>
+                    <button class="ultimate-control-btn info" onclick="exportUltimateReport('agents')">
+                        <i class="fas fa-users-cog"></i>
+                        AGENT ANALYTICS
+                    </button>
+                    <button class="ultimate-control-btn info" onclick="exportUltimateReport('operations')">
+                        <i class="fas fa-satellite-dish"></i>
+                        OPERATION LOGS
+                    </button>
+                </div>
+            </div>
+            <div class="ultimate-control-panel">
+                <h3 style="color: #ffffff; font-size: 1.8rem; font-weight: 700; margin-bottom: 2rem;">
+                    <i class="fas fa-brain me-3" style="color: #8a2be2;"></i>
+                    AI COMMAND CENTER
+                </h3>
+                <div class="d-grid gap-3">
+                    <button class="ultimate-control-btn info" onclick="launchAIAnalysis('predictive')">
+                        <i class="fas fa-crystal-ball"></i>
+                        PREDICTIVE ANALYSIS
+                    </button>
+                    <button class="ultimate-control-btn info" onclick="launchAIAnalysis('correlation')">
+                        <i class="fas fa-project-diagram"></i>
+                        CORRELATION ENGINE
+                    </button>
+                    <button class="ultimate-control-btn warning" onclick="launchAIAnalysis('threat')">
+                        <i class="fas fa-shield-alt"></i>
+                        THREAT ASSESSMENT
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize ultimate charts
+    initializeUltimateCharts();
+    
+    // Start real-time updates
+    startUltimateRealTimeUpdates();
+    
+    // Initialize ultimate dashboard features
+    initializeUltimateDashboard();
+    
+    function initializeUltimateCharts() {
+        // Ultimate Revenue Chart
+        const ultimateRevenueCtx = document.getElementById('ultimateRevenueChart');
+        if (ultimateRevenueCtx) {
+            window.ultimateRevenueChart = new Chart(ultimateRevenueCtx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+                    datasets: [{
+                        label: 'Mission Revenue ($)',
+                        data: [1200, 1900, 3000, 5000, 8000, 9500, 12000],
+                        borderColor: '#00ffff',
+                        backgroundColor: 'rgba(0, 255, 255, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#00ffff',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
+                    }, {
+                        label: 'AI Predictions',
+                        data: [1000, 2100, 3200, 5200, 8200, 9800, 13000],
+                        borderColor: '#8a2be2',
+                        backgroundColor: 'rgba(138, 43, 226, 0.05)',
+                        tension: 0.4,
+                        fill: false,
+                        borderWidth: 2,
+                        borderDash: [10, 5],
+                        pointBackgroundColor: '#8a2be2',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#ffffff',
+                                font: { size: 14, weight: 'bold' }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#cccccc', font: { size: 12 } },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        y: {
+                            ticks: { 
+                                color: '#cccccc',
+                                font: { size: 12 },
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+        
+        // Ultimate User Distribution Chart
+        const ultimateUserCtx = document.getElementById('ultimateUserChart');
+        if (ultimateUserCtx) {
+            window.ultimateUserChart = new Chart(ultimateUserCtx.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Field Operatives', 'Elite Agents', 'Command Staff', 'Mission Control'],
+                    datasets: [{
+                        data: [45, 30, 20, 5],
+                        backgroundColor: [
+                            'rgba(0, 255, 136, 0.8)',
+                            'rgba(255, 107, 53, 0.8)',
+                            'rgba(138, 43, 226, 0.8)',
+                            'rgba(255, 20, 147, 0.8)'
+                        ],
+                        borderColor: [
+                            '#00ff88',
+                            '#ff6b35',
+                            '#8a2be2',
+                            '#ff1493'
+                        ],
+                        borderWidth: 3,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#ffffff',
+                                padding: 20,
+                                font: { size: 12, weight: 'bold' }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+    
+    function startUltimateRealTimeUpdates() {
+        setInterval(updateUltimateMetrics, 3000); // Update every 3 seconds
+        setInterval(updateUltimateActivity, 8000); // Update activity every 8 seconds
+    }
+    
+    function updateUltimateMetrics() {
+        // Simulate real-time metric updates with more dynamic ranges
+        const metrics = {
+            ultimateTotalUsers: Math.floor(Math.random() * 500) + 12500,
+            ultimateTotalSearches: Math.floor(Math.random() * 1000) + 189000,
+            ultimateTotalRevenue: (Math.random() * 5000 + 280000).toFixed(0),
+            ultimateConversionRate: (Math.random() * 2 + 93).toFixed(1),
+            ultimateActiveScans: Math.floor(Math.random() * 50) + 100,
+            ultimateSystemHealth: (Math.random() * 0.05 + 99.95).toFixed(2)
+        };
+        
+        Object.keys(metrics).forEach(key => {
+            const element = document.getElementById(key);
+            if (element) {
+                if (key === 'ultimateTotalRevenue') {
+                    element.textContent = `$${parseInt(metrics[key]).toLocaleString()}`;
+                } else if (key === 'ultimateConversionRate' || key === 'ultimateSystemHealth') {
+                    element.textContent = `${metrics[key]}%`;
+                } else {
+                    element.textContent = parseInt(metrics[key]).toLocaleString();
+                }
+            }
+        });
+    }
+    
+    function updateUltimateActivity() {
+        // This would fetch real activity data from the ultimate API
+        console.log('Ultimate activity stream updated');
+    }
+    
+    function initializeUltimateDashboard() {
+        // Add advanced dashboard interactions
+        console.log('Ultimate Intelligence Dashboard initialized');
+    }
+    
+    // Ultimate admin action functions
+    window.viewUltimateDetails = function(id) {
+        showUltimateNotification(`Accessing classified intel for operation ${id}`, 'info');
+    };
+    
+    window.flagUltimateActivity = function(id) {
+        if (confirm(`Flag operation ${id} for security review?`)) {
+            showUltimateNotification('Operation flagged for intelligence review', 'warning');
+        }
+    };
+    
+    window.expediteUltimate = function(id) {
+        if (confirm(`Deploy priority resources for operation ${id}?`)) {
+            showUltimateNotification('Priority resources deployed', 'success');
+        }
+    };
+    
+    window.downloadUltimateReport = function(id) {
+        showUltimateNotification('Extracting classified intelligence...', 'info');
+        // Mock download with enhanced security
+        setTimeout(() => {
+            const link = document.createElement('a');
+            link.href = 'data:text/plain;charset=utf-8,CLASSIFIED INTELLIGENCE REPORT - EYES ONLY';
+            link.download = `intel-report-${id}-${Date.now()}.encrypted`;
+            link.click();
+            showUltimateNotification('Intelligence report extracted securely', 'success');
+        }, 2000);
+    };
+    
+    window.manageUltimateSystem = function(action) {
+        const actions = {
+            lockdown: 'Initiate emergency lockdown protocol',
+            restart: 'Execute system restart sequence',
+            backup: 'Create quantum-encrypted backup'
+        };
+        
+        if (confirm(`SECURITY ALERT: ${actions[action]}?`)) {
+            showUltimateNotification(`${actions[action]} authorized`, 'warning');
+        }
+    };
+    
+    window.exportUltimateReport = function(type) {
+        const types = {
+            revenue: 'Revenue Intelligence Report',
+            agents: 'Agent Performance Analytics',
+            operations: 'Operation Classification Logs'
+        };
+        
+        showUltimateNotification(`Generating ${types[type]}...`, 'info');
+        
+        setTimeout(() => {
+            const link = document.createElement('a');
+            link.href = `data:text/plain;charset=utf-8,CLASSIFIED ${types[type].toUpperCase()} DATA`;
+            link.download = `${type}-intel-${new Date().toISOString().split('T')[0]}.encrypted`;
+            link.click();
+            showUltimateNotification(`${types[type]} exported securely`, 'success');
+        }, 3000);
+    };
+    
+    window.launchAIAnalysis = function(type) {
+        const analyses = {
+            predictive: 'AI Predictive Intelligence Engine',
+            correlation: 'Quantum Correlation Matrix',
+            threat: 'Advanced Threat Assessment Protocol'
+        };
+        
+        showUltimateNotification(`Launching ${analyses[type]}...`, 'info');
+        
+        setTimeout(() => {
+            showUltimateNotification(`${analyses[type]} operational`, 'success');
+        }, 4000);
+    };
+    
+    window.applyUltimateFilters = function() {
+        const filters = {
+            period: document.getElementById('ultimatePeriodFilter').value,
+            userType: document.getElementById('ultimateUserTypeFilter').value,
+            searchType: document.getElementById('ultimateSearchTypeFilter').value
+        };
+        
+        console.log('Applying ultimate filters:', filters);
+        showUltimateNotification('Intelligence filters applied', 'success');
+    };
+    
+    function showUltimateNotification(message, type) {
+        const notification = document.createElement('div');
+        const bgColors = {
+            success: 'linear-gradient(45deg, rgba(0, 255, 136, 0.2), rgba(0, 255, 136, 0.1))',
+            warning: 'linear-gradient(45deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.1))',
+            info: 'linear-gradient(45deg, rgba(0, 255, 255, 0.2), rgba(0, 255, 255, 0.1))',
+            error: 'linear-gradient(45deg, rgba(255, 71, 87, 0.2), rgba(255, 71, 87, 0.1))'
+        };
+        const borderColors = { success: '#00ff88', warning: '#ffc107', info: '#00ffff', error: '#ff4757' };
+        const icons = { success: 'check-circle', warning: 'exclamation-triangle', info: 'info-circle', error: 'times-circle' };
+        
+        notification.style.cssText = `
+            position: fixed;
+            top: 200px;
+            right: 30px;
+            z-index: 2000;
+            min-width: 350px;
+            background: ${bgColors[type]};
+            border: 2px solid ${borderColors[type]};
+            border-radius: 15px;
+            padding: 1.5rem;
+            color: #ffffff;
+            font-weight: 500;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: slide-in-right 0.5s ease-out;
+        `;
+        
+        notification.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <i class="fas fa-${icons[type]}" style="color: ${borderColors[type]}; font-size: 1.5rem;"></i>
+                <div>
+                    <div style="font-size: 0.9rem; color: ${borderColors[type]}; text-transform: uppercase; letter-spacing: 0.5px;">INTELLIGENCE ALERT</div>
+                    <div style="margin-top: 0.5rem;">${message}</div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slide-out-right 0.5s ease-in forwards';
+            setTimeout(() => notification.remove(), 500);
+        }, 5000);
+    }
+});
+
+// Add custom animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slide-in-right {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slide-out-right {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+</script>
+
+<!-- Enhanced Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.0.1/dist/chart.min.js"></script>
+{% endblock %}
