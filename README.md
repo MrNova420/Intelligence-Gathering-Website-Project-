@@ -55,8 +55,11 @@ cd Intelligence-Gathering-Website-Project-
 # Install dependencies
 pip install -r requirements.txt
 
-# Start the platform
+# Start the platform (main unified application)
 python start.py
+
+# OR start directly
+python unified_app.py
 ```
 
 ### Access Points
