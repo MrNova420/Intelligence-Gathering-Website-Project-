@@ -86,7 +86,8 @@ class PlatformSetup:
             "pydantic[email]>=2.5.0",
             "python-dotenv>=1.0.0",
             "aiohttp>=3.9.1",
-            "requests>=2.31.0"
+            "requests>=2.31.0",
+            "itsdangerous>=2.1.2"
         ]
         
         # Enhanced features dependencies (optional)
@@ -250,11 +251,12 @@ htmlcov/
             logger.info("✅ Core web framework imports successful")
             
             # Test configuration
-            from config import config
+            from config import PlatformConfig
+            config = PlatformConfig()
             logger.info("✅ Configuration system working")
             
             # Test app creation
-            from app import app
+            from webapp import app
             logger.info("✅ Web application created successfully")
             
             logger.info("🎉 Installation test passed!")
@@ -262,6 +264,7 @@ htmlcov/
             
         except ImportError as e:
             logger.error(f"❌ Import error: {e}")
+            logger.info("💡 Some modules may not be installed. Try running setup again.")
             return False
         except Exception as e:
             logger.error(f"❌ Test failed: {e}")

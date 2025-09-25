@@ -1,0 +1,94 @@
+
+/* Intelligence Platform Styles */
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #64748b;
+    --success-color: #059669;
+    --warning-color: #d97706;
+    --danger-color: #dc2626;
+    --dark-color: #1e293b;
+}
+
+body {
+    background-color: #f8fafc;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+}
+
+.btn-lg {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+}
+
+.progress {
+    height: 8px;
+    border-radius: 4px;
+}
+
+.badge {
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.text-muted {
+    color: var(--secondary-color) !important;
+}
+
+/* Scan results styling */
+#scanResults .card {
+    border-left: 4px solid var(--primary-color);
+}
+
+.scan-metric {
+    padding: 1rem;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.scan-result-item {
+    padding: 0.75rem;
+    border-left: 3px solid var(--primary-color);
+    margin-bottom: 0.5rem;
+    background-color: #f1f5f9;
+    border-radius: 4px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
