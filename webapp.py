@@ -999,6 +999,14 @@ document.addEventListener('DOMContentLoaded', () => {
         except ImportError:
             logger.warning("⚠️ Compliance API not available")
         
+        # Include Performance Monitoring API
+        try:
+            from backend.app.api.performance_api import performance_api
+            self.app.include_router(performance_api.router)
+            logger.info("✅ Performance Monitoring API routes included")
+        except ImportError:
+            logger.warning("⚠️ Performance API not available")
+        
         # Add enhanced API endpoints for dashboard data
         @self.app.get("/api/v1/dashboard/metrics")
         async def get_dashboard_metrics():
