@@ -1,0 +1,625 @@
+/* Advanced Next-Generation Intelligence Platform - Futuristic CSS Framework */
+/* Holographic effects, quantum animations, and AI-driven visual elements */
+/* Inspired by cutting-edge UI/UX from the future of technology */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Quantum Color System - Dynamic and adaptive */
+    --quantum-primary: #00ffff;
+    --quantum-secondary: #0099ff;
+    --quantum-accent: #9900ff;
+    --quantum-success: #00ff00;
+    --quantum-warning: #ffff00;
+    --quantum-danger: #ff0066;
+    --quantum-info: #00ccff;
+    
+    /* Holographic Color Palette */
+    --holo-cyan: rgba(0, 255, 255, 0.8);
+    --holo-blue: rgba(0, 153, 255, 0.8);
+    --holo-purple: rgba(153, 0, 255, 0.8);
+    --holo-green: rgba(0, 255, 0, 0.8);
+    --holo-orange: rgba(255, 153, 0, 0.8);
+    --holo-pink: rgba(255, 0, 153, 0.8);
+    
+    /* Neural Network Colors */
+    --neural-node: rgba(0, 255, 255, 0.6);
+    --neural-connection: rgba(0, 255, 255, 0.3);
+    --neural-pulse: rgba(0, 255, 255, 1);
+    
+    /* Advanced Gradients */
+    --gradient-quantum: linear-gradient(45deg, var(--quantum-primary), var(--quantum-accent), var(--quantum-secondary));
+    --gradient-holographic: linear-gradient(135deg, var(--holo-cyan) 0%, var(--holo-blue) 25%, var(--holo-purple) 50%, var(--holo-green) 75%, var(--holo-cyan) 100%);
+    --gradient-neural: radial-gradient(circle, var(--neural-pulse) 0%, var(--neural-node) 50%, transparent 100%);
+    
+    /* Futuristic Shadows */
+    --shadow-holographic: 0 0 50px var(--holo-cyan), 0 0 100px var(--holo-blue), 0 0 150px var(--holo-purple);
+    --shadow-quantum: 0 0 30px var(--quantum-primary), inset 0 0 50px rgba(0, 255, 255, 0.1);
+    --shadow-neural: 0 0 20px var(--neural-pulse), 0 0 40px var(--neural-node);
+    
+    /* Advanced Typography */
+    --font-futuristic: 'Orbitron', monospace;
+    --font-interface: 'Exo 2', sans-serif;
+    
+    /* Quantum Physics Animations */
+    --animation-quantum-fluctuation: quantumFluctuation 2s infinite ease-in-out;
+    --animation-holographic-shift: holographicShift 3s infinite linear;
+    --animation-neural-pulse: neuralPulse 1.5s infinite ease-in-out;
+    --animation-wave-function: waveFunction 4s infinite ease-in-out;
+    
+    /* Advanced Measurements */
+    --space-quantum: 1.618rem; /* Golden ratio spacing */
+    --border-radius-holo: 15px;
+    --blur-holographic: 20px;
+    --blur-quantum: 30px;
+}
+
+/* Quantum Fluctuation Background */
+body {
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(153, 0, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 20% 80%, rgba(0, 153, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(0, 255, 0, 0.1) 0%, transparent 50%),
+        #0a0a0a;
+    background-attachment: fixed;
+    animation: var(--animation-quantum-fluctuation);
+    overflow-x: hidden;
+}
+
+/* Holographic Ambience Layer */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-holographic);
+    opacity: 0.05;
+    z-index: -3;
+    animation: var(--animation-holographic-shift);
+}
+
+/* Neural Network Background Layer */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 100px 150px, var(--neural-node), transparent),
+        radial-gradient(2px 2px at 200px 300px, var(--neural-connection), transparent),
+        radial-gradient(1px 1px at 300px 100px, var(--neural-pulse), transparent);
+    z-index: -2;
+    animation: var(--animation-neural-pulse);
+}
+
+/* Advanced Holographic Panel System */
+.holographic-panel {
+    background: linear-gradient(135deg, 
+        rgba(0, 255, 255, 0.1) 0%, 
+        rgba(0, 150, 255, 0.1) 50%, 
+        rgba(150, 0, 255, 0.1) 100%);
+    border: 1px solid var(--holo-cyan);
+    border-radius: var(--border-radius-holo);
+    backdrop-filter: blur(var(--blur-holographic)) saturate(180%);
+    box-shadow: var(--shadow-holographic);
+    position: relative;
+    overflow: hidden;
+}
+
+.holographic-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: holographicScan 3s infinite;
+}
+
+.holographic-panel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(45deg, transparent 49%, rgba(0, 255, 255, 0.1) 50%, transparent 51%),
+        linear-gradient(-45deg, transparent 49%, rgba(0, 255, 255, 0.1) 50%, transparent 51%);
+    background-size: 20px 20px;
+    animation: var(--animation-holographic-shift);
+    pointer-events: none;
+}
+
+/* Quantum UI Elements */
+.quantum-button {
+    background: var(--gradient-quantum);
+    border: 2px solid var(--quantum-primary);
+    border-radius: var(--border-radius-holo);
+    color: #ffffff;
+    font-family: var(--font-futuristic);
+    font-weight: 700;
+    padding: 12px 24px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: var(--shadow-quantum);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.quantum-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s;
+}
+
+.quantum-button:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 
+        var(--shadow-quantum),
+        0 10px 30px rgba(0, 255, 255, 0.3);
+    border-color: var(--holo-cyan);
+}
+
+.quantum-button:hover::before {
+    left: 100%;
+}
+
+.quantum-button:active {
+    transform: translateY(-1px) scale(1.02);
+    animation: quantumButtonPulse 0.3s ease-out;
+}
+
+/* Neural Network Cards */
+.neural-card {
+    background: rgba(0, 50, 100, 0.2);
+    border: 1px solid var(--neural-connection);
+    border-radius: var(--border-radius-holo);
+    backdrop-filter: blur(var(--blur-holographic));
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+.neural-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+        from 0deg,
+        transparent,
+        var(--neural-pulse),
+        transparent,
+        var(--neural-node),
+        transparent
+    );
+    animation: neuralRotation 6s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.neural-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: var(--neural-pulse);
+    box-shadow: var(--shadow-neural);
+}
+
+.neural-card:hover::before {
+    opacity: 0.3;
+}
+
+/* Magnetic Interactive Elements */
+.magnetic-element {
+    transition: all 0.2s cubic-bezier(0.23, 1, 0.320, 1);
+    cursor: pointer;
+    position: relative;
+}
+
+.magnetic-element::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, var(--quantum-primary), transparent);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.magnetic-element:hover::after {
+    width: 200%;
+    height: 200%;
+    opacity: 0.1;
+}
+
+/* Advanced Form Elements */
+.quantum-input {
+    background: rgba(0, 50, 100, 0.3);
+    border: 2px solid transparent;
+    border-radius: var(--border-radius-holo);
+    color: var(--quantum-primary);
+    font-family: var(--font-interface);
+    padding: 15px 20px;
+    font-size: 1rem;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.quantum-input::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-quantum);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.quantum-input:focus {
+    border-color: var(--quantum-primary);
+    box-shadow: 
+        0 0 0 3px rgba(0, 255, 255, 0.2),
+        var(--shadow-quantum);
+    outline: none;
+}
+
+.quantum-input:focus::before {
+    opacity: 0.1;
+}
+
+.quantum-input::placeholder {
+    color: rgba(0, 255, 255, 0.5);
+    font-style: italic;
+}
+
+/* Holographic Navigation */
+.holo-nav {
+    background: rgba(0, 20, 40, 0.8);
+    backdrop-filter: blur(var(--blur-holographic)) saturate(180%);
+    border-bottom: 1px solid var(--holo-cyan);
+    position: relative;
+}
+
+.holo-nav::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gradient-holographic);
+    animation: var(--animation-holographic-shift);
+}
+
+.holo-nav-brand {
+    font-family: var(--font-futuristic);
+    font-weight: 900;
+    font-size: 1.5rem;
+    background: var(--gradient-quantum);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px var(--quantum-primary);
+    position: relative;
+}
+
+.holo-nav-brand::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-quantum);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: var(--animation-wave-function);
+    opacity: 0.3;
+}
+
+.holo-nav-link {
+    color: var(--holo-cyan);
+    font-family: var(--font-interface);
+    font-weight: 500;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.holo-nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.holo-nav-link:hover {
+    color: #ffffff;
+    background: rgba(0, 255, 255, 0.1);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.holo-nav-link:hover::before {
+    left: 100%;
+}
+
+/* Advanced Data Visualization */
+.intelligence-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-quantum);
+    padding: var(--space-quantum);
+}
+
+.intelligence-cell {
+    background: rgba(0, 30, 60, 0.6);
+    border: 1px solid var(--neural-connection);
+    border-radius: var(--border-radius-holo);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+.intelligence-cell::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-quantum);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.intelligence-cell:hover {
+    transform: translateY(-5px);
+    border-color: var(--quantum-primary);
+    box-shadow: var(--shadow-quantum);
+}
+
+.intelligence-cell:hover::before {
+    transform: scaleX(1);
+}
+
+/* Quantum Animations */
+@keyframes quantumFluctuation {
+    0%, 100% { 
+        background-position: 0% 0%, 100% 100%, 0% 100%, 100% 0%;
+    }
+    25% { 
+        background-position: 100% 0%, 0% 100%, 100% 100%, 0% 0%;
+    }
+    50% { 
+        background-position: 100% 100%, 0% 0%, 100% 0%, 0% 100%;
+    }
+    75% { 
+        background-position: 0% 100%, 100% 0%, 0% 0%, 100% 100%;
+    }
+}
+
+@keyframes holographicShift {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
+}
+
+@keyframes holographicScan {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes neuralPulse {
+    0%, 100% { 
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes neuralRotation {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes waveFunction {
+    0%, 100% { 
+        opacity: 0.3;
+        filter: blur(1px);
+    }
+    50% { 
+        opacity: 0.7;
+        filter: blur(0px);
+    }
+}
+
+@keyframes quantumButtonPulse {
+    0% { transform: translateY(-1px) scale(1.02); }
+    50% { transform: translateY(-1px) scale(1.1) rotateZ(1deg); }
+    100% { transform: translateY(-1px) scale(1.02); }
+}
+
+/* Holographic Text Effects */
+.holo-text {
+    font-family: var(--font-futuristic);
+    background: var(--gradient-holographic);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+    display: inline-block;
+}
+
+.holo-text::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--gradient-holographic);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: var(--animation-holographic-shift);
+    opacity: 0.3;
+    z-index: -1;
+}
+
+.holo-text-glow {
+    text-shadow: 
+        0 0 10px var(--quantum-primary),
+        0 0 20px var(--quantum-primary),
+        0 0 30px var(--quantum-primary);
+    animation: textGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes textGlow {
+    from {
+        text-shadow: 
+            0 0 10px var(--quantum-primary),
+            0 0 20px var(--quantum-primary),
+            0 0 30px var(--quantum-primary);
+    }
+    to {
+        text-shadow: 
+            0 0 5px var(--quantum-primary),
+            0 0 10px var(--quantum-primary),
+            0 0 15px var(--quantum-primary);
+    }
+}
+
+/* Advanced Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 20, 40, 0.5);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gradient-quantum);
+    border-radius: 4px;
+    box-shadow: 0 0 10px var(--quantum-primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gradient-holographic);
+    box-shadow: var(--shadow-holographic);
+}
+
+/* Responsive Holographic Design */
+@media (max-width: 768px) {
+    :root {
+        --space-quantum: 1rem;
+        --blur-holographic: 15px;
+    }
+    
+    .holographic-panel {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    .quantum-button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .intelligence-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
+    }
+}
+
+/* Performance Optimizations */
+.gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform, opacity, filter;
+}
+
+.reduce-motion {
+    animation: none !important;
+    transition: none !important;
+}
+
+/* Accessibility Enhancements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    :root {
+        --quantum-primary: #ffffff;
+        --holo-cyan: #ffffff;
+        --neural-pulse: #ffffff;
+    }
+    
+    .holographic-panel {
+        border: 2px solid #ffffff;
+    }
+    
+    .quantum-button {
+        border: 2px solid #ffffff;
+        background: #000000;
+        color: #ffffff;
+    }
+}
+
+/* Dark Mode Enhancements */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #000000;
+    }
+    
+    .holographic-panel {
+        background: rgba(0, 255, 255, 0.05);
+    }
+    
+    .neural-card {
+        background: rgba(0, 50, 100, 0.1);
+    }
+}
