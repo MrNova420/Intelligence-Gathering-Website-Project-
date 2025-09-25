@@ -141,6 +141,25 @@ run.bat
 - 📋 **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Cheat sheet and command reference  
 - 👨‍🏫 **[STEP_BY_STEP_TUTORIALS.md](STEP_BY_STEP_TUTORIALS.md)** - Detailed tutorials with screenshots
 - 🔧 **[TERMUX_SETUP.md](TERMUX_SETUP.md)** - Android/Termux specific guide
+- 🚀 **[PRODUCTION_DEPLOYMENT_GUIDE.md](PRODUCTION_DEPLOYMENT_GUIDE.md)** - Deploy to web for public use
+- ⚡ **[DEPLOYMENT_QUICK_REFERENCE.md](DEPLOYMENT_QUICK_REFERENCE.md)** - Production deployment cheat sheet
+
+### **🌐 Deploy to Production Web**
+
+**Ready to go live? Deploy for public access:**
+
+```bash
+# Interactive deployment wizard
+./deploy_to_production.sh
+
+# Choose from:
+# • Vercel + Railway (Free-$20/mo) - 30 min setup
+# • DigitalOcean ($12-50/mo) - Full control
+# • AWS ($50+/mo) - Enterprise scale
+# • Docker Production - Any provider
+```
+
+**Or follow the complete guide:** [PRODUCTION_DEPLOYMENT_GUIDE.md](PRODUCTION_DEPLOYMENT_GUIDE.md)
 
 ### **📱 Platform-Specific Quick Start**
 
