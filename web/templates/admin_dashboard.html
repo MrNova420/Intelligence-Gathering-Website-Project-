@@ -1,0 +1,761 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - Intelligence Platform{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-header {
+        background: linear-gradient(135deg, rgba(255, 0, 0, 0.1), rgba(138, 43, 226, 0.1));
+        border: 1px solid rgba(255, 0, 0, 0.3);
+        backdrop-filter: blur(15px);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .metric-card {
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(255, 0, 0, 0.3);
+        border-radius: 15px;
+        padding: 2rem;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(255, 0, 0, 0.2);
+        border-color: #ff0000;
+    }
+    
+    .metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(45deg, #ff0000, #ff6b35);
+    }
+    
+    .metric-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(45deg, #ff0000, #ff6b35);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+    
+    .metric-label {
+        color: #fff;
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+    
+    .metric-change {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .metric-change.positive {
+        color: #10b981;
+    }
+    
+    .metric-change.negative {
+        color: #ef4444;
+    }
+    
+    .chart-container {
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(255, 0, 0, 0.3);
+        border-radius: 15px;
+        padding: 2rem;
+        backdrop-filter: blur(10px);
+        margin-bottom: 2rem;
+    }
+    
+    .table-container {
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(255, 0, 0, 0.3);
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        overflow: hidden;
+    }
+    
+    .table-header {
+        background: rgba(255, 0, 0, 0.1);
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 0, 0, 0.3);
+    }
+    
+    .admin-table {
+        width: 100%;
+        color: #fff;
+    }
+    
+    .admin-table th,
+    .admin-table td {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: left;
+    }
+    
+    .admin-table th {
+        background: rgba(255, 0, 0, 0.1);
+        font-weight: 600;
+        color: #ff6b35;
+    }
+    
+    .admin-table tbody tr:hover {
+        background: rgba(255, 0, 0, 0.05);
+    }
+    
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .status-active {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        border: 1px solid #10b981;
+    }
+    
+    .status-inactive {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        border: 1px solid #ef4444;
+    }
+    
+    .status-pending {
+        background: rgba(251, 191, 36, 0.2);
+        color: #fbbf24;
+        border: 1px solid #fbbf24;
+    }
+    
+    .action-btn {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        color: #fff;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        margin-right: 0.5rem;
+        cursor: pointer;
+    }
+    
+    .action-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        transform: translateY(-1px);
+    }
+    
+    .action-btn.danger {
+        border-color: rgba(239, 68, 68, 0.5);
+        color: #ef4444;
+    }
+    
+    .action-btn.danger:hover {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    .filters-section {
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(255, 0, 0, 0.3);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        backdrop-filter: blur(10px);
+    }
+    
+    .real-time-indicator {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid rgba(16, 185, 129, 0.5);
+        border-radius: 10px;
+        padding: 1rem;
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+    }
+    
+    .live-pulse {
+        width: 12px;
+        height: 12px;
+        background: #10b981;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 0.5rem;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Real-time Indicator -->
+<div class="real-time-indicator">
+    <div class="live-pulse"></div>
+    <small class="text-success">Live Updates</small>
+</div>
+
+<div class="container mt-4">
+    <!-- Admin Header -->
+    <div class="admin-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="holo-text-glow mb-2" style="color: #ff0000;">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    Admin Dashboard
+                </h2>
+                <p class="text-muted mb-0">
+                    Real-time platform monitoring and management
+                </p>
+            </div>
+            <div class="text-end">
+                <span class="badge bg-danger" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                    <i class="fas fa-crown me-1"></i>
+                    Administrator Access
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Key Metrics -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-value" id="totalUsers">1,247</div>
+            <div class="metric-label">
+                <i class="fas fa-users me-2"></i>Total Users
+            </div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>+15 today</span>
+            </div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-value" id="totalSearches">18,394</div>
+            <div class="metric-label">
+                <i class="fas fa-search me-2"></i>Total Searches
+            </div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>+287 today</span>
+            </div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-value" id="totalRevenue">$2,841</div>
+            <div class="metric-label">
+                <i class="fas fa-dollar-sign me-2"></i>Total Revenue
+            </div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>+$89 today</span>
+            </div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-value" id="conversionRate">12.7%</div>
+            <div class="metric-label">
+                <i class="fas fa-chart-line me-2"></i>Conversion Rate
+            </div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>+2.1% this week</span>
+            </div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-value" id="activeScans">47</div>
+            <div class="metric-label">
+                <i class="fas fa-radar me-2"></i>Active Scans
+            </div>
+            <div class="metric-change">
+                <i class="fas fa-minus"></i>
+                <span>Real-time</span>
+            </div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-value" id="systemHealth">99.8%</div>
+            <div class="metric-label">
+                <i class="fas fa-heartbeat me-2"></i>System Health
+            </div>
+            <div class="metric-change positive">
+                <i class="fas fa-check"></i>
+                <span>All systems operational</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Section -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="chart-container">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-light mb-0">
+                        <i class="fas fa-chart-area me-2"></i>Revenue Analytics
+                    </h5>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-sm btn-outline-light active" data-period="24h">24H</button>
+                        <button class="btn btn-sm btn-outline-light" data-period="7d">7D</button>
+                        <button class="btn btn-sm btn-outline-light" data-period="30d">30D</button>
+                    </div>
+                </div>
+                <canvas id="revenueChart" height="300"></canvas>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="chart-container">
+                <h5 class="text-light mb-3">
+                    <i class="fas fa-pie-chart me-2"></i>User Distribution
+                </h5>
+                <canvas id="userChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="filters-section">
+        <div class="row align-items-center">
+            <div class="col-md-3">
+                <label class="form-label text-light">
+                    <i class="fas fa-filter me-2"></i>Filter Period
+                </label>
+                <select class="form-select" id="periodFilter">
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                    <option value="all">All Time</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label text-light">
+                    <i class="fas fa-users me-2"></i>User Type
+                </label>
+                <select class="form-select" id="userTypeFilter">
+                    <option value="">All Users</option>
+                    <option value="free">Free Users</option>
+                    <option value="premium">Premium Users</option>
+                    <option value="admin">Administrators</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label text-light">
+                    <i class="fas fa-search me-2"></i>Search Type
+                </label>
+                <select class="form-select" id="searchTypeFilter">
+                    <option value="">All Searches</option>
+                    <option value="phone">Phone Lookups</option>
+                    <option value="email">Email Searches</option>
+                    <option value="username">Username Searches</option>
+                    <option value="domain">Domain Analysis</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label text-light">&nbsp;</label>
+                <div class="d-grid">
+                    <button class="btn btn-danger" onclick="applyFilters()">
+                        <i class="fas fa-filter me-2"></i>Apply Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="table-container">
+        <div class="table-header">
+            <h5 class="text-light mb-0">
+                <i class="fas fa-history me-2"></i>Recent Activity
+            </h5>
+        </div>
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Type</th>
+                        <th>Revenue</th>
+                        <th>Status</th>
+                        <th>Time</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="activityTable">
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold">john.doe@example.com</div>
+                                    <small class="text-muted">Premium User</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Phone Lookup</td>
+                        <td><span class="badge bg-info">Advanced Report</span></td>
+                        <td class="text-success fw-bold">$2.99</td>
+                        <td><span class="status-badge status-active">Completed</span></td>
+                        <td>2 minutes ago</td>
+                        <td>
+                            <button class="action-btn" onclick="viewDetails('search_123')">
+                                <i class="fas fa-eye"></i>View
+                            </button>
+                            <button class="action-btn danger" onclick="flagActivity('search_123')">
+                                <i class="fas fa-flag"></i>Flag
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm bg-success rounded-circle me-2 d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold">sarah.wilson@company.com</div>
+                                    <small class="text-muted">Free User</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Email Search</td>
+                        <td><span class="badge bg-warning">Basic Report</span></td>
+                        <td class="text-success fw-bold">$1.99</td>
+                        <td><span class="status-badge status-pending">Processing</span></td>
+                        <td>5 minutes ago</td>
+                        <td>
+                            <button class="action-btn" onclick="viewDetails('search_124')">
+                                <i class="fas fa-eye"></i>View
+                            </button>
+                            <button class="action-btn" onclick="expedite('search_124')">
+                                <i class="fas fa-fast-forward"></i>Expedite
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm bg-warning rounded-circle me-2 d-flex align-items-center justify-center-center">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold">mike.johnson@email.com</div>
+                                    <small class="text-muted">Premium User</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Domain Analysis</td>
+                        <td><span class="badge bg-info">Advanced Report</span></td>
+                        <td class="text-success fw-bold">$2.99</td>
+                        <td><span class="status-badge status-active">Completed</span></td>
+                        <td>8 minutes ago</td>
+                        <td>
+                            <button class="action-btn" onclick="viewDetails('search_125')">
+                                <i class="fas fa-eye"></i>View
+                            </button>
+                            <button class="action-btn" onclick="downloadReport('search_125')">
+                                <i class="fas fa-download"></i>Export
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Admin Actions -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="metric-card">
+                <h5 class="text-light mb-3">
+                    <i class="fas fa-cogs me-2"></i>System Controls
+                </h5>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-danger" onclick="manageSystem('maintenance')">
+                        <i class="fas fa-tools me-2"></i>Maintenance Mode
+                    </button>
+                    <button class="btn btn-outline-warning" onclick="manageSystem('restart')">
+                        <i class="fas fa-redo me-2"></i>Restart Services
+                    </button>
+                    <button class="btn btn-outline-info" onclick="manageSystem('backup')">
+                        <i class="fas fa-database me-2"></i>Create Backup
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="metric-card">
+                <h5 class="text-light mb-3">
+                    <i class="fas fa-chart-bar me-2"></i>Export Reports
+                </h5>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-success" onclick="exportReport('revenue')">
+                        <i class="fas fa-dollar-sign me-2"></i>Revenue Report
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="exportReport('users')">
+                        <i class="fas fa-users me-2"></i>User Analytics
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="exportReport('system')">
+                        <i class="fas fa-server me-2"></i>System Logs
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize charts
+    initializeCharts();
+    
+    // Start real-time updates
+    startRealTimeUpdates();
+    
+    function initializeCharts() {
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        window.revenueChart = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+                datasets: [{
+                    label: 'Revenue ($)',
+                    data: [120, 190, 300, 500, 800, 950, 1200],
+                    borderColor: '#ff0000',
+                    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // User Distribution Chart
+        const userCtx = document.getElementById('userChart').getContext('2d');
+        window.userChart = new Chart(userCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Free Users', 'Premium Users', 'Admin Users'],
+                datasets: [{
+                    data: [65, 30, 5],
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(255, 107, 53, 0.8)',
+                        'rgba(255, 0, 0, 0.8)'
+                    ],
+                    borderColor: [
+                        '#10b981',
+                        '#ff6b35',
+                        '#ff0000'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#ffffff',
+                            padding: 20
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    function startRealTimeUpdates() {
+        setInterval(updateMetrics, 5000); // Update every 5 seconds
+        setInterval(updateActivity, 10000); // Update activity every 10 seconds
+    }
+    
+    function updateMetrics() {
+        // Simulate real-time metric updates
+        const metrics = {
+            totalUsers: Math.floor(Math.random() * 50) + 1200,
+            totalSearches: Math.floor(Math.random() * 500) + 18000,
+            totalRevenue: (Math.random() * 200 + 2700).toFixed(0),
+            conversionRate: (Math.random() * 5 + 10).toFixed(1),
+            activeScans: Math.floor(Math.random() * 20) + 30,
+            systemHealth: (Math.random() * 0.5 + 99.5).toFixed(1)
+        };
+        
+        Object.keys(metrics).forEach(key => {
+            const element = document.getElementById(key);
+            if (element) {
+                if (key === 'totalRevenue') {
+                    element.textContent = `$${metrics[key]}`;
+                } else if (key === 'conversionRate' || key === 'systemHealth') {
+                    element.textContent = `${metrics[key]}%`;
+                } else {
+                    element.textContent = metrics[key].toLocaleString();
+                }
+            }
+        });
+    }
+    
+    function updateActivity() {
+        // This would fetch real activity data from the API
+        console.log('Activity updated');
+    }
+    
+    // Admin action functions
+    window.viewDetails = function(id) {
+        alert(`Viewing details for ${id}`);
+    };
+    
+    window.flagActivity = function(id) {
+        if (confirm(`Flag activity ${id} for review?`)) {
+            showNotification('Activity flagged for review', 'warning');
+        }
+    };
+    
+    window.expedite = function(id) {
+        if (confirm(`Expedite processing for ${id}?`)) {
+            showNotification('Search expedited', 'success');
+        }
+    };
+    
+    window.downloadReport = function(id) {
+        showNotification('Downloading report...', 'info');
+        // Mock download
+        setTimeout(() => {
+            const link = document.createElement('a');
+            link.href = 'data:text/plain;charset=utf-8,Mock report data';
+            link.download = `report-${id}.pdf`;
+            link.click();
+            showNotification('Report downloaded', 'success');
+        }, 1500);
+    };
+    
+    window.manageSystem = function(action) {
+        const actions = {
+            maintenance: 'Enter maintenance mode',
+            restart: 'Restart system services',
+            backup: 'Create system backup'
+        };
+        
+        if (confirm(`Are you sure you want to ${actions[action]}?`)) {
+            showNotification(`${actions[action]} initiated`, 'info');
+        }
+    };
+    
+    window.exportReport = function(type) {
+        const types = {
+            revenue: 'Revenue Report',
+            users: 'User Analytics',
+            system: 'System Logs'
+        };
+        
+        showNotification(`Generating ${types[type]}...`, 'info');
+        
+        setTimeout(() => {
+            const link = document.createElement('a');
+            link.href = `data:text/plain;charset=utf-8,Mock ${types[type]} data`;
+            link.download = `${type}-report-${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+            showNotification(`${types[type]} exported`, 'success');
+        }, 2000);
+    };
+    
+    window.applyFilters = function() {
+        const filters = {
+            period: document.getElementById('periodFilter').value,
+            userType: document.getElementById('userTypeFilter').value,
+            searchType: document.getElementById('searchTypeFilter').value
+        };
+        
+        console.log('Applying filters:', filters);
+        showNotification('Filters applied', 'success');
+    };
+    
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info'} position-fixed`;
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+            ${message}
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 5000);
+    }
+});
+</script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}

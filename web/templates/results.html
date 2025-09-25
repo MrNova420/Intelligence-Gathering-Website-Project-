@@ -1,0 +1,677 @@
+{% extends "base.html" %}
+{% block title %}Search Results - Intelligence Platform{% endblock %}
+
+{% block extra_css %}
+<style>
+    .results-header {
+        background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(138, 43, 226, 0.1));
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        backdrop-filter: blur(15px);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .results-table {
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        overflow: hidden;
+    }
+    
+    .table-header {
+        background: rgba(0, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        padding: 1rem;
+    }
+    
+    .result-row {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: between;
+        align-items: center;
+    }
+    
+    .result-row:hover {
+        background: rgba(0, 255, 255, 0.05);
+    }
+    
+    .result-row:last-child {
+        border-bottom: none;
+    }
+    
+    .premium-locked {
+        filter: blur(2px);
+        opacity: 0.6;
+        pointer-events: none;
+        position: relative;
+    }
+    
+    .unlock-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.8);
+        border-radius: 10px;
+        z-index: 10;
+    }
+    
+    .unlock-btn {
+        background: linear-gradient(45deg, #ffd700, #ff8c00);
+        border: none;
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        color: #000;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .unlock-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+    }
+    
+    .filters-panel {
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        backdrop-filter: blur(10px);
+    }
+    
+    .export-panel {
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+        backdrop-filter: blur(10px);
+    }
+    
+    .confidence-bar {
+        height: 4px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 2px;
+        overflow: hidden;
+        margin-top: 0.5rem;
+    }
+    
+    .confidence-fill {
+        height: 100%;
+        background: linear-gradient(45deg, #10b981, #059669);
+        transition: width 0.3s ease;
+    }
+    
+    .result-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.2rem;
+    }
+    
+    .icon-phone { background: linear-gradient(45deg, #3b82f6, #1d4ed8); }
+    .icon-email { background: linear-gradient(45deg, #10b981, #059669); }
+    .icon-user { background: linear-gradient(45deg, #8b5cf6, #7c3aed); }
+    .icon-globe { background: linear-gradient(45deg, #f59e0b, #d97706); }
+    .icon-image { background: linear-gradient(45deg, #ec4899, #db2777); }
+    
+    .premium-badge {
+        background: linear-gradient(45deg, #ffd700, #ff8c00);
+        color: #000;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: auto;
+    }
+    
+    .free-badge {
+        background: linear-gradient(45deg, #10b981, #059669);
+        color: #fff;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: auto;
+    }
+    
+    .sortable-header {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        user-select: none;
+    }
+    
+    .sortable-header:hover {
+        color: #00ffff;
+    }
+    
+    .sort-indicator {
+        margin-left: 0.5rem;
+        opacity: 0.5;
+    }
+    
+    .sort-indicator.active {
+        opacity: 1;
+        color: #00ffff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Results Header -->
+    <div class="results-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="holo-text-glow mb-2" style="color: #00ffff;">
+                    <i class="fas fa-search-plus me-2"></i>
+                    Search Results
+                </h2>
+                <p class="text-muted mb-0">
+                    Query: <strong id="searchQuery">{{ query or 'sample@email.com' }}</strong> | 
+                    Type: <strong id="searchType">{{ search_type or 'email' }}</strong> |
+                    Found: <strong id="resultCount">6</strong> results
+                </p>
+            </div>
+            <div class="text-end">
+                <span class="badge bg-success" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                    <i class="fas fa-clock me-1"></i>
+                    Completed in 0.8s
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filters and Sorting Panel -->
+    <div class="filters-panel">
+        <div class="row align-items-center">
+            <div class="col-md-3">
+                <label class="form-label text-light">
+                    <i class="fas fa-filter me-2"></i>Filter by Type
+                </label>
+                <select class="form-select" id="typeFilter">
+                    <option value="">All Types</option>
+                    <option value="free">Free Results</option>
+                    <option value="basic">Basic Premium</option>
+                    <option value="advanced">Advanced Premium</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label text-light">
+                    <i class="fas fa-percentage me-2"></i>Confidence Level
+                </label>
+                <select class="form-select" id="confidenceFilter">
+                    <option value="">All Levels</option>
+                    <option value="high">High (80%+)</option>
+                    <option value="medium">Medium (60-80%)</option>
+                    <option value="low">Low (60%)</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label text-light">
+                    <i class="fas fa-sort me-2"></i>Sort By
+                </label>
+                <select class="form-select" id="sortBy">
+                    <option value="relevance">Relevance</option>
+                    <option value="confidence">Confidence</option>
+                    <option value="type">Type</option>
+                    <option value="price">Price</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label text-light">&nbsp;</label>
+                <div class="d-grid">
+                    <button class="btn quantum-button" id="applyFilters">
+                        <i class="fas fa-search me-2"></i>Apply Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Results Table -->
+    <div class="results-table">
+        <div class="table-header">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <h5 class="mb-0 text-light sortable-header" data-sort="title">
+                        Information Type
+                        <i class="fas fa-sort sort-indicator"></i>
+                    </h5>
+                </div>
+                <div class="col-md-3">  
+                    <h5 class="mb-0 text-light sortable-header" data-sort="confidence">
+                        Confidence
+                        <i class="fas fa-sort sort-indicator"></i>
+                    </h5>
+                </div>
+                <div class="col-md-2">
+                    <h5 class="mb-0 text-light sortable-header" data-sort="level">
+                        Access Level
+                        <i class="fas fa-sort sort-indicator"></i>
+                    </h5>
+                </div>
+                <div class="col-md-3 text-end">
+                    <h5 class="mb-0 text-light">Action</h5>
+                </div>
+            </div>
+        </div>
+        
+        <div id="resultsContainer">
+            <!-- Free Results -->
+            <div class="result-row" data-type="free" data-confidence="95">
+                <div class="d-flex align-items-center flex-grow-1">
+                    <div class="result-icon icon-email">
+                        <i class="fas fa-envelope text-white"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-light mb-1">Email Verification</h6>
+                        <p class="text-muted mb-0">Valid email address, Domain: example.com</p>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: 95%"></div>
+                        </div>
+                        <small class="text-muted">Confidence: 95%</small>
+                    </div>
+                </div>
+                <div class="free-badge">
+                    <i class="fas fa-unlock me-1"></i>Free
+                </div>
+            </div>
+            
+            <!-- Basic Premium Results -->
+            <div class="result-row premium-locked" data-type="basic" data-confidence="88">
+                <div class="d-flex align-items-center flex-grow-1">
+                    <div class="result-icon icon-user">
+                        <i class="fas fa-users text-white"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-light mb-1">Associated Social Accounts</h6>
+                        <p class="text-muted mb-0">4 social media profiles found</p>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: 88%"></div>
+                        </div>
+                        <small class="text-muted">Confidence: 88%</small>
+                    </div>
+                </div>
+                <div class="unlock-overlay">
+                    <button class="unlock-btn" onclick="purchaseReport('basic', 1.99)">
+                        <i class="fas fa-unlock me-1"></i>Unlock $1.99
+                    </button>
+                </div>
+            </div>
+            
+            <div class="result-row premium-locked" data-type="basic" data-confidence="92">
+                <div class="d-flex align-items-center flex-grow-1">
+                    <div class="result-icon icon-phone">
+                        <i class="fas fa-phone text-white"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-light mb-1">Contact Information</h6>
+                        <p class="text-muted mb-0">Phone numbers and addresses</p>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: 92%"></div>
+                        </div>
+                        <small class="text-muted">Confidence: 92%</small>
+                    </div>
+                </div>
+                <div class="unlock-overlay">
+                    <button class="unlock-btn" onclick="purchaseReport('basic', 1.99)">
+                        <i class="fas fa-unlock me-1"></i>Unlock $1.99
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Advanced Premium Results -->
+            <div class="result-row premium-locked" data-type="advanced" data-confidence="85">
+                <div class="d-flex align-items-center flex-grow-1">
+                    <div class="result-icon icon-globe">
+                        <i class="fas fa-briefcase text-white"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-light mb-1">Professional Networks</h6>
+                        <p class="text-muted mb-0">LinkedIn and business associations</p>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: 85%"></div>
+                        </div>
+                        <small class="text-muted">Confidence: 85%</small>
+                    </div>
+                </div>
+                <div class="unlock-overlay">
+                    <button class="unlock-btn" onclick="purchaseReport('advanced', 2.99)">
+                        <i class="fas fa-unlock me-1"></i>Unlock $2.99
+                    </button>
+                </div>
+            </div>
+            
+            <div class="result-row premium-locked" data-type="advanced" data-confidence="78">
+                <div class="d-flex align-items-center flex-grow-1">
+                    <div class="result-icon icon-image">
+                        <i class="fas fa-chart-line text-white"></i> 
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-light mb-1">AI Risk Assessment</h6>
+                        <p class="text-muted mb-0">Security analysis and risk factors</p>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: 78%"></div>
+                        </div>
+                        <small class="text-muted">Confidence: 78%</small>
+                    </div>
+                </div>
+                <div class="unlock-overlay">
+                    <button class="unlock-btn" onclick="purchaseReport('advanced', 2.99)">
+                        <i class="fas fa-unlock me-1"></i>Unlock $2.99
+                    </button>
+                </div>
+            </div>
+            
+            <div class="result-row premium-locked" data-type="advanced" data-confidence="91">
+                <div class="d-flex align-items-center flex-grow-1">
+                    <div class="result-icon icon-user">
+                        <i class="fas fa-history text-white"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-light mb-1">Historical Data Analysis</h6>
+                        <p class="text-muted mb-0">Archive records and timeline data</p>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: 91%"></div>
+                        </div>
+                        <small class="text-muted">Confidence: 91%</small>
+                    </div>
+                </div>
+                <div class="unlock-overlay">
+                    <button class="unlock-btn" onclick="purchaseReport('advanced', 2.99)">
+                        <i class="fas fa-unlock me-1"></i>Unlock $2.99
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Export Panel -->
+    <div class="export-panel">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h5 class="text-light mb-0">
+                    <i class="fas fa-download me-2"></i>Export Results
+                </h5>
+                <p class="text-muted mb-0">Export your results in various formats</p>
+            </div>
+            <div class="col-md-6 text-end">
+                <div class="btn-group" role="group">
+                    <button class="btn btn-outline-light disabled" onclick="exportResults('pdf')">
+                        <i class="fas fa-file-pdf me-2"></i>PDF
+                        <br><small>Premium Required</small>
+                    </button>
+                    <button class="btn btn-outline-light disabled" onclick="exportResults('csv')">
+                        <i class="fas fa-file-csv me-2"></i>CSV
+                        <br><small>Premium Required</small>
+                    </button>
+                    <button class="btn btn-outline-light disabled" onclick="exportResults('json')">
+                        <i class="fas fa-file-code me-2"></i>JSON
+                        <br><small>Premium Required</small>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Premium Upgrade CTA -->
+    <div class="text-center mt-4">
+        <div class="alert alert-warning" style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 152, 0, 0.1)); border: 1px solid rgba(255, 193, 7, 0.5);">
+            <h5 class="alert-heading">
+                <i class="fas fa-crown me-2"></i>Unlock Complete Intelligence Report
+            </h5>
+            <p class="mb-3">Get access to all premium features, export capabilities, and advanced analytics.</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <button class="btn btn-warning btn-lg" onclick="purchaseFullReport('basic')">
+                    <i class="fas fa-unlock me-2"></i>
+                    Basic Package - $1.99
+                    <br><small>Essential premium features</small>
+                </button>
+                <button class="btn btn-success btn-lg" onclick="purchaseFullReport('advanced')">
+                    <i class="fas fa-crown me-2"></i>
+                    Advanced Package - $2.99
+                    <br><small>Complete analysis + exports</small>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const resultsContainer = document.getElementById('resultsContainer');
+    const sortHeaders = document.querySelectorAll('.sortable-header');
+    const filters = {
+        type: document.getElementById('typeFilter'),
+        confidence: document.getElementById('confidenceFilter'),
+        sort: document.getElementById('sortBy')
+    };
+    
+    let currentSort = { field: 'relevance', direction: 'asc' };
+    let allResults = Array.from(document.querySelectorAll('.result-row'));
+    
+    // Sorting functionality
+    sortHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const field = this.dataset.sort;
+            const direction = currentSort.field === field && currentSort.direction === 'asc' ? 'desc' : 'asc';
+            
+            currentSort = { field, direction };
+            sortResults(field, direction);
+            updateSortIndicators(this, direction);
+        });
+    });
+    
+    function sortResults(field, direction) {
+        const sortedResults = allResults.sort((a, b) => {
+            let aValue, bValue;
+            
+            switch(field) {
+                case 'title':
+                    aValue = a.querySelector('h6').textContent;
+                    bValue = b.querySelector('h6').textContent;
+                    break;
+                case 'confidence':
+                    aValue = parseInt(a.dataset.confidence);
+                    bValue = parseInt(b.dataset.confidence);
+                    break;
+                case 'level':
+                    const levelOrder = { 'free': 0, 'basic': 1, 'advanced': 2 };
+                    aValue = levelOrder[a.dataset.type] || 0;
+                    bValue = levelOrder[b.dataset.type] || 0;
+                    break;
+                default:
+                    return 0;
+            }
+            
+            if (direction === 'asc') {
+                return aValue > bValue ? 1 : -1;
+            } else {
+                return aValue < bValue ? 1 : -1;
+            }
+        });
+        
+        // Clear and re-append sorted results
+        resultsContainer.innerHTML = '';
+        sortedResults.forEach(result => resultsContainer.appendChild(result));
+    }
+    
+    function updateSortIndicators(activeHeader, direction) {
+        // Reset all indicators
+        sortHeaders.forEach(header => {
+            const indicator = header.querySelector('.sort-indicator');
+            indicator.classList.remove('active');
+            indicator.className = 'fas fa-sort sort-indicator';
+        });
+        
+        // Update active indicator
+        const activeIndicator = activeHeader.querySelector('.sort-indicator');
+        activeIndicator.classList.add('active');
+        activeIndicator.className = `fas fa-sort-${direction === 'asc' ? 'up' : 'down'} sort-indicator active`;
+    }
+    
+    // Filtering functionality
+    document.getElementById('applyFilters').addEventListener('click', function() {
+        applyFilters();
+    });
+    
+    function applyFilters() {
+        const typeFilter = filters.type.value;
+        const confidenceFilter = filters.confidence.value;
+        
+        allResults.forEach(result => {
+            let show = true;
+            
+            // Type filter
+            if (typeFilter && result.dataset.type !== typeFilter) {
+                show = false;
+            }
+            
+            // Confidence filter
+            if (confidenceFilter) {
+                const confidence = parseInt(result.dataset.confidence);
+                switch(confidenceFilter) {
+                    case 'high':
+                        if (confidence < 80) show = false;
+                        break;
+                    case 'medium':
+                        if (confidence < 60 || confidence >= 80) show = false;
+                        break;
+                    case 'low':
+                        if (confidence >= 60) show = false;
+                        break;
+                }
+            }
+            
+            result.style.display = show ? 'flex' : 'none';
+        });
+        
+        updateResultCount();
+    }
+    
+    function updateResultCount() {
+        const visibleResults = allResults.filter(result => result.style.display !== 'none').length;
+        document.getElementById('resultCount').textContent = visibleResults;
+    }
+    
+    // Purchase functionality
+    window.purchaseReport = function(type, price) {
+        if (confirm(`Purchase ${type} report features for $${price}?`)) {
+            // Mock payment process
+            showNotification('Processing payment...', 'info');
+            
+            setTimeout(() => {
+                unlockReportType(type);
+                showNotification('Payment successful! Content unlocked.', 'success');
+            }, 2000);
+        }
+    };
+    
+    window.purchaseFullReport = function(type) {
+        const prices = { basic: 1.99, advanced: 2.99 };
+        const price = prices[type];
+        
+        if (confirm(`Purchase full ${type} report for $${price}?`)) {
+            showNotification('Processing payment...', 'info');
+            
+            setTimeout(() => {
+                unlockAllContent(type);
+                showNotification('Payment successful! All content unlocked.', 'success');
+            }, 2000);
+        }
+    };
+    
+    function unlockReportType(type) {
+        document.querySelectorAll(`[data-type="${type}"]`).forEach(result => {
+            result.classList.remove('premium-locked');
+            const overlay = result.querySelector('.unlock-overlay');
+            if (overlay) overlay.remove();
+            
+            // Add unlocked badge
+            const badge = document.createElement('div');
+            badge.className = 'free-badge';
+            badge.innerHTML = '<i class="fas fa-unlock me-1"></i>Unlocked';
+            result.appendChild(badge);
+        });
+        
+        enableExportButtons();
+    }
+    
+    function unlockAllContent(level) {
+        const typesToUnlock = level === 'advanced' ? ['free', 'basic', 'advanced'] : ['free', 'basic'];
+        
+        typesToUnlock.forEach(type => {
+            document.querySelectorAll(`[data-type="${type}"]`).forEach(result => {
+                result.classList.remove('premium-locked');
+                const overlay = result.querySelector('.unlock-overlay');
+                if (overlay) overlay.remove();
+            });
+        });
+        
+        enableExportButtons();
+        hideUpgradeCTA();
+    }
+    
+    function enableExportButtons() {
+        document.querySelectorAll('.export-panel .btn').forEach(btn => {
+            btn.classList.remove('disabled');
+            btn.querySelector('small').textContent = 'Available';
+        });
+    }
+    
+    function hideUpgradeCTA() {
+        document.querySelector('.alert-warning').style.display = 'none';
+    }
+    
+    window.exportResults = function(format) {
+        // Check if export is available
+        if (document.querySelector('.export-panel .btn').classList.contains('disabled')) {
+            showNotification('Export requires premium access', 'warning');
+            return;
+        }
+        
+        showNotification(`Exporting results as ${format.toUpperCase()}...`, 'info');
+        
+        // Mock export process
+        setTimeout(() => {
+            const link = document.createElement('a');
+            link.href = `data:text/plain;charset=utf-8,Mock ${format} export data`;
+            link.download = `intelligence-report.${format}`;
+            link.click();
+            
+            showNotification(`Results exported as ${format.toUpperCase()}`, 'success');
+        }, 1500);
+    };
+    
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info'} position-fixed`;
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+            ${message}
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 5000);
+    }
+});
+</script>
+{% endblock %}

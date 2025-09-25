@@ -1,0 +1,779 @@
+{% extends "base.html" %}
+{% block title %}Enterprise Intelligence Search Platform{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-search {
+        background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(138, 43, 226, 0.1));
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        backdrop-filter: blur(20px);
+        min-height: 70vh;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .hero-search::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+        animation: pulse-gradient 4s ease-in-out infinite;
+        z-index: 0;
+    }
+    
+    .search-container {
+        position: relative;
+        z-index: 10;
+        max-width: 800px;
+        width: 100%;
+    }
+    
+    .unified-search-box {
+        background: rgba(0, 0, 0, 0.8);
+        border: 2px solid transparent;
+        border-radius: 25px;
+        padding: 3rem;
+        backdrop-filter: blur(15px);
+        background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), 
+                          linear-gradient(45deg, #00ffff, #8a2be2, #ff1493);
+        background-origin: border-box;
+        background-clip: content-box, border-box;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .search-type-tabs {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+    
+    .search-type-tab {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        border-radius: 15px;
+        padding: 0.8rem 1.5rem;
+        color: #fff;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        min-width: 100px;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+    
+    .search-type-tab:hover, .search-type-tab.active {
+        background: rgba(0, 255, 255, 0.2);
+        border-color: #00ffff;
+        color: #00ffff;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+    
+    .search-input-container {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+    
+    .search-input {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(0, 255, 255, 0.5);
+        border-radius: 20px;
+        padding: 1.2rem 1.5rem 1.2rem 4rem;
+        font-size: 1.2rem;
+        color: #fff;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .search-input:focus {
+        outline: none;
+        border-color: #00ffff;
+        box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .search-input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #00ffff;
+        font-size: 1.3rem;
+        z-index: 10;
+    }
+    
+    .search-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .search-option {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(0, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .search-option:hover {
+        background: rgba(0, 255, 255, 0.1);
+        border-color: rgba(0, 255, 255, 0.4);
+    }
+    
+    .premium-preview {
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-top: 3rem;
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+        display: none;
+    }
+    
+    .preview-item {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .preview-item:last-child {
+        border-bottom: none;
+    }
+    
+    .premium-lock {
+        background: linear-gradient(45deg, #ffd700, #ff8c00);
+        color: #000;
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .premium-lock:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+    }
+    
+    .pricing-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+    }
+    
+    .pricing-content {
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(20, 20, 20, 0.9));
+        border: 2px solid rgba(0, 255, 255, 0.5);
+        border-radius: 25px;
+        padding: 3rem;
+        max-width: 600px;
+        width: 90%;
+        text-align: center;
+        position: relative;
+    }
+    
+    .pricing-option {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .pricing-option:hover {
+        background: rgba(0, 255, 255, 0.2);
+        border-color: #00ffff;
+        transform: translateY(-2px);
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin: 4rem 0;
+    }
+    
+    .stat-card {
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 255, 255, 0.2);
+        border-color: #00ffff;
+    }
+    
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        background: linear-gradient(45deg, #00ffff, #8a2be2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+    
+    @keyframes pulse-gradient {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 0.8; }
+    }
+    
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 4rem 0;
+    }
+    
+    .feature-card {
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        border-radius: 20px;
+        padding: 2rem;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 255, 255, 0.2);
+        border-color: #00ffff;
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+        color: #00ffff;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Search Section -->
+<div class="hero-search">
+    <div class="search-container">
+        <!-- Main Title -->
+        <div class="text-center mb-5">
+            <h1 class="display-3 mb-3 holo-text-glow" style="color: #00ffff;">
+                <i class="fas fa-brain me-3"></i>
+                Intelligence Search
+            </h1>
+            <p class="lead text-light mb-4" style="font-size: 1.3rem;">
+                Advanced OSINT gathering with AI-powered analysis and real-time monitoring
+            </p>
+        </div>
+        
+        <!-- Unified Search Box -->
+        <div class="unified-search-box">
+            <form id="intelligenceSearchForm" class="needs-validation" novalidate>
+                <!-- Search Type Tabs -->
+                <div class="search-type-tabs">
+                    <div class="search-type-tab active" data-type="phone">
+                        <i class="fas fa-phone"></i>
+                        <span>Phone</span>
+                    </div>
+                    <div class="search-type-tab" data-type="email">
+                        <i class="fas fa-envelope"></i>
+                        <span>Email</span>
+                    </div>
+                    <div class="search-type-tab" data-type="username">
+                        <i class="fas fa-user"></i>
+                        <span>Username</span>
+                    </div>
+                    <div class="search-type-tab" data-type="image">
+                        <i class="fas fa-image"></i>
+                        <span>Image</span>
+                    </div>
+                    <div class="search-type-tab" data-type="domain">
+                        <i class="fas fa-globe"></i>
+                        <span>Domain</span>
+                    </div>
+                </div>
+                
+                <!-- Search Input -->
+                <div class="search-input-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" 
+                           class="search-input" 
+                           id="searchQuery"
+                           name="query"
+                           placeholder="Enter phone number to investigate..."
+                           required>
+                    <div class="invalid-feedback">
+                        Please enter a valid search query.
+                    </div>
+                </div>
+                
+                <!-- Search Options -->
+                <div class="search-options">
+                    <div class="search-option">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="deepScan">
+                            <label class="form-check-label text-light" for="deepScan">
+                                <i class="fas fa-microscope me-2"></i>Deep Scan
+                                <br><small class="text-muted">Comprehensive analysis</small>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="search-option">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="realTimeMonitoring">
+                            <label class="form-check-label text-light" for="realTimeMonitoring">
+                                <i class="fas fa-satellite-dish me-2"></i>Real-time Monitoring
+                                <br><small class="text-muted">Live updates</small>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="search-option">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="socialMedia">
+                            <label class="form-check-label text-light" for="socialMedia">
+                                <i class="fas fa-users me-2"></i>Social Media
+                                <br><small class="text-muted">Profile search</small>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="search-option">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="historicalData">
+                            <label class="form-check-label text-light" for="historicalData">
+                                <i class="fas fa-history me-2"></i>Historical Data
+                                <br><small class="text-muted">Archive search</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Search Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-lg quantum-button magnetic-element" style="min-width: 250px; padding: 1rem 2rem;">
+                        <i class="fas fa-search me-2"></i>
+                        Start Intelligence Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Results Section (Hidden by default) -->
+<div id="previewResults" class="container mt-5" style="display: none;">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="premium-preview">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="holo-text-glow" style="color: #00ffff;">
+                        <i class="fas fa-eye me-2"></i>Preview Results
+                    </h3>
+                    <span class="badge bg-warning text-dark" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                        <i class="fas fa-crown me-1"></i>Premium Required for Full Results
+                    </span>
+                </div>
+                
+                <div id="previewResultsList">
+                    <!-- Preview results will be populated here -->
+                </div>
+                
+                <!-- Premium Purchase Options -->
+                <div class="text-center mt-4">
+                    <h5 class="text-light mb-3">
+                        <i class="fas fa-unlock me-2"></i>Unlock Complete Intelligence Report
+                    </h5>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <button class="btn btn-warning btn-lg" onclick="showPricingModal('basic')">
+                            <i class="fas fa-file-alt me-2"></i>
+                            Basic Report - $1.99
+                            <br><small>Essential information</small>
+                        </button>
+                        <button class="btn btn-success btn-lg" onclick="showPricingModal('advanced')">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Advanced Report - $2.99
+                            <br><small>Complete analysis + exports</small>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Intelligence Statistics -->
+<div class="container">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number" id="searchesToday">15,247</div>
+            <h5 class="text-light">Searches Today</h5>
+            <small class="text-muted">Intelligence queries processed</small>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="datasourcesActive">127</div>
+            <h5 class="text-light">Active Data Sources</h5>
+            <small class="text-muted">Real-time intelligence feeds</small>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="accuracyRate">99.7%</div>
+            <h5 class="text-light">Accuracy Rate</h5>
+            <small class="text-muted">AI-verified intelligence</small>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="responseTime">0.6s</div>
+            <h5 class="text-light">Avg Response Time</h5>
+            <small class="text-muted">Lightning-fast results</small>
+        </div>
+    </div>
+</div>
+
+<!-- Features Overview -->
+<div class="container">
+    <div class="text-center mb-5">
+        <h2 class="holo-text-glow" style="color: #8a2be2; font-size: 2.5rem;">
+            <i class="fas fa-cogs me-2"></i>Advanced Intelligence Capabilities
+        </h2>
+        <p class="lead text-muted">Powered by cutting-edge AI and machine learning technologies</p>
+    </div>
+    
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h4 class="text-light mb-3">AI-Powered Analysis</h4>
+            <p class="text-muted">Advanced machine learning algorithms for pattern recognition, data correlation, and predictive intelligence gathering.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h4 class="text-light mb-3">Enterprise Security</h4>
+            <p class="text-muted">Military-grade encryption, secure authentication, and compliance with international privacy standards.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h4 class="text-light mb-3">Real-time Intelligence</h4>
+            <p class="text-muted">Live monitoring, instant alerts, and continuous data feeds for up-to-the-minute intelligence.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h4 class="text-light mb-3">Advanced Analytics</h4>
+            <p class="text-muted">Comprehensive reporting, data visualization, and export capabilities in multiple formats.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-network-wired"></i>
+            </div>
+            <h4 class="text-light mb-3">Multi-Source Integration</h4>
+            <p class="text-muted">Access to over 100+ data sources including social media, public records, and specialized databases.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-globe"></i>
+            </div>
+            <h4 class="text-light mb-3">Global Coverage</h4>
+            <p class="text-muted">Worldwide intelligence gathering with localized data sources and international compliance.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Pricing Modal -->
+<div id="pricingModal" class="pricing-modal">
+    <div class="pricing-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="holo-text-glow" style="color: #00ffff;">
+                <i class="fas fa-crown me-2"></i>Choose Your Report
+            </h3>
+            <button type="button" class="btn-close btn-close-white" onclick="closePricingModal()"></button>
+        </div>
+        
+        <div id="pricingOptions">
+            <!-- Pricing options will be populated here -->
+        </div>
+        
+        <div class="mt-4">
+            <button class="btn btn-success btn-lg" onclick="processPurchase()">
+                <i class="fas fa-credit-card me-2"></i>
+                Secure Checkout
+            </button>
+        </div>
+        
+        <p class="text-muted mt-3">
+            <i class="fas fa-lock me-1"></i>
+            Secure payment processing with 256-bit encryption
+        </p>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.getElementById('intelligenceSearchForm');
+    const searchInput = document.getElementById('searchQuery');
+    const typeTabs = document.querySelectorAll('.search-type-tab');
+    let currentSearchType = 'phone';
+    let selectedPricingOption = null;
+    
+    // Search type tab handling
+    typeTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            typeTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            currentSearchType = this.dataset.type;
+            updatePlaceholder();
+        });
+    });
+    
+    function updatePlaceholder() {
+        const placeholders = {
+            phone: 'Enter phone number (e.g., +1-555-123-4567)',
+            email: 'Enter email address (e.g., user@example.com)',
+            username: 'Enter username or handle (e.g., @username)',
+            image: 'Upload image or enter image URL',
+            domain: 'Enter domain name (e.g., example.com)'
+        };
+        searchInput.placeholder = placeholders[currentSearchType];
+    }
+    
+    // Form submission
+    searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const query = searchInput.value.trim();
+        
+        if (!query) {
+            searchInput.classList.add('is-invalid');
+            return;
+        }
+        
+        searchInput.classList.remove('is-invalid');
+        performSearch(query, currentSearchType);
+    });
+    
+    async function performSearch(query, type) {
+        try {
+            const submitBtn = searchForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Analyzing...';
+            submitBtn.disabled = true;
+            
+            const response = await fetch('/api/v1/search/preview', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: query,
+                    type: type,
+                    deep_scan: document.getElementById('deepScan').checked,
+                    real_time_monitoring: document.getElementById('realTimeMonitoring').checked,
+                    social_media: document.getElementById('socialMedia').checked,
+                    historical_data: document.getElementById('historicalData').checked
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                displayPreviewResults(result.data, query, type);
+            } else {
+                throw new Error(result.message || 'Search failed');
+            }
+            
+        } catch (error) {
+            console.error('Search error:', error);
+            showNotification('Search failed. Please try again.', 'error');
+        } finally {
+            const submitBtn = searchForm.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<i class="fas fa-search me-2"></i>Start Intelligence Search';
+            submitBtn.disabled = false;
+        }
+    }
+    
+    function displayPreviewResults(data, query, type) {
+        const previewSection = document.getElementById('previewResults');
+        const resultsList = document.getElementById('previewResultsList');
+        
+        // Generate mock preview results based on search type
+        const mockResults = generateMockResults(query, type);
+        
+        const resultsHTML = mockResults.map(item => `
+            <div class="preview-item">
+                <div>
+                    <i class="fas fa-${item.icon} me-2" style="color: #00ffff;"></i>
+                    <strong>${item.title}</strong>
+                    <br>
+                    <small class="text-muted">${item.description}</small>
+                </div>
+                <div class="premium-lock" onclick="showPricingModal('${item.level}')">
+                    <i class="fas fa-lock"></i>
+                    Unlock $${item.price}
+                </div>
+            </div>
+        `).join('');
+        
+        resultsList.innerHTML = resultsHTML;
+        previewSection.style.display = 'block';
+        previewSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function generateMockResults(query, type) {
+        const baseResults = [
+            { title: 'Basic Information', description: 'Name, location, and carrier details', icon: 'info-circle', level: 'basic', price: '1.99' },
+            { title: 'Social Media Profiles', description: 'Associated social media accounts and profiles', icon: 'users', level: 'basic', price: '1.99' },
+            { title: 'Professional Networks', description: 'LinkedIn, professional associations', icon: 'briefcase', level: 'advanced', price: '2.99' },
+            { title: 'Historical Data', description: 'Previous records and archived information', icon: 'history', level: 'advanced', price: '2.99' },
+            { title: 'Risk Assessment', description: 'Security analysis and risk factors', icon: 'shield-alt', level: 'advanced', price: '2.99' },
+            { title: 'Advanced Analytics', description: 'AI-powered insights and predictions', icon: 'chart-line', level: 'advanced', price: '2.99' }
+        ];
+        
+        return baseResults;
+    }
+    
+    window.showPricingModal = function(level) {
+        const modal = document.getElementById('pricingModal');
+        const optionsContainer = document.getElementById('pricingOptions');
+        
+        const options = {
+            basic: {
+                title: 'Basic Intelligence Report',
+                price: '1.99',
+                features: ['Basic information', 'Social media profiles', 'Contact details', 'Public records']
+            },
+            advanced: {
+                title: 'Advanced Intelligence Report', 
+                price: '2.99',
+                features: ['Everything in Basic', 'Professional networks', 'Historical data', 'Risk assessment', 'AI insights', 'Export options (PDF, CSV, JSON)']
+            }
+        };
+        
+        const option = options[level];
+        optionsContainer.innerHTML = `
+            <div class="pricing-option active" data-level="${level}">
+                <h4 class="text-light">${option.title}</h4>
+                <div class="h2 text-success mb-3">$${option.price}</div>
+                <ul class="list-unstyled text-left">
+                    ${option.features.map(feature => `<li class="text-muted mb-2"><i class="fas fa-check text-success me-2"></i>${feature}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+        
+        selectedPricingOption = level;
+        modal.style.display = 'flex';
+    };
+    
+    window.closePricingModal = function() {
+        document.getElementById('pricingModal').style.display = 'none';
+    };
+    
+    window.processPurchase = function() {
+        if (!selectedPricingOption) return;
+        
+        // In a real implementation, this would integrate with Stripe/PayPal
+        showNotification('Redirecting to secure payment...', 'info');
+        
+        // Mock payment processing
+        setTimeout(() => {
+            closePricingModal();
+            showNotification('Payment successful! Full report unlocked.', 'success');
+            unlockPremiumContent();
+        }, 2000);
+    };
+    
+    function unlockPremiumContent() {
+        // Replace premium locks with actual content
+        document.querySelectorAll('.premium-lock').forEach(lock => {
+            lock.innerHTML = '<i class="fas fa-unlock text-success"></i> Unlocked';
+            lock.style.background = 'linear-gradient(45deg, #10b981, #059669)';
+            lock.style.color = '#fff';
+        });
+    }
+    
+    function showNotification(message, type) {
+        // Simple notification system
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} position-fixed`;
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+            ${message}
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 5000);
+    }
+    
+    // Update stats periodically
+    function updateStats() {
+        const stats = {
+            searchesToday: Math.floor(Math.random() * 2000) + 14000,
+            datasourcesActive: Math.floor(Math.random() * 20) + 120,
+            accuracyRate: (99.5 + Math.random() * 0.4).toFixed(1) + '%',
+            responseTime: (0.4 + Math.random() * 0.4).toFixed(1) + 's'
+        };
+        
+        Object.keys(stats).forEach(key => {
+            const element = document.getElementById(key);
+            if (element) {
+                element.textContent = stats[key];
+            }
+        });
+    }
+    
+    // Update stats every 30 seconds
+    setInterval(updateStats, 30000);
+    
+    // Close modal when clicking outside
+    document.getElementById('pricingModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closePricingModal();
+        }
+    });
+});
+</script>
+{% endblock %}
