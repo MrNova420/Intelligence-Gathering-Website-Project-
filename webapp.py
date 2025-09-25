@@ -18,11 +18,18 @@ try:
     from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
     from fastapi.staticfiles import StaticFiles
     from fastapi.templating import Jinja2Templates
-    from starlette.middleware.sessions import SessionMiddleware
     FASTAPI_AVAILABLE = True
 except ImportError:
     FASTAPI_AVAILABLE = False
     FastAPI = None
+
+# Try to import SessionMiddleware separately 
+try:
+    from starlette.middleware.sessions import SessionMiddleware
+    SESSION_MIDDLEWARE_AVAILABLE = True
+except ImportError:
+    SESSION_MIDDLEWARE_AVAILABLE = False
+    SessionMiddleware = None
 
 # Configure logging
 logging.basicConfig(
@@ -635,8 +642,11 @@ document.addEventListener('DOMContentLoaded', () => {
             lifespan=self.lifespan,
         )
         
-        # Add session middleware
-        self.app.add_middleware(SessionMiddleware, secret_key="intelligence-platform-secret-key")
+        # Add session middleware if available
+        if SESSION_MIDDLEWARE_AVAILABLE:
+            self.app.add_middleware(SessionMiddleware, secret_key="intelligence-platform-secret-key")
+        else:
+            logger.warning("⚠️ SessionMiddleware not available - sessions disabled")
         
         # CORS middleware
         self.app.add_middleware(
