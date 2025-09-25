@@ -440,7 +440,7 @@ body {
 """
         
         # Only create basic CSS if enhanced version doesn't exist
-        css_file = Path("web/static/css/style.css")
+        css_file = Path("frontend/legacy-web/static/css/style.css")
         if not css_file.exists() or css_file.stat().st_size < 1000:  # If basic CSS
             css_file.write_text(css_content)
         
@@ -616,7 +616,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 """
         
-        Path("web/static/js/app.js").write_text(js_content)
+        Path("frontend/legacy-web/static/js/app.js").write_text(js_content)
         
         logger.info("✅ Web templates and static files created")
 
