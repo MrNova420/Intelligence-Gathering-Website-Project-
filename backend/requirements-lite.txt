@@ -37,5 +37,11 @@ aiohttp==3.9.1
 # Redis (optional - will use fallback if not available)
 redis==5.0.1
 
+# System monitoring and testing dependencies
+psutil==5.9.6
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-asyncio==0.21.1
+
 # Note: psycopg2-binary, alembic, celery, and stripe are excluded
 # for lightweight installations. Add them back if PostgreSQL/production features needed.
