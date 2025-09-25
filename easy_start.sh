@@ -85,15 +85,43 @@ install_system_deps() {
 install_python_deps() {
     step "Installing Python dependencies..."
     
-    # Use requirements-lite.txt for lightweight installation
+    # Try requirements-lite.txt first
     if [[ -f "backend/requirements-lite.txt" ]]; then
-        pip install -r backend/requirements-lite.txt --user --break-system-packages 2>/dev/null || pip install -r backend/requirements-lite.txt --user
-        info "Python dependencies installed (SQLite-only)"
+        if pip install -r backend/requirements-lite.txt --user --break-system-packages 2>/dev/null; then
+            info "Python dependencies installed (SQLite-only)"
+        elif pip install -r backend/requirements-lite.txt --user 2>/dev/null; then
+            info "Python dependencies installed (SQLite-only)"
+        else
+            warn "Failed to install from requirements-lite.txt, trying individual packages..."
+            install_core_packages
+        fi
     else
-        # Fallback to core packages
-        pip install --user fastapi uvicorn sqlalchemy pydantic dnspython phonenumbers python-dotenv requests passlib[bcrypt] --break-system-packages 2>/dev/null || pip install --user fastapi uvicorn sqlalchemy pydantic dnspython phonenumbers python-dotenv requests passlib[bcrypt]
-        info "Python dependencies installed (core packages)"
+        warn "requirements-lite.txt not found, installing core packages..."
+        install_core_packages
     fi
+}
+
+# Install core packages individually (fallback)
+install_core_packages() {
+    local packages=(
+        "fastapi>=0.100.0"
+        "uvicorn>=0.20.0"
+        "sqlalchemy>=2.0.0"
+        "pydantic>=2.0.0"
+        "dnspython"
+        "phonenumbers"
+        "python-dotenv"
+        "requests"
+        "passlib[bcrypt]"
+    )
+    
+    for package in "${packages[@]}"; do
+        if pip install --user "$package" --break-system-packages 2>/dev/null || pip install --user "$package" 2>/dev/null; then
+            info "Installed: $package"
+        else
+            warn "Failed to install: $package (continuing anyway)"
+        fi
+    done
 }
 
 # Install Node.js dependencies
@@ -102,9 +130,29 @@ install_node_deps() {
     
     if [[ -d "frontend" ]]; then
         cd frontend
-        npm install --silent
+        
+        # Check if package.json exists
+        if [[ ! -f "package.json" ]]; then
+            warn "package.json not found in frontend directory"
+            cd ..
+            return 1
+        fi
+        
+        # Try different npm install methods
+        if npm install --silent 2>/dev/null; then
+            info "Node.js dependencies installed"
+        elif npm install 2>/dev/null; then
+            info "Node.js dependencies installed (with warnings)"
+        else
+            warn "npm install failed, trying with --force..."
+            if npm install --force --silent 2>/dev/null; then
+                info "Node.js dependencies installed (forced)"
+            else
+                warn "Node.js installation failed - frontend may not work properly"
+            fi
+        fi
+        
         cd ..
-        info "Node.js dependencies installed"
     else
         warn "Frontend directory not found, skipping Node.js dependencies"
     fi
@@ -140,11 +188,40 @@ setup_database() {
     step "Setting up database..."
     
     cd backend
+    
+    # Check if setup script exists
+    if [[ ! -f "app/db/setup_standalone.py" ]]; then
+        warn "Database setup script not found"
+        cd ..
+        return 1
+    fi
+    
+    # Try to setup database
     if python app/db/setup_standalone.py; then
         info "Database setup completed"
+        cd ..
+        return 0
     else
-        warn "Database setup failed, but continuing..."
+        warn "Database setup failed, trying alternative method..."
+        
+        # Alternative: try to import and create tables manually
+        if python -c "
+import sys
+sys.path.insert(0, '.')
+try:
+    from app.db.database import Base, engine
+    Base.metadata.create_all(bind=engine)
+    print('Database tables created successfully')
+except Exception as e:
+    print(f'Alternative setup failed: {e}')
+    sys.exit(1)
+        "; then
+            info "Database setup completed (alternative method)"
+        else
+            warn "Database setup failed - continuing anyway (may cause issues)"
+        fi
     fi
+    
     cd ..
 }
 
