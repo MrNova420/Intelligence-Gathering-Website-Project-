@@ -2,7 +2,7 @@
 
 ## **Complete Termux/Android Deployment Guide**
 
-This guide provides step-by-step instructions for running the Intelligence Gathering Platform on Android devices using Termux.
+This guide provides **multiple ways** to run the Intelligence Gathering Platform on Android devices using Termux, from super simple to advanced control.
 
 ---
 
@@ -17,19 +17,66 @@ This guide provides step-by-step instructions for running the Intelligence Gathe
 # Update package lists
 pkg update && pkg upgrade
 
-# Install essential packages
-pkg install python git nodejs-lts redis
+# Install git (required for cloning)
+pkg install git
+```
 
-# Install Python package manager
-pkg install python-pip
+---
 
-# Optional: Install text editor
-pkg install nano vim
+## 🚀 **SUPER EASY METHOD (Recommended)**
+
+**Just run this - everything else is automatic:**
+
+```bash
+# Clone and run - that's it!
+git clone https://github.com/MrNova420/Intelligence-Gathering-Website-Project-.git
+cd Intelligence-Gathering-Website-Project-
+
+# ONE COMMAND DOES EVERYTHING:
+./run.sh
+
+# What this automatically does:
+# ✅ Installs Python, Node.js, and all dependencies
+# ✅ Sets up SQLite database (no PostgreSQL needed)
+# ✅ Configures everything
+# ✅ Starts both backend API and frontend website
+# ✅ Shows you exactly where to access it
+```
+
+**Access Points:**
+- 🌐 **Full Website**: http://localhost:3000
+- 🔧 **API Backend**: http://localhost:8000  
+- 📖 **API Documentation**: http://localhost:8000/docs
+
+**Stop/Restart:**
+```bash
+./easy_start.sh stop      # Stop everything
+./easy_start.sh restart   # Restart everything
+./easy_start.sh status    # Check what's running
 ```
 
 ---
 
 ## 🔧 **Platform Installation**
+
+### **🚀 Option 1: Automated Setup (Recommended)**
+```bash
+# Clone repository
+git clone https://github.com/MrNova420/Intelligence-Gathering-Website-Project-.git
+cd Intelligence-Gathering-Website-Project-
+
+# Run the automated Termux setup script
+./start_termux.sh
+
+# That's it! The script will:
+# - Install Python dependencies (SQLite-only)
+# - Setup the database
+# - Install Node.js dependencies  
+# - Start both backend and frontend
+# - Open the full website on localhost
+```
+
+### **🔧 Option 2: Manual Setup**
 
 ### **Step 1: Clone Repository**
 ```bash
@@ -42,14 +89,17 @@ cd Intelligence-Gathering-Website-Project-
 
 ### **Step 2: Install Python Dependencies**
 ```bash
-# Install backend dependencies
-pip install -r backend/requirements.txt
+# Install lightweight dependencies (SQLite only - recommended for Termux)
+pip install -r backend/requirements-lite.txt
 
-# If you encounter build errors, try:
-pip install --no-cache-dir -r backend/requirements.txt
+# If you encounter build errors with requirements-lite.txt, try minimal install:
+pip install fastapi uvicorn sqlalchemy pydantic dnspython phonenumbers python-dotenv requests passlib[bcrypt] cryptography
 
-# For problematic packages, install individually:
-pip install fastapi uvicorn sqlalchemy pydantic requests
+# Alternative for problematic packages (install one by one):
+pip install --no-cache-dir fastapi uvicorn sqlalchemy pydantic requests
+
+# If psycopg2-binary fails (common on Termux):
+# Skip it - SQLite will be used instead of PostgreSQL
 ```
 
 ### **Step 3: Configure Environment**
@@ -88,7 +138,27 @@ export USE_REDIS_FALLBACK=true
 
 ## 🚀 **Running the Platform**
 
-### **Start the Server**
+### **🌐 Complete Website (Backend + Frontend)**
+```bash
+# Option 1: Use the automated script
+./start_termux.sh
+
+# Option 2: Manual startup
+# Terminal 1 - Backend:
+python backend/run_standalone.py
+
+# Terminal 2 - Frontend:
+cd frontend
+npm install  # First time only
+npm run dev
+
+# Access the complete platform:
+# 🌐 Website: http://localhost:3000
+# 🔧 API: http://localhost:8000  
+# 📖 API Docs: http://localhost:8000/docs
+```
+
+### **🔧 Backend Only**
 ```bash
 # Run the standalone server
 python backend/run_standalone.py
@@ -99,6 +169,25 @@ python backend/run_standalone.py
 # 🌐 Access Points:
 #    • API Server: http://localhost:8000
 #    • API Docs: http://localhost:8000/docs
+```
+
+### **📱 Using tmux for Better Management**
+```bash
+# Install tmux for session management
+pkg install tmux
+
+# Create session with both services
+tmux new-session -d -s intel
+tmux send-keys -t intel:0 'cd backend && python run_standalone.py' Enter
+tmux new-window -t intel
+tmux send-keys -t intel:1 'cd frontend && npm run dev' Enter
+
+# Attach to see both services
+tmux attach -t intel
+
+# Switch between windows: Ctrl+B then 0 or 1
+# Detach: Ctrl+B then D
+# Kill session: tmux kill-session -t intel
 ```
 
 ### **Test the Platform**
@@ -213,14 +302,25 @@ chmod +x backend/app/db/setup_standalone.py
 
 #### **2. Package Installation Failures**
 ```bash
-# Update pip
+# Common solution: Use lightweight requirements
+pip install -r backend/requirements-lite.txt
+
+# If psycopg2-binary fails (common in Termux):
+# Skip it - SQLite will be used instead
+
+# Update pip first
 pip install --upgrade pip
 
-# Install build essentials
+# Install build essentials if needed
 pkg install build-essential clang
 
-# For specific package issues:
-pip install --no-binary :all: package-name
+# For cryptography issues:
+pkg install openssl-dev libffi-dev
+
+# Install minimal packages individually:
+pip install fastapi uvicorn sqlalchemy pydantic dnspython phonenumbers
+
+# Platform will use fallback implementations for missing packages
 ```
 
 #### **3. Database Connection Issues**

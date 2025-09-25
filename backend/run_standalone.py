@@ -57,7 +57,7 @@ def check_dependencies():
         import uvicorn
         import sqlalchemy
         import pydantic
-        import dnspython
+        import dns  # dnspython imports as dns
         import phonenumbers
         logger.info("✅ Core dependencies found")
     except ImportError as e:
