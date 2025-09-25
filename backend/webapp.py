@@ -54,10 +54,10 @@ class IntelligenceWebPlatform:
     def setup_directories(self):
         """Setup required directories for the unified web platform"""
         directories = [
-            "web/static/css",
-            "web/static/js", 
-            "web/static/images",
-            "web/templates",
+            "frontend/legacy-web/static/css",
+            "frontend/legacy-web/static/js", 
+            "frontend/legacy-web/static/images",
+            "frontend/legacy-web/templates",
             "data/scans",
             "data/reports",
             "data/backups",
@@ -309,7 +309,7 @@ class IntelligenceWebPlatform:
 {% endblock %}"""
         
         # Write templates only if they don't exist (to preserve enhanced versions)
-        templates_dir = Path("web/templates")
+        templates_dir = Path("frontend/legacy-web/templates")
         
         # Check if enhanced templates exist, if not create basic ones
         if not (templates_dir / "base.html").exists():
@@ -440,7 +440,7 @@ body {
 """
         
         # Only create basic CSS if enhanced version doesn't exist
-        css_file = Path("web/static/css/style.css")
+        css_file = Path("frontend/legacy-web/static/css/style.css")
         if not css_file.exists() or css_file.stat().st_size < 1000:  # If basic CSS
             css_file.write_text(css_content)
         
@@ -616,7 +616,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 """
         
-        Path("web/static/js/app.js").write_text(js_content)
+        Path("frontend/legacy-web/static/js/app.js").write_text(js_content)
         
         logger.info("✅ Web templates and static files created")
 
@@ -668,7 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
         self.create_web_templates()
         
         # Initialize templates engine
-        self.templates = Jinja2Templates(directory="web/templates")
+        self.templates = Jinja2Templates(directory="frontend/legacy-web/templates")
         
         # Create FastAPI app
         self.app = FastAPI(
@@ -703,7 +703,7 @@ document.addEventListener('DOMContentLoaded', () => {
         )
         
         # Mount static files
-        self.app.mount("/static", StaticFiles(directory="web/static"), name="static")
+        self.app.mount("/static", StaticFiles(directory="frontend/legacy-web/static"), name="static")
         
         # Setup routes
         self.setup_web_routes()

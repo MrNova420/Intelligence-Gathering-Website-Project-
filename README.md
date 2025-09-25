@@ -45,18 +45,32 @@ The platform features a completely integrated enterprise interface with:
 
 Get the platform running in under 2 minutes:
 
-### Simple Startup
+### 🎯 Main Startup Options
 
+**Option 1: Simple Start (Recommended)**
 ```bash
 # Clone the repository
 git clone https://github.com/MrNova420/Intelligence-Gathering-Website-Project-.git
 cd Intelligence-Gathering-Website-Project-
 
-# Install dependencies
+# Install dependencies and start
 pip install -r requirements.txt
-
-# Start the platform
 python start.py
+```
+
+**Option 2: Direct Backend Start**
+```bash
+# Start the unified application directly
+cd backend
+python unified_app.py
+```
+
+**Option 3: Script-Based Start**
+```bash
+# Use convenience scripts
+./scripts/easy_start.sh
+# OR for complete platform
+./scripts/start_platform.sh
 ```
 
 ### Access Points
@@ -789,37 +803,40 @@ python backend/run_standalone.py
 
 ```
 Intelligence-Gathering-Platform/
-├── 📂 backend/                 # FastAPI backend application
-│   ├── 📂 app/
+├── 📂 backend/                 # Python backend application
+│   ├── 📂 app/                # FastAPI application modules
 │   │   ├── 📂 api/            # API routes and endpoints
-│   │   │   └── 📂 v1/         # API version 1
 │   │   ├── 📂 core/           # Core configuration and security
 │   │   ├── 📂 db/             # Database models and migrations
 │   │   ├── 📂 scanners/       # 100+ intelligence gathering modules
 │   │   ├── 📂 services/       # Business logic services
-│   │   └── 📂 utils/          # Utility functions
+│   │   └── 📂 monitoring/     # Performance and system monitoring
 │   ├── 📂 tests/              # Comprehensive test suite
-│   ├── 📄 requirements.txt    # Python dependencies
-│   └── 📄 Dockerfile         # Container configuration
-├── 📂 frontend/               # React/Next.js frontend
-│   ├── 📂 components/         # Reusable UI components
+│   ├── 📄 webapp.py           # Main unified web application
+│   ├── 📄 unified_app.py      # Primary entry point
+│   ├── 📄 run_standalone.py   # Standalone backend runner
+│   ├── 📄 config.py           # Configuration management
+│   └── 📄 requirements.txt    # Python dependencies
+├── 📂 frontend/               # Frontend applications
+│   ├── 📂 components/         # Next.js React components
 │   ├── 📂 pages/             # Application pages and routing
-│   ├── 📂 services/          # API service layer
 │   ├── 📂 styles/            # CSS and styling
+│   ├── 📂 legacy-web/        # Legacy Flask web interface
+│   │   ├── 📂 static/        # Static assets (CSS, JS)
+│   │   ├── 📂 templates/     # HTML templates
+│   │   └── 📄 app.py         # Flask application
 │   ├── 📄 package.json       # Node.js dependencies
-│   └── 📄 Dockerfile         # Container configuration
-├── 📂 infrastructure/         # Production deployment configs
-│   ├── 📂 nginx/             # Reverse proxy configuration
-│   ├── 📂 postgres/          # Database initialization
-│   └── 📂 ssl/               # SSL certificates
+│   └── 📄 next.config.js     # Next.js configuration
 ├── 📂 scripts/               # Deployment and utility scripts
-│   ├── 📄 deploy.sh          # Production deployment
-│   ├── 📄 backup.sh          # Database backup
-│   └── 📄 update.sh          # System updates
-├── 📄 docker-compose.yml     # Development environment
-├── 📄 docker-compose.prod.yml # Production environment
-├── 📄 .env.example           # Environment template
-└── 📄 README.md              # This comprehensive guide
+│   ├── 📄 start_platform.sh  # Complete platform startup
+│   ├── 📄 easy_start.sh      # Simplified startup
+│   ├── 📄 setup.py           # Automated setup
+│   └── 📄 deploy_to_production.sh # Production deployment
+├── 📂 infrastructure/         # Production deployment configs
+├── 📂 not_needed/            # Archived/redundant files
+├── 📄 start.py               # Main startup script
+├── 📄 README.md              # This documentation
+└── 📄 requirements.txt       # Root-level dependencies
 ```
 
 ---

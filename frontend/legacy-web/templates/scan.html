@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}New Scan - Intelligence Platform{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h1 class="mb-4">🔍 Start New Intelligence Scan</h1>
+        
+        <div class="card">
+            <div class="card-body">
+                <form id="scanForm" method="POST" action="/api/v1/scan">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="scanType" class="form-label">Scan Type</label>
+                            <select class="form-select" id="scanType" name="scan_type" required>
+                                <option value="">Select scan type...</option>
+                                <option value="email" {% if scan_type == 'email' %}selected{% endif %}>Email Intelligence</option>
+                                <option value="phone" {% if scan_type == 'phone' %}selected{% endif %}>Phone Lookup</option>
+                                <option value="social" {% if scan_type == 'social' %}selected{% endif %}>Social Media</option>
+                                <option value="domain" {% if scan_type == 'domain' %}selected{% endif %}>Domain Analysis</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="target" class="form-label">Target</label>
+                            <input type="text" class="form-control" id="target" name="target" 
+                                   placeholder="Enter email, phone, username, or domain..." required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Scan Options</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="deepScan" name="deep_scan">
+                            <label class="form-check-label" for="deepScan">
+                                Deep Scan (more comprehensive but slower)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="includeSocial" name="include_social" checked>
+                            <label class="form-check-label" for="includeSocial">
+                                Include social media profiles
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-search"></i> Start Scan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Real-time scan results will appear here -->
+        <div id="scanResults" class="mt-4" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-spinner fa-spin"></i> Scan in Progress</h5>
+                </div>
+                <div class="card-body">
+                    <div class="progress mb-3">
+                        <div id="scanProgress" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <div id="scanStatus">Initializing scan...</div>
+                    <div id="scanResultsContent" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
