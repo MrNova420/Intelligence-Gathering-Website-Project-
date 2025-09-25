@@ -134,6 +134,26 @@ run.bat
 - ✅ Starts both backend and frontend
 - ✅ Opens on localhost for testing
 
+### **📚 Complete Documentation**
+
+**Choose your setup guide:**
+- 📖 **[PLATFORM_GUIDE.md](PLATFORM_GUIDE.md)** - Complete setup for ALL platforms
+- 📋 **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Cheat sheet and command reference  
+- 👨‍🏫 **[STEP_BY_STEP_TUTORIALS.md](STEP_BY_STEP_TUTORIALS.md)** - Detailed tutorials with screenshots
+- 🔧 **[TERMUX_SETUP.md](TERMUX_SETUP.md)** - Android/Termux specific guide
+
+### **📱 Platform-Specific Quick Start**
+
+| Platform | Quick Command |
+|----------|---------------|
+| **📱 Android (Termux)** | `pkg install git && git clone <repo> && cd <dir> && ./run.sh` |
+| **🐧 Linux** | `sudo apt install git && git clone <repo> && cd <dir> && ./run.sh` |
+| **🍎 macOS** | `brew install git && git clone <repo> && cd <dir> && ./run.sh` |
+| **🪟 Windows** | `git clone <repo> && cd <dir> && run.bat` |
+
+### **🌐 Access Points**
+After setup: **Website**: http://localhost:3000 | **API**: http://localhost:8000 | **Default Login**: admin@platform.local / admin123
+
 ### **🔧 Option 2: Advanced Control**
 
 ```bash
