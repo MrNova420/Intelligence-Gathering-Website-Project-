@@ -10,20 +10,24 @@ from webapp import platform, app
 if __name__ == "__main__":
     import uvicorn
     import logging
+    import sys
     
     logger = logging.getLogger(__name__)
+    
+    # Get port from command line or use default
+    port = 8001 if len(sys.argv) > 1 and sys.argv[1] == "alt" else 8000
     
     # Run the unified web application
     logger.info("🌐 Starting Unified Intelligence Gathering Web Platform")
     logger.info("🔍 Single system combining API + Web Interface")
     logger.info("📱 Termux/Android Compatible")
-    logger.info("🌐 Web Interface: http://localhost:8000")
-    logger.info("🔧 API Docs: http://localhost:8000/docs")
+    logger.info(f"🌐 Web Interface: http://localhost:{port}")
+    logger.info(f"🔧 API Docs: http://localhost:{port}/docs")
     
     uvicorn.run(
         "webapp:app",
         host="0.0.0.0",
-        port=8000,
+        port=port,
         reload=False,
         log_level="info"
     )

@@ -26,10 +26,12 @@ except ImportError:
 # Try to import SessionMiddleware separately 
 try:
     from starlette.middleware.sessions import SessionMiddleware
+    import secrets
     SESSION_MIDDLEWARE_AVAILABLE = True
 except ImportError:
     SESSION_MIDDLEWARE_AVAILABLE = False
     SessionMiddleware = None
+    secrets = None
 
 # Configure logging
 logging.basicConfig(
@@ -303,11 +305,39 @@ class IntelligenceWebPlatform:
 </div>
 {% endblock %}"""
         
-        # Write templates
+        # Write templates only if they don't exist (to preserve enhanced versions)
         templates_dir = Path("web/templates")
-        (templates_dir / "base.html").write_text(base_template)
-        (templates_dir / "dashboard.html").write_text(dashboard_template)
-        (templates_dir / "scan.html").write_text(scan_template)
+        
+        # Check if enhanced templates exist, if not create basic ones
+        if not (templates_dir / "base.html").exists():
+            (templates_dir / "base.html").write_text(base_template)
+        
+        if not (templates_dir / "dashboard.html").exists():
+            (templates_dir / "dashboard.html").write_text(dashboard_template)
+        
+        if not (templates_dir / "scan.html").exists():
+            (templates_dir / "scan.html").write_text(scan_template)
+        
+        # Always create scan_results.html if it doesn't exist
+        if not (templates_dir / "scan_results.html").exists():
+            scan_results_template = """{% extends "base.html" %}
+{% block title %}Scan Results - Intelligence Platform{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="mb-4">📊 Scan Results</h1>
+        <div class="card">
+            <div class="card-body">
+                <h5>Scan ID: {{ scan_id }}</h5>
+                <p class="text-muted">Results will be displayed here.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}"""
+            (templates_dir / "scan_results.html").write_text(scan_results_template)
+        
         
         # Create CSS
         css_content = """
@@ -406,7 +436,10 @@ body {
 }
 """
         
-        Path("web/static/css/style.css").write_text(css_content)
+        # Only create basic CSS if enhanced version doesn't exist
+        css_file = Path("web/static/css/style.css")
+        if not css_file.exists() or css_file.stat().st_size < 1000:  # If basic CSS
+            css_file.write_text(css_content)
         
         # Create JavaScript
         js_content = """
@@ -643,8 +676,17 @@ document.addEventListener('DOMContentLoaded', () => {
         )
         
         # Add session middleware if available
-        if SESSION_MIDDLEWARE_AVAILABLE:
-            self.app.add_middleware(SessionMiddleware, secret_key="intelligence-platform-secret-key")
+        if SESSION_MIDDLEWARE_AVAILABLE and secrets:
+            # Generate secure session key
+            session_key = os.getenv("SESSION_SECRET_KEY") or secrets.token_urlsafe(32)
+            self.app.add_middleware(
+                SessionMiddleware, 
+                secret_key=session_key,
+                max_age=86400,  # 24 hours
+                same_site="lax",
+                https_only=False  # Set to True in production
+            )
+            logger.info("✅ Advanced session management enabled")
         else:
             logger.warning("⚠️ SessionMiddleware not available - sessions disabled")
         
@@ -720,6 +762,55 @@ document.addEventListener('DOMContentLoaded', () => {
         async def reports_page(request: Request):
             """Reports page"""
             return HTMLResponse("<h1>Reports - Coming Soon</h1>")
+        
+        @self.app.get("/settings", response_class=HTMLResponse)
+        async def settings_page(request: Request):
+            """User settings and preferences page"""
+            try:
+                # Get user preferences from session
+                preferences = request.session.get("user_preferences", {
+                    "theme": "dark",
+                    "notifications": True,
+                    "auto_refresh": 30,
+                    "default_scan_type": "email",
+                    "language": "en"
+                })
+                
+                return self.templates.TemplateResponse("settings.html", {
+                    "request": request,
+                    "preferences": preferences
+                })
+            except Exception as e:
+                logger.error(f"Settings page error: {e}")
+                return HTMLResponse("Settings temporarily unavailable", status_code=500)
+        
+        @self.app.post("/api/v1/preferences")
+        async def update_preferences(request: Request):
+            """Update user preferences"""
+            try:
+                form_data = await request.form()
+                preferences = {
+                    "theme": form_data.get("theme", "dark"),
+                    "notifications": form_data.get("notifications") == "on",
+                    "auto_refresh": int(form_data.get("auto_refresh", 30)),
+                    "default_scan_type": form_data.get("default_scan_type", "email"),
+                    "language": form_data.get("language", "en")
+                }
+                
+                # Store in session
+                request.session["user_preferences"] = preferences
+                
+                return JSONResponse({
+                    "success": True,
+                    "message": "Preferences updated successfully",
+                    "preferences": preferences
+                })
+            except Exception as e:
+                logger.error(f"Update preferences error: {e}")
+                return JSONResponse({
+                    "success": False,
+                    "error": str(e)
+                }, status_code=500)
     
     def setup_api_routes(self):
         """Setup API routes integrating with existing backend systems"""
