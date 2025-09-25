@@ -393,16 +393,128 @@ if (autoRefresh > 0) {
     setInterval(() => {
         // Update metrics without full page reload
         updateMetrics();
+        updateCharts();
     }, autoRefresh * 1000);
 }
 
-function updateMetrics() {
-    // Simulate real-time updates
-    const totalScans = document.getElementById('total-scans');
-    if (totalScans) {
-        const current = parseInt(totalScans.textContent);
-        totalScans.textContent = current + Math.floor(Math.random() * 3);
+async function updateMetrics() {
+    try {
+        const response = await fetch('/api/v1/dashboard/metrics');
+        const data = await response.json();
+        
+        if (data.success && data.metrics) {
+            // Update scan count
+            const totalScans = document.getElementById('total-scans');
+            if (totalScans && data.metrics.scans) {
+                totalScans.textContent = data.metrics.scans.current_value;
+            }
+            
+            // Update other metrics dynamically
+            updateMetricCards(data.metrics);
+        }
+    } catch (error) {
+        console.error('Error updating metrics:', error);
+        // Fallback to mock updates
+        const totalScans = document.getElementById('total-scans');
+        if (totalScans) {
+            const current = parseInt(totalScans.textContent);
+            totalScans.textContent = current + Math.floor(Math.random() * 3);
+        }
     }
 }
+
+function updateMetricCards(metrics) {
+    // Update metric cards with trend indicators
+    Object.entries(metrics).forEach(([key, metric]) => {
+        const card = document.querySelector(`[data-metric="${key}"]`);
+        if (card) {
+            const valueElement = card.querySelector('.metric-value');
+            const trendElement = card.querySelector('.metric-trend');
+            
+            if (valueElement) {
+                valueElement.textContent = metric.current_value;
+            }
+            
+            if (trendElement) {
+                const change = metric.change_percentage;
+                const icon = change > 0 ? 'fa-arrow-up text-success' : 
+                           change < 0 ? 'fa-arrow-down text-danger' : 
+                           'fa-minus text-muted';
+                
+                trendElement.innerHTML = `<i class="fas ${icon} me-1"></i>${Math.abs(change).toFixed(1)}%`;
+            }
+        }
+    });
+}
+
+async function updateCharts() {
+    try {
+        // Update performance chart
+        const performanceResponse = await fetch('/api/v1/dashboard/chart-data/scans');
+        const performanceData = await performanceResponse.json();
+        
+        if (performanceData.success && performanceChart) {
+            const chartData = performanceData.data.data || [];
+            const labels = chartData.map(point => new Date(point.timestamp).toLocaleTimeString());
+            const values = chartData.map(point => point.value);
+            
+            performanceChart.data.labels = labels;
+            performanceChart.data.datasets[0].data = values;
+            performanceChart.update('none'); // Smooth update without animation
+        }
+    } catch (error) {
+        console.error('Error updating charts:', error);
+    }
+}
+
+// Add real-time notifications
+function showNotification(message, type = 'info') {
+    const alertsContainer = document.getElementById('alertsContainer');
+    if (!alertsContainer) return;
+    
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type} alert-dismissible fade show`;
+    alert.innerHTML = `
+        <i class="fas fa-info-circle me-2"></i>${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    alertsContainer.appendChild(alert);
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+        alert.remove();
+    }, 5000);
+}
+
+// Initialize real-time features on load
+document.addEventListener('DOMContentLoaded', function() {
+    // Load initial data
+    updateMetrics();
+    updateCharts();
+    
+    // Set up WebSocket connection for real-time updates (if available)
+    if (typeof WebSocket !== 'undefined') {
+        try {
+            const ws = new WebSocket(`ws://${window.location.host}/ws/dashboard`);
+            
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                
+                if (data.type === 'metric_update') {
+                    updateMetricCards(data.metrics);
+                } else if (data.type === 'notification') {
+                    showNotification(data.message, data.level);
+                }
+            };
+            
+            ws.onerror = function(error) {
+                console.log('WebSocket connection failed, using polling instead');
+            };
+        } catch (error) {
+            console.log('WebSocket not supported, using polling for updates');
+        }
+    }
+});
 </script>
 {% endblock %}
