@@ -1,12 +1,19 @@
 import Head from 'next/head'
 import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Search, Shield, Target, Zap, Users, BarChart3, Lock, Globe, 
   TrendingUp, Calendar, FileText, Download, Eye, Clock, 
   AlertTriangle, CheckCircle, XCircle, Activity, Database,
   Filter, Settings, Bell, User, LogOut, ChevronDown, Plus,
   Map, Smartphone, Mail, Link as LinkIcon, Image, Network,
-  Brain, Radar, Fingerprint, Crosshair
+  Brain, Radar, Fingerprint, Crosshair, Star, ArrowRight,
+  Play, Pause, Volume2, ChevronLeft, ChevronRight, Quote,
+  Award, Layers, Cpu, Cloud, GitBranch, Workflow, 
+  MousePointer, Sparkles, Infinity, CircuitBoard, Satellite,
+  Server, Terminal, GitMerge, Hexagon, PenTool,
+  Lightbulb, MessageSquare, TrendingDown, Monitor, Code,
+  Command, Package, Briefcase, Building, Crown, Gem
 } from 'lucide-react'
 
 interface ScanResult {
