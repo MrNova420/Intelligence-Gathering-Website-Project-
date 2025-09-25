@@ -15,11 +15,11 @@ import {
   Lightbulb, MessageSquare, TrendingDown, Monitor, Code,
   Gauge, Mic, Video, Headphones, BookOpen, Hash, AtSign,
   Command, GitPullRequest, Package, Briefcase, Building,
-  Zap as ZapIcon, Bot, Cpu as ProcessorIcon, Orbit, Waves
+  Zap as ZapIcon, Bot, Cpu as ProcessorIcon, Orbit
 } from 'lucide-react'
 
-// Ultimate Intelligence Platform - AAA Industry Standards
-export default function UltimateIntelligencePlatform() {
+// NEXUS Quantum Intelligence Platform - Ultimate AAA Industry Standards
+export default function NEXUSQuantumPlatform() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchType, setSearchType] = useState('phone')
   const [isSearching, setIsSearching] = useState(false)
