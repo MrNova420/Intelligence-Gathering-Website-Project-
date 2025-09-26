@@ -45,9 +45,8 @@ The platform features a completely integrated enterprise interface with:
 
 Get the platform running in under 2 minutes:
 
-### 🎯 Main Startup Options
+### 🎯 **MAIN STARTUP METHOD** (Recommended)
 
-**Option 1: Simple Start (Recommended)**
 ```bash
 # Clone the repository
 git clone https://github.com/MrNova420/Intelligence-Gathering-Website-Project-.git
@@ -58,20 +57,38 @@ pip install -r requirements.txt
 python start.py
 ```
 
-**Option 2: Direct Backend Start**
+### 📋 **Alternative Startup Options**
+
+<details>
+<summary>Click to see alternative startup methods</summary>
+
+**Direct Backend Start**
 ```bash
-# Start the unified application directly
-cd backend
-python unified_app.py
+# Start the unified application directly  
+python backend/unified_app.py
 ```
 
-**Option 3: Script-Based Start**
+**Script-Based Start**
 ```bash
 # Use convenience scripts
 ./scripts/easy_start.sh
 # OR for complete platform
 ./scripts/start_platform.sh
 ```
+
+**Termux/Android Optimized**
+```bash
+./scripts/start_termux.sh
+```
+
+**Docker-Based**
+```bash
+./scripts/start_with_docker.sh
+```
+
+</details>
+
+> **Note**: All methods start the same unified platform. Use `python start.py` for simplicity.
 
 ### Access Points
 
