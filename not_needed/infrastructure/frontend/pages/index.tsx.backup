@@ -1,0 +1,669 @@
+import Head from 'next/head'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence, useAnimation } from 'framer-motion'
+import { 
+  Search, Shield, Target, Zap, Users, BarChart3, Lock, Globe, 
+  TrendingUp, Calendar, FileText, Download, Eye, Clock, 
+  AlertTriangle, CheckCircle, XCircle, Activity, Database,
+  Filter, Settings, Bell, User, LogOut, ChevronDown, Plus,
+  Map, Smartphone, Mail, Link as LinkIcon, Image, Network,
+  Brain, Radar, Fingerprint, Crosshair, Star, ArrowRight,
+  Play, Pause, Volume2, ChevronLeft, ChevronRight, Quote,
+  Award, Layers, Cpu, Cloud, GitBranch, Workflow,
+  MousePointer, Sparkles, Infinity, CircuitBoard, Satellite,
+  Server, Terminal, GitMerge, Hexagon, PenTool,
+  Lightbulb, MessageSquare, TrendingDown, Monitor, Code,
+  Gauge, Mic, Video, Headphones, BookOpen, Hash, AtSign,
+  Command, GitPullRequest, Package, Briefcase, Building,
+  Zap as ZapIcon, Bot, Cpu as ProcessorIcon, Orbit
+} from 'lucide-react'
+
+// NEXUS Quantum Intelligence Platform - Ultimate AAA Industry Standards
+export default function NEXUSQuantumPlatform() {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchType, setSearchType] = useState('phone')
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchResults, setSearchResults] = useState(null)
+  const [showResults, setShowResults] = useState(false)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const canvasRef = useRef(null)
+  const controls = useAnimation()
+
+  // Live platform metrics
+  const [metrics, setMetrics] = useState({
+    activeUsers: 12847,
+    searchesToday: 278943,
+    aiAccuracy: 98.7,
+    dataPoints: 15600000,
+    threatsBlocked: 1247,
+    networksAnalyzed: 89734
+  })
+
+  // Enterprise search capabilities
+  const searchCapabilities = [
+    { 
+      id: 'phone', 
+      name: 'Phone Intelligence',
+      description: 'Advanced carrier detection, location mapping, social profiles',
+      icon: <Smartphone className="w-5 h-5" />,
+      confidence: 99.2,
+      sources: 23
+    },
+    { 
+      id: 'email', 
+      name: 'Email Investigation',
+      description: 'Breach detection, verification, account correlation',
+      icon: <Mail className="w-5 h-5" />,
+      confidence: 98.7,
+      sources: 18
+    },
+    { 
+      id: 'username', 
+      name: 'Username Tracking',
+      description: 'Cross-platform correlation, social media analysis',
+      icon: <User className="w-5 h-5" />,
+      confidence: 97.9,
+      sources: 31
+    },
+    { 
+      id: 'people', 
+      name: 'People Search',
+      description: 'Background checks, contact info, address history',
+      icon: <Users className="w-5 h-5" />,
+      confidence: 96.8,
+      sources: 27
+    },
+    { 
+      id: 'image', 
+      name: 'Image Analysis',
+      description: 'Facial recognition, reverse search, source tracking',
+      icon: <Image className="w-5 h-5" />,
+      confidence: 98.1,
+      sources: 15
+    },
+    { 
+      id: 'network', 
+      name: 'Network Intelligence',
+      description: 'IP geolocation, network topology, threat analysis',
+      icon: <Network className="w-5 h-5" />,
+      confidence: 95.4,
+      sources: 42
+    }
+  ]
+
+  // Live metrics update
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMetrics(prev => ({
+        activeUsers: prev.activeUsers + Math.floor(Math.random() * 5) - 2,
+        searchesToday: prev.searchesToday + Math.floor(Math.random() * 8),
+        aiAccuracy: Math.max(95, Math.min(99.9, prev.aiAccuracy + (Math.random() - 0.5) * 0.2)),
+        dataPoints: prev.dataPoints + Math.floor(Math.random() * 100),
+        threatsBlocked: prev.threatsBlocked + Math.floor(Math.random() * 3),
+        networksAnalyzed: prev.networksAnalyzed + Math.floor(Math.random() * 12)
+      }))
+    }, 2000)
+    return () => clearInterval(interval)
+  }, [])
+
+  // Advanced canvas animation system
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext('2d')
+    const particles = []
+    const particleCount = 150
+
+    // Initialize particles
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        radius: Math.random() * 2 + 0.5,
+        opacity: Math.random() * 0.5 + 0.3,
+        hue: Math.random() * 60 + 200
+      })
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      
+      particles.forEach((particle, index) => {
+        // Update position
+        particle.x += particle.vx
+        particle.y += particle.vy
+        
+        // Boundary collision
+        if (particle.x <= 0 || particle.x >= canvas.width) particle.vx *= -1
+        if (particle.y <= 0 || particle.y >= canvas.height) particle.vy *= -1
+        
+        // Mouse interaction
+        const dx = mousePosition.x - particle.x
+        const dy = mousePosition.y - particle.y
+        const distance = Math.sqrt(dx * dx + dy * dy)
+        
+        if (distance < 100) {
+          const force = (100 - distance) / 100
+          particle.vx += dx * force * 0.001
+          particle.vy += dy * force * 0.001
+        }
+        
+        // Draw particle
+        ctx.beginPath()
+        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2)
+        ctx.fillStyle = `hsla(${particle.hue}, 70%, 60%, ${particle.opacity})`
+        ctx.fill()
+        
+        // Connect nearby particles
+        particles.slice(index + 1).forEach(otherParticle => {
+          const dx = particle.x - otherParticle.x
+          const dy = particle.y - otherParticle.y
+          const distance = Math.sqrt(dx * dx + dy * dy)
+          
+          if (distance < 80) {
+            ctx.beginPath()
+            ctx.moveTo(particle.x, particle.y)
+            ctx.lineTo(otherParticle.x, otherParticle.y)
+            ctx.strokeStyle = `hsla(${particle.hue}, 70%, 60%, ${0.1 * (1 - distance / 80)})`
+            ctx.lineWidth = 0.5
+            ctx.stroke()
+          }
+        })
+      })
+      
+      requestAnimationFrame(animate)
+    }
+    
+    animate()
+  }, [mousePosition])
+
+  // Mouse tracking
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY })
+    }
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
+  // Canvas resize
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+    
+    resizeCanvas()
+    window.addEventListener('resize', resizeCanvas)
+    return () => window.removeEventListener('resize', resizeCanvas)
+  }, [])
+
+  // Advanced search simulation
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return
+    
+    setIsSearching(true)
+    setShowResults(false)
+    
+    // Simulate AI processing
+    await new Promise(resolve => setTimeout(resolve, 2500))
+    
+    const capability = searchCapabilities.find(c => c.id === searchType)
+    setSearchResults({
+      query: searchQuery,
+      type: capability.name,
+      confidence: capability.confidence,
+      sources: capability.sources,
+      location: "San Francisco, CA, USA",
+      carrier: "Advanced Networks Inc.",
+      lineType: "Mobile Premium",
+      profiles: 12,
+      emails: 6,
+      addresses: 3,
+      riskLevel: "Low",
+      lastSeen: "2 hours ago"
+    })
+    
+    setIsSearching(false)
+    setShowResults(true)
+  }
+
+  return (
+    <>
+      <Head>
+        <title>IntelliSearch Pro - Advanced Intelligence Platform</title>
+        <meta name="description" content="Professional-grade intelligence gathering platform for investigators, businesses, and security professionals" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-hidden relative">
+        {/* Advanced Background Canvas */}
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 pointer-events-none"
+          style={{ mixBlendMode: 'screen' }}
+        />
+
+        {/* Professional Header */}
+        <header className="relative z-10 border-b border-slate-800/50 backdrop-blur-sm bg-slate-900/20">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <div className="flex items-center justify-between">
+              <motion.div 
+                className="flex items-center space-x-3"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                <div className="relative">
+                  <motion.div
+                    className="w-10 h-10 bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 rounded-xl flex items-center justify-center"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Radar className="w-6 h-6 text-white" />
+                  </motion.div>
+                  <motion.div
+                    className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl opacity-20 blur"
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold">IntelliSearch Pro</h1>
+                  <p className="text-xs text-slate-400">Advanced Intelligence Platform</p>
+                </div>
+              </motion.div>
+
+              {/* Live Metrics Bar */}
+              <motion.div 
+                className="hidden lg:flex items-center space-x-8"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <div className="flex items-center space-x-2 text-sm">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                  <span className="text-slate-300">{metrics.activeUsers.toLocaleString()} users online</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm">
+                  <Activity className="w-4 h-4 text-blue-400" />
+                  <span className="text-slate-300">{metrics.searchesToday.toLocaleString()} searches today</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm">
+                  <Brain className="w-4 h-4 text-purple-400" />
+                  <span className="text-slate-300">{metrics.aiAccuracy.toFixed(1)}% AI accuracy</span>
+                </div>
+              </motion.div>
+
+              {/* Professional Navigation */}
+              <div className="flex items-center space-x-4">
+                <button className="p-2 hover:bg-slate-800/50 rounded-lg transition-colors">
+                  <Bell className="w-5 h-5" />
+                </button>
+                <button className="p-2 hover:bg-slate-800/50 rounded-lg transition-colors">
+                  <Settings className="w-5 h-5" />
+                </button>
+                <button className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg transition-colors">
+                  <User className="w-4 h-4" />
+                  <span className="text-sm font-medium">Sign In</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Hero Section */}
+        <main className="relative z-10">
+          <div className="max-w-7xl mx-auto px-6 pt-20 pb-32">
+            <div className="text-center max-w-4xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1 }}
+              >
+                <h1 className="text-5xl lg:text-7xl font-bold mb-6">
+                  <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                    Find Anyone,
+                  </span>
+                  <br />
+                  <span className="text-white">Anywhere</span>
+                </h1>
+                <p className="text-xl text-slate-300 mb-12 leading-relaxed">
+                  Advanced intelligence search engine with access to billions of records.
+                  Get instant results for phone numbers, emails, usernames, and more.
+                </p>
+              </motion.div>
+
+              {/* Advanced Search Interface */}
+              <motion.div
+                className="bg-slate-800/30 backdrop-blur-lg border border-slate-700/50 rounded-2xl p-8 mb-16"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              >
+                {/* Search Type Selector */}
+                <div className="flex flex-wrap justify-center gap-2 mb-6">
+                  {searchCapabilities.map((capability) => (
+                    <button
+                      key={capability.id}
+                      onClick={() => setSearchType(capability.id)}
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                        searchType === capability.id
+                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                          : 'bg-slate-700/50 text-slate-300 hover:bg-slate-700'
+                      }`}
+                    >
+                      {capability.icon}
+                      <span>{capability.name}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Search Input */}
+                <div className="relative mb-6">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Search className="h-5 w-5 text-slate-400" />
+                  </div>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                    placeholder="Enter phone number, email, username, or any identifier..."
+                    className="w-full pl-12 pr-4 py-4 bg-slate-900/50 border border-slate-600 rounded-xl text-white text-lg placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  />
+                </div>
+
+                <button
+                  onClick={handleSearch}
+                  disabled={isSearching || !searchQuery.trim()}
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 disabled:from-slate-600 disabled:to-slate-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 flex items-center justify-center space-x-3"
+                >
+                  {isSearching ? (
+                    <>
+                      <motion.div
+                        className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      />
+                      <span>Analyzing Intelligence...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="w-5 h-5" />
+                      <span>Launch Intelligence Search</span>
+                    </>
+                  )}
+                </button>
+              </motion.div>
+
+              {/* Search Results */}
+              <AnimatePresence>
+                {showResults && searchResults && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -50 }}
+                    className="bg-slate-800/30 backdrop-blur-lg border border-slate-700/50 rounded-2xl p-8 mb-16"
+                  >
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-2xl font-bold text-white">Results Found!</h3>
+                      <div className="flex items-center space-x-2">
+                        <CheckCircle className="w-5 h-5 text-green-400" />
+                        <span className="text-green-400 font-medium">{searchResults.confidence}% Confidence</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Location:</span>
+                          <span className="text-white font-medium blur-sm">{searchResults.location}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Carrier:</span>
+                          <span className="text-white font-medium blur-sm">{searchResults.carrier}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Line Type:</span>
+                          <span className="text-white font-medium blur-sm">{searchResults.lineType}</span>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Social Profiles:</span>
+                          <span className="text-white font-medium blur-sm">{searchResults.profiles}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Associated Emails:</span>
+                          <span className="text-white font-medium blur-sm">{searchResults.emails}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Risk Level:</span>
+                          <span className="text-green-400 font-medium">{searchResults.riskLevel}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-slate-700 pt-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <Shield className="w-5 h-5 text-blue-400" />
+                          <span className="text-slate-300">Instant Access</span>
+                          <Lock className="w-5 h-5 text-green-400" />
+                          <span className="text-slate-300">Secure & Verified</span>
+                          <Eye className="w-5 h-5 text-purple-400" />
+                          <span className="text-slate-300">Professional Intelligence</span>
+                        </div>
+                        <button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-500 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-lg transition-all flex items-center space-x-2">
+                          <Download className="w-4 h-4" />
+                          <span>Get Full Report - $9.99</span>
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* Enterprise Features Section */}
+          <div className="bg-slate-800/20 backdrop-blur-sm border-t border-slate-700/50">
+            <div className="max-w-7xl mx-auto px-6 py-20">
+              <div className="text-center mb-16">
+                <h2 className="text-4xl font-bold text-white mb-4">
+                  Advanced Intelligence Capabilities
+                </h2>
+                <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+                  Comprehensive search tools powered by AI and billions of data points
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {searchCapabilities.map((capability, index) => (
+                  <motion.div
+                    key={capability.id}
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    className="bg-slate-800/30 backdrop-blur-lg border border-slate-700/50 rounded-xl p-6 hover:bg-slate-800/50 transition-all group"
+                  >
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="p-2 bg-blue-600/20 rounded-lg group-hover:bg-blue-600/30 transition-colors">
+                        {capability.icon}
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">{capability.name}</h3>
+                        <p className="text-sm text-blue-400">{capability.confidence}% accuracy</p>
+                      </div>
+                    </div>
+                    <p className="text-slate-300 mb-4">{capability.description}</p>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-slate-400">{capability.sources} sources</span>
+                      <ArrowRight className="w-4 h-4 text-blue-400 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Platform Statistics */}
+          <div className="max-w-7xl mx-auto px-6 py-20">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-white mb-4">
+                Trusted by Millions Worldwide
+              </h2>
+              <p className="text-xl text-slate-300">
+                Professional-grade intelligence platform used by investigators, businesses, and individuals
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6 }}
+              >
+                <div className="text-3xl font-bold text-blue-400 mb-2">
+                  {metrics.activeUsers.toLocaleString()}+
+                </div>
+                <div className="text-slate-400">Active Users</div>
+              </motion.div>
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+              >
+                <div className="text-3xl font-bold text-green-400 mb-2">
+                  {(metrics.dataPoints / 1000000).toFixed(1)}B+
+                </div>
+                <div className="text-slate-400">Records Indexed</div>
+              </motion.div>
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <div className="text-3xl font-bold text-purple-400 mb-2">
+                  {metrics.aiAccuracy.toFixed(1)}%
+                </div>
+                <div className="text-slate-400">AI Accuracy</div>
+              </motion.div>
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
+                <div className="text-3xl font-bold text-cyan-400 mb-2">24/7</div>
+                <div className="text-slate-400">Expert Support</div>
+              </motion.div>
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                <div className="text-3xl font-bold text-yellow-400 mb-2">
+                  {metrics.searchesToday.toLocaleString()}+
+                </div>
+                <div className="text-slate-400">Searches Today</div>
+              </motion.div>
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+              >
+                <div className="text-3xl font-bold text-red-400 mb-2">
+                  {metrics.threatsBlocked.toLocaleString()}+
+                </div>
+                <div className="text-slate-400">Threats Blocked</div>
+              </motion.div>
+            </div>
+          </div>
+        </main>
+
+        {/* Professional Footer */}
+        <footer className="relative z-10 border-t border-slate-800/50 bg-slate-900/50 backdrop-blur-sm">
+          <div className="max-w-7xl mx-auto px-6 py-12">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+              <div>
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                    <Radar className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-xl font-bold text-white">IntelliSearch Pro</span>
+                </div>
+                <p className="text-slate-400 text-sm">
+                  The world's most advanced intelligence search platform. Find anyone, anywhere, instantly.
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-white mb-4">Services</h4>
+                <ul className="space-y-2 text-sm text-slate-400">
+                  <li><a href="#" className="hover:text-white transition-colors">Phone Lookup</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">Email Search</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">People Finder</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">Username Tracking</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">Image Search</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">IP Analysis</a></li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-white mb-4">Company</h4>
+                <ul className="space-y-2 text-sm text-slate-400">
+                  <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">Support</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">API Docs</a></li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-white mb-4">Connect</h4>
+                <div className="flex space-x-3">
+                  <a href="#" className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-lg flex items-center justify-center transition-colors">
+                    <LinkIcon className="w-4 h-4 text-slate-400" />
+                  </a>
+                  <a href="#" className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-lg flex items-center justify-center transition-colors">
+                    <Mail className="w-4 h-4 text-slate-400" />
+                  </a>
+                  <a href="#" className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-lg flex items-center justify-center transition-colors">
+                    <MessageSquare className="w-4 h-4 text-slate-400" />
+                  </a>
+                </div>
+              </div>
+            </div>
+            
+            <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+              <p className="text-slate-400 text-sm">
+                © 2024 IntelliSearch Pro. All rights reserved. Professional intelligence platform.
+              </p>
+              <div className="flex items-center space-x-4 mt-4 md:mt-0">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                  <span className="text-slate-400 text-sm">All systems operational</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </>
+  )
+}
